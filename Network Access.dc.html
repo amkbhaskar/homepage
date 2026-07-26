@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#FAFAF8; scroll-behavior:smooth; }
+  a{ color:#5B8DEF; text-decoration:none; }
+  a:hover{ color:#0F172A; }
+  @keyframes naIn{ from{ opacity:0; transform:translateY(-6px);} to{ opacity:1; transform:none;} }
+  @keyframes naText{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:none;} }
+  @keyframes naFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+  @keyframes naFlow{ from{ stroke-dashoffset:200;} to{ stroke-dashoffset:0;} }
+  @keyframes naPulse{ 0%,100%{ opacity:.35; transform:scale(1);} 50%{ opacity:1; transform:scale(1.12);} }
+  @keyframes naMarquee{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+  @keyframes naCoin{ 0%{ opacity:0; transform:translateY(16px);} 18%{ opacity:1; transform:translateY(0);} 82%{ opacity:1; transform:translateY(0);} 100%{ opacity:0; transform:translateY(-4px);} }
+  @keyframes naSpin{ to{ transform:rotate(360deg);} }
+  @keyframes naPulseDot{ 0%,100%{ transform:scale(1); opacity:.85;} 50%{ transform:scale(1.55); opacity:1;} }
+  @keyframes naConv{ 0%,100%{ opacity:.22;} 45%{ opacity:1;} }
+  @keyframes naBar{ 0%{ transform:scaleY(.18);} 45%{ transform:scaleY(1);} 100%{ transform:scaleY(.18);} }
+  @keyframes naLineUp{ from{ transform:translateY(105%);} to{ transform:translateY(0);} }
+  .na-hline{ display:block; overflow:hidden; }
+  .na-hline > span{ display:inline-block; transform:translateY(105%); animation:naLineUp .9s cubic-bezier(.2,.75,.2,1) both; }
+  .na-hline.l1 > span{ animation-delay:.08s; }
+  .na-hline.l2 > span{ animation-delay:.24s; }
+  .na-rise{ opacity:0; }
+  .na-rise.seen{ animation:naText .85s cubic-bezier(.2,.7,.2,1) both; }
+</style>
+<script src="image-slot.js"></script>
+</helmet>
+
+<div style="position:relative; width:100%; background:#FAFAF8; color:#1B2333; font-family:'Manrope',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;">
+
+  <!-- ===== HERO ===== -->
+  <section style="position:relative; overflow:hidden; padding:clamp(56px,9vh,120px) clamp(22px,5vw,72px) clamp(70px,11vh,140px); background:radial-gradient(120% 100% at 78% 30%, rgba(91,141,239,0.10), rgba(250,250,248,0) 58%);">
+    <div style="max-width:900px; margin:0 auto; text-align:center; display:flex; flex-direction:column; align-items:center;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:26px;">
+        <span style="width:26px; height:1px; background:#5B8DEF; display:inline-block; opacity:.8;"></span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#5B8DEF;">NETWORKACCESS</span>
+      </div>
+      <h1 style="margin:0 0 26px; font-weight:700; font-size:clamp(40px,5.4vw,80px); line-height:1.02; letter-spacing:-0.032em; color:#0A1F44; text-wrap:balance;">
+        <span class="na-hline l1"><span>From Scattered</span></span><span class="na-hline l2"><span>Information to&nbsp;<span style="color:#5B8DEF;">Instant Answers</span></span></span>
+      </h1>
+      <p style="margin:0 0 36px; font-size:clamp(16px,1.25vw,19px); line-height:1.65; color:#5A647B; max-width:640px; text-wrap:pretty;">
+        Your infrastructure already has the answers—but they're buried across planning tools, inventory records, field updates, and operational systems. InfrastructureAccess connects them into one complete view, giving every team the answers they need, exactly when they need them.
+      </p>
+      <div style="display:flex; align-items:center; gap:22px;">
+        <a href="#" style="background:#5B8DEF; color:#fff; font-weight:600; font-size:14.5px; padding:14px 26px; border-radius:9px; box-shadow:0 12px 26px -10px rgba(91,141,239,0.65);" style-hover="background:#3F73D8;">Book a Demo</a>
+        <a href="#" style="color:#5B8DEF; font-size:14.5px; font-weight:500;" style-hover="color:#0A1F44;">See how it works →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUSTED ===== -->
+  <section style="position:relative; padding:44px clamp(22px,5vw,72px) 40px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="text-align:center; font-size:13.5px; letter-spacing:0.02em; color:#8A93A3; margin-bottom:30px;">Trusted by operators and enterprises across 60+ countries</div>
+
+    <div style="position:relative; overflow:hidden; -webkit-mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);">
+      <div style="display:flex; width:max-content; align-items:center; gap:76px; animation:naMarquee 34s linear infinite;">
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">airtel</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Vodafone</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Jio</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">BSNL</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Ericsson</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Nokia</span>
+        <span style="font-size:26px; font-weight:800; letter-spacing:0.03em; color:#A6ADB8; white-space:nowrap;">STC</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Indian Oil</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">airtel</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Vodafone</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Jio</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">BSNL</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Ericsson</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Nokia</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:800; letter-spacing:0.03em; color:#A6ADB8; white-space:nowrap;">STC</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Indian Oil</span>
+      </div>
+    </div>
+
+    <div ref="{{ setProofRow }}" style="display:grid; grid-template-columns:repeat(5,1fr); gap:clamp(16px,3vw,48px); max-width:1120px; margin:clamp(44px,6vh,64px) auto 0;">
+      <sc-for list="{{ proofStats }}" as="p" hint-placeholder-count="5">
+        <div style="text-align:center; padding:0 6px;">
+          <div style="font-weight:700; font-size:clamp(34px,3.8vw,56px); letter-spacing:-0.03em; line-height:1; color:{{ p.color }};"><span data-pcount="{{ p.value }}">0%</span></div>
+          <div style="width:34px; height:3px; border-radius:2px; margin:16px auto 14px; background:{{ p.color }}; opacity:.55;"></div>
+          <div style="font-size:clamp(12px,0.95vw,14px); line-height:1.45; color:#5A647B; text-wrap:balance;">{{ p.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ===== HOW ===== -->
+  <section ref="{{ setHowSec }}" style="position:relative; overflow:hidden; min-height:min(94vh,880px); display:flex; align-items:center; background:radial-gradient(130% 100% at 72% 42%, #10203f 0%, #0a1428 46%, #060c1c 100%);">
+    <canvas ref="{{ setHowFig }}" style="position:absolute; inset:0; width:100%; height:100%; display:block; z-index:1;"></canvas>
+    <div style="position:absolute; inset:0; z-index:2; pointer-events:none; background:linear-gradient(90deg, rgba(6,12,28,0.9) 0%, rgba(6,12,28,0.6) 34%, rgba(6,12,28,0) 62%);"></div>
+
+    <div ref="{{ setHowCopy }}" style="position:relative; z-index:3; max-width:1240px; margin:0 auto; padding:0 clamp(22px,5vw,72px); width:100%; opacity:0; transform:translateY(14px); transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1);">
+      <div style="max-width:520px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+          <span style="width:26px; height:1px; background:#6E9BF6; display:inline-block; opacity:.8;"></span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#6E9BF6;">HOW IT WORKS</span>
+        </div>
+        <h2 style="margin:0 0 24px; font-weight:700; font-size:clamp(32px,3.8vw,58px); line-height:1.05; letter-spacing:-0.03em; color:#F4F7FF; text-wrap:balance;">
+          Every Infrastructure Decision Starts with <span style="color:#6E9BF6;">One Connected View</span>
+        </h2>
+        <p style="margin:0; max-width:500px; font-size:clamp(16px,1.35vw,20px); line-height:1.62; color:#AEB9D0; text-wrap:pretty;">
+          We build the digital nervous system of your telecom infrastructure by continuously connecting planning, inventory, field execution, operations, and service intelligence into a living Digital Twin—giving every team one trusted view of the infrastructure to answer, decide, and act in real time.
+        </p>
+        <div style="display:flex; align-items:center; gap:12px; margin-top:32px; flex-wrap:wrap;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.06em; color:#8FA0C0;">One trusted view</span>
+          <span style="width:6px; height:6px; border-radius:50%; background:#4CD6A0;"></span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.06em; color:#8FA0C0;">Answer · Decide · Act in real time</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:absolute; right:22px; bottom:16px; z-index:3; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; color:rgba(160,180,220,0.5); pointer-events:none;">LIVE DIGITAL TWIN · <span style="color:rgba(120,220,180,0.85);">MAPPING</span></div>
+  </section>
+
+  <!-- ===== WHAT ===== -->
+  <section id="what-you-get" ref="{{ setWhatSec }}" style="position:relative; padding:clamp(90px,13vh,160px) clamp(22px,5vw,72px) clamp(100px,15vh,180px); border-top:1px solid rgba(18,28,70,0.06); background:radial-gradient(120% 80% at 15% 0%, rgba(91,141,239,0.07), rgba(250,250,248,0) 55%);">
+    <div style="max-width:1240px; margin:0 auto;">
+
+      <!-- Modules: pinned scroll sequence -->
+      <div ref="{{ setTrack }}" style="position:relative; height:560vh; margin-top:clamp(8px,2vh,20px);">
+        <div style="position:sticky; top:0; min-height:100vh; display:flex; flex-direction:column; justify-content:flex-start; gap:clamp(24px,3.2vh,38px); padding:clamp(24px,3.5vh,48px) 0 clamp(20px,3vh,40px);">
+
+          <div>
+            <div class="na-rise" style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#5B8DEF; margin-bottom:16px;">WHAT YOU GET</div>
+            <h2 class="na-rise" style="animation-delay:.08s; margin:0 0 12px; font-weight:700; font-size:clamp(30px,3.8vw,54px); line-height:1.05; letter-spacing:-0.03em; color:#0A1F44;">
+              One Platform<br>Built for Your Entire Infrastructure
+            </h2>
+            <p class="na-rise" style="animation-delay:.16s; margin:0; max-width:620px; font-size:clamp(15px,1.15vw,18px); line-height:1.6; color:#5A647B; text-wrap:pretty;">
+              Manage your entire infrastructure lifecycle on a single platform.
+            </p>
+          </div>
+
+          <div style="width:100%; display:grid; grid-template-columns:0.62fr 1.38fr; gap:clamp(28px,4vw,64px); align-items:stretch;">
+
+            <!-- Left: only active module shown -->
+            <div style="position:relative; height:min(58vh,560px);">
+              <sc-for list="{{ modules }}" as="m" hint-placeholder-count="1">
+                <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-start; transition:opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1); opacity:{{ m.op }}; transform:{{ m.tf }}; pointer-events:{{ m.pe }};">
+                  <div style="position:relative; max-width:380px; margin-bottom:26px;">
+                    <div style="position:absolute; left:7px; right:7px; top:6px; height:2px; background:rgba(18,28,70,0.12);"></div>
+                    <div style="position:absolute; left:7px; top:6px; height:2px; background:#5B8DEF; width:{{ connProgress }}; transition:width .5s cubic-bezier(.2,.7,.2,1);"></div>
+                    <div style="position:relative; display:flex; justify-content:space-between;">
+                      <sc-for list="{{ modules }}" as="c" hint-placeholder-count="5">
+                        <div onClick="{{ c.select }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer;">
+                          <span style="width:13px; height:13px; border-radius:50%; background:{{ c.dotBg }}; border:2px solid {{ c.dotBorder }}; transition:background .4s ease, border-color .4s ease; box-shadow:0 0 0 4px rgba(91,141,239,0.08);"></span>
+                          <span style="font-size:clamp(8px,0.66vw,10px); white-space:nowrap; letter-spacing:-0.02em; transition:color .35s ease; color:{{ c.stepColor }}; font-weight:{{ c.stepWeight }};">{{ c.name }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500; color:#5B8DEF;">{{ m.num }}</span>
+                    <span style="width:24px; height:1px; background:#5B8DEF; opacity:.7;"></span>
+                  </div>
+                  <div style="font-weight:700; letter-spacing:-0.02em; font-size:clamp(28px,3vw,44px); line-height:1.04; color:#0A1F44; margin-bottom:18px;">{{ m.name }}</div>
+                  <p style="margin:0 0 18px; font-size:clamp(15px,1.15vw,18px); line-height:1.6; color:#5A647B; max-width:480px; text-wrap:pretty;">{{ m.desc }}</p>
+                  <div style="display:flex; align-items:flex-start; gap:10px; font-size:clamp(14.5px,1.05vw,16.5px); font-weight:600; color:#0A1F44; line-height:1.45; max-width:480px;">
+                    <span style="color:#5B8DEF;">→</span><span>{{ m.benefit }}</span>
+                  </div>
+                  <div style="margin-top:26px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                    <a href="{{ m.exploreHref }}" style="display:inline-flex; align-items:center; gap:8px; background:#5B8DEF; color:#ffffff; font-weight:600; font-size:14.5px; padding:12px 22px; border-radius:9px; box-shadow:0 12px 26px -10px rgba(91,141,239,0.65);" style-hover="background:#3F73D8;">Explore more <span style="font-size:15px;">→</span></a>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <!-- Right: visual panel -->
+            <div style="position:relative; height:min(72vh,720px);">
+              <div style="position:absolute; inset:0; border-radius:22px; overflow:hidden; background:linear-gradient(180deg,#0c1526,#0a1120); box-shadow:0 40px 90px -54px rgba(6,12,28,0.7); border:1px solid rgba(120,150,200,0.14); transition:opacity .5s ease; opacity:{{ boxOp }};">
+                <div ref="{{ setWhatFig }}" style="position:absolute; inset:0;"></div>
+                <div style="position:absolute; left:20px; top:18px; z-index:3; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.18em; color:rgba(160,180,220,0.6); pointer-events:none;">{{ activeModuleTag }}</div>
+              </div>
+              <img src="assets/smartinventory.png" alt="SmartInventory — living Digital Twin infrastructure map" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; z-index:2; transition:opacity .55s ease; opacity:{{ invImgOp }}; pointer-events:none;">
+              <img src="assets/smartplanner.png" alt="SmartPlanner — AI route optimization map" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; z-index:2; transition:opacity .55s ease; opacity:{{ planImgOp }}; pointer-events:none;">
+              <img src="assets/smartops.png" alt="SmartOps — field operations and work orders" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; z-index:2; transition:opacity .55s ease; opacity:{{ opsImgOp }}; pointer-events:none;">
+              <img src="assets/smartsq.png" alt="SmartSQ — serviceability and quality inspection" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; z-index:2; transition:opacity .55s ease; opacity:{{ sqImgOp }}; pointer-events:none;">
+              <img src="assets/smartbuilt.png" alt="SmartBuilt — AI construction quality and As-Built validation" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; z-index:2; transition:opacity .55s ease; opacity:{{ builtImgOp }}; pointer-events:none;">
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== IMPACT ===== -->
+  <section ref="{{ setImpactSec }}" style="position:relative; padding:clamp(90px,13vh,160px) clamp(22px,5vw,72px) clamp(100px,15vh,180px); border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="max-width:1080px; margin:0 auto; text-align:center;">
+      <div class="na-rise" style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#5B8DEF; margin-bottom:24px;">THE IMPACT WE CREATE</div>
+      <h2 class="na-rise" style="animation-delay:.08s; margin:0 auto; max-width:880px; font-weight:700; font-size:clamp(34px,4.6vw,68px); line-height:1.04; letter-spacing:-0.03em; color:#0A1F44; text-wrap:balance;">
+        Measured in Business Outcomes,<br>Not Features
+      </h2>
+    </div>
+
+    <div class="na-rise" style="animation-delay:.18s; display:grid; grid-template-columns:repeat(5,1fr); gap:clamp(16px,2.5vw,40px); max-width:1200px; margin:clamp(56px,8vh,90px) auto 0;">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
+        <div style="text-align:center; padding:0 4px;">
+          <div style="display:flex; justify-content:center; margin-bottom:16px;"><image-slot id="{{ s.slotId }}" shape="rounded" radius="16" style="width:84px; height:84px;" placeholder="{{ s.label }}"></image-slot></div>
+          <div style="display:flex; align-items:baseline; justify-content:center; font-weight:700; font-size:clamp(40px,4.6vw,72px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;">
+            <span data-count="{{ s.value }}" data-suffix="{{ s.suffix }}" data-plain="{{ s.plain }}">{{ s.plain }}</span>
+          </div>
+          <div style="margin-top:14px; font-size:clamp(13px,1vw,15.5px); font-weight:500; color:#5A647B; line-height:1.35; text-wrap:balance;">{{ s.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section style="padding:20px clamp(22px,5vw,72px) 110px;">
+    <div style="position:relative; overflow:hidden; max-width:1200px; margin:0 auto; border-radius:26px; padding:clamp(64px,9vw,120px) clamp(24px,6vw,80px); text-align:center; background:radial-gradient(120% 130% at 50% 0%, #12244A 0%, #0B1730 46%, #070E1F 100%); box-shadow:0 40px 90px -50px rgba(6,12,28,0.9);">
+      <div style="position:absolute; left:50%; top:-30%; width:60%; height:120%; transform:translateX(-50%); background:radial-gradient(circle, rgba(91,141,239,0.28), rgba(7,14,31,0) 68%); pointer-events:none;"></div>
+      <h2 style="position:relative; margin:0 0 22px; font-size:clamp(34px,5vw,74px); font-weight:700; line-height:1.02; letter-spacing:-0.035em; color:#F4F7FF; text-wrap:balance;">The Right Infrastructure Decisions <span style="color:#6E9BF6;">Start Here.</span></h2>
+      <p style="position:relative; margin:0 auto 40px; max-width:520px; font-size:clamp(15px,1.2vw,18px); line-height:1.6; color:#96A2BC; text-wrap:pretty;">Tell us your infrastructure challenge. We'll show you the connected view and the answers that solve it.</p>
+      <div style="position:relative; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <a href="#" style="display:inline-flex; align-items:center; gap:9px; background:#5B8DEF; color:#ffffff; font-weight:600; font-size:15px; padding:14px 28px; border-radius:999px; box-shadow:0 16px 34px -14px rgba(91,141,239,0.7);" style-hover="filter:brightness(1.08);">Book a Demo <span style="font-size:16px;">→</span></a>
+        <a href="#" style="display:inline-flex; align-items:center; gap:9px; color:#EAEEF6; font-weight:600; font-size:15px; padding:14px 26px; border-radius:999px; border:1px solid rgba(255,255,255,0.22);" style-hover="background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.4);">Explore InfrastructureAccess</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:1440}}">
+class Component extends DCLogic {
+  state = { active: 0, prog: 0 };
+
+  _mods() {
+    return [
+      { num: "01", name: "SmartInventory", tag: "GIS DIGITAL TWIN · INVENTORY",
+        desc: "Build a living Digital Twin using GIS-based inventory, real-time asset updates, and intelligent infrastructure modelling. Understand every asset, connection, and available capacity from a single source of truth.",
+        benefit: "So every team works from one accurate, always-current view of the infrastructure." },
+      { num: "02", name: "SmartPlanner", tag: "AI PLANNING · ROUTE OPTIMIZATION",
+        desc: "Design optimized fiber infrastructures with AI-assisted planning, route optimization, demand forecasting, capacity planning, and automated BOQ generation—all powered by your Digital Twin.",
+        benefit: "So every expansion is planned with maximum coverage, minimum cost, and fewer redesigns." },
+      { num: "03", name: "SmartBuilt", tag: "AS-BUILT · CONSTRUCTION QUALITY",
+        desc: "Digitize construction quality with AI-powered field inspections, automated compliance checks, GNSS-enabled location accuracy, and real-time As-Built validation. SmartBuilt verifies work as it happens, automatically extracts information from field captures, and updates your Digital Twin with trusted construction records.",
+        benefit: "So your infrastructure is built correctly, verified instantly, and ready to operate with complete confidence." },
+      { num: "04", name: "SmartOps", tag: "FIELD OPERATIONS · WORK ORDERS",
+        desc: "Digitize field operations with mobile work orders, technician assignment, SLA tracking, preventive maintenance, workforce management, and real-time task monitoring from one operational platform.",
+        benefit: "So issues are resolved faster, field teams execute efficiently, and infrastructure downtime stays minimal." },
+      { num: "05", name: "SmartSQ", tag: "SERVICEABILITY · FEASIBILITY",
+        desc: "Qualify new customer connections instantly with automated serviceability checks, capacity validation, LOS analysis, geo-coding, and integrated feasibility assessment before deployment.",
+        benefit: "So you can commit to new connections with confidence and activate customers faster." },
+    ];
+  }
+
+  _select(i) { this.setState({ active: i, prog: 0 }); }
+
+  _statIcon(i) {
+    const A = "#5B8DEF", B = "#7BA5F2", C = "#A9C4F7", D = "#0A1F44";
+    const icons = [
+      `<svg width="58" height="58" viewBox="0 0 58 58" fill="none"><ellipse cx="29" cy="46" rx="17" ry="5.5" fill="${A}" style="animation:naCoin 2.8s ease-in-out infinite"/><ellipse cx="29" cy="37" rx="17" ry="5.5" fill="${B}" style="animation:naCoin 2.8s ease-in-out .35s infinite"/><ellipse cx="29" cy="28" rx="17" ry="5.5" fill="${C}" style="animation:naCoin 2.8s ease-in-out .7s infinite"/></svg>`,
+      `<svg width="56" height="56" viewBox="0 0 56 56" fill="none"><g style="transform-origin:28px 28px; animation:naSpin 1.6s linear infinite"><path d="M28 11 A17 17 0 1 1 13 20" fill="none" stroke="${A}" stroke-width="4.5" stroke-linecap="round"/><path d="M28 4 L28 14 L18 14" fill="none" stroke="${A}" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`,
+      `<svg width="56" height="56" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="20" stroke="${C}" stroke-width="3.5"/><circle cx="28" cy="28" r="12" stroke="${B}" stroke-width="3.5"/><circle cx="28" cy="28" r="5" fill="${A}" style="transform-origin:28px 28px; animation:naPulseDot 1.7s ease-in-out infinite"/></svg>`,
+      `<svg width="70" height="44" viewBox="0 0 70 44" fill="none"><circle cx="14" cy="22" r="8" fill="${A}" style="animation:naConv 2.4s ease-in-out infinite"/><circle cx="35" cy="22" r="8" fill="${A}" style="animation:naConv 2.4s ease-in-out .5s infinite"/><circle cx="56" cy="22" r="8" fill="${A}" style="animation:naConv 2.4s ease-in-out 1s infinite"/></svg>`,
+      `<svg width="64" height="54" viewBox="0 0 64 54" fill="none"><rect x="9" y="26" width="10" height="22" rx="2.5" fill="${C}" style="transform-box:fill-box; transform-origin:bottom; animation:naBar 2.4s ease-in-out infinite"/><rect x="27" y="18" width="10" height="30" rx="2.5" fill="${B}" style="transform-box:fill-box; transform-origin:bottom; animation:naBar 2.4s ease-in-out .2s infinite"/><rect x="45" y="10" width="10" height="38" rx="2.5" fill="${A}" style="transform-box:fill-box; transform-origin:bottom; animation:naBar 2.4s ease-in-out .4s infinite"/><path d="M11 22 L31 15 L49 6" fill="none" stroke="${D}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M43 6 L49 6 L49 12" fill="none" stroke="${D}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    ];
+    return icons[i] || "";
+  }
+
+  _goTo(i) {
+    const track = this._track;
+    if (!track) { this.setState({ active: i }); return; }
+    const N = this._mods().length;
+    const rectTop = track.getBoundingClientRect().top + window.scrollY;
+    const denom = track.offsetHeight - window.innerHeight;
+    const seg = denom / N;
+    window.scrollTo({ top: rectTop + seg * i + seg * 0.5, behavior: 'smooth' });
+  }
+
+  renderVals() {
+    const M = this._mods();
+    const N = M.length;
+    const active = this.state.active, prog = this.state.prog;
+    return {
+      setHowFig: (el) => { this.howFig = el; },
+      setHowCopy: (el) => { this.howCopy = el; },
+      setHowSec: (el) => { this.howSec = el; },
+      setProofRow: (el) => { this.proofRow = el; },
+      proofStats: [
+        { value: 80, color: "#5A6B8C", label: "Reduction in Survey for Fiber Feasibility" },
+        { value: 65, color: "#D97B7B", label: "Reduction in time and effort for FTTX Infrastructure Planning" },
+        { value: 30, color: "#6BB5D6", label: "Improvement in Field Force Productivity" },
+        { value: 25, color: "#E0B44A", label: "Improvement in Inventory Utilization" },
+        { value: 90, color: "#6BB89A", label: "Increase in Customer Satisfaction" },
+      ],
+      setWhatSec: (el) => { this.whatSec = el; },
+      setWhatFig: (el) => { this.whatFig = el; },
+      setTrack: (el) => { this._track = el; },
+      activeModuleTag: M[active].tag,
+      invImgOp: active === 0 ? "1" : "0",
+      planImgOp: active === 1 ? "1" : "0",
+      opsImgOp: active === 3 ? "1" : "0",
+      sqImgOp: active === 4 ? "1" : "0",
+      builtImgOp: active === 2 ? "1" : "0",
+      boxOp: "0",
+      connProgress: (N > 1 ? (active / (N - 1)) * 100 : 0).toFixed(2) + "%",
+      modules: M.map((m, i) => ({
+        num: m.num, name: m.name, desc: m.desc, benefit: m.benefit,
+        exploreHref: ({SmartInventory:"SmartInventory.dc.html",SmartPlanner:"SmartPlanner.dc.html",SmartOps:"SmartOps.dc.html",SmartSQ:"SmartSQ.dc.html",SmartBuilt:"#"})[m.name] || "#",
+        select: () => this._goTo(i),
+        op: i === active ? 1 : 0,
+        tf: i === active ? "none" : "translateY(22px)",
+        pe: i === active ? "auto" : "none",
+        dotBg: i <= active ? "#5B8DEF" : "#FFFFFF",
+        dotBorder: i <= active ? "#5B8DEF" : "rgba(18,28,70,0.22)",
+        stepColor: i === active ? "#0A1F44" : "#98A1B2",
+        stepWeight: i === active ? 700 : 500,
+      })),
+      setImpactSec: (el) => { this.impactSec = el; },
+      deeperRows: [
+        { title: "Capabilities", desc: "Inventory, serviceability, capacity, ops" },
+        { title: "Use cases", desc: "Serviceability, inventory, outage, FTTx, 5G", active: true },
+        { title: "How it works", desc: "From digital twin to live operations" },
+        { title: "Integrations", desc: "OSS/BSS, GIS, CRM, NMS, open APIs" },
+        { title: "Engagement", desc: "Pilot to enterprise rollout" },
+        { title: "Resources", desc: "Guides on fiber, FTTx, 5G" },
+        { title: "FAQ", desc: "GIS vs inventory, migration, more" },
+      ].map(r => ({
+        title: r.title, desc: r.desc,
+        bg: r.active ? "#ffffff" : "transparent",
+        ringBg: r.active ? "#5B8DEF" : "transparent",
+        ringBorder: r.active ? "#5B8DEF" : "rgba(18,28,70,0.16)",
+        arrowColor: r.active ? "#ffffff" : "#0A1F44",
+      })),
+      stats: [
+        { value: 80, suffix: "%+", plain: "80%+", label: "Cost Savings" },
+        { value: 90, suffix: "%",  plain: "90%",  label: "Faster Issue Resolution" },
+        { value: 50, suffix: "%",  plain: "50%",  label: "Accurate Service Qualification" },
+        { value: 20, suffix: "%",  plain: "20%",  label: "Customer Conversion" },
+        { value: 0,  suffix: "",   plain: "↑",    label: "Revenue Growth" },
+      ].map((s, i) => ({ ...s, slotId: "impact-img-" + i })),
+    };
+  }
+
+  componentDidMount() {
+    this._observe();
+    this._initCounts();
+    this._initProofCounts();
+    this._buildHowFig();
+    this._initModuleScroll();
+    this._buildWhatFig();
+  }
+
+  _initModuleScroll() {
+    const N = this._mods().length;
+    const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+    let ticking = false;
+    const pick = () => {
+      ticking = false;
+      const track = this._track;
+      if (!track) return;
+      const r = track.getBoundingClientRect();
+      const denom = r.height - window.innerHeight;
+      const p = denom > 0 ? clamp(-r.top / denom, 0, 1) : 0;
+      let idx = Math.floor(p * N);
+      idx = clamp(idx, 0, N - 1);
+      if (idx !== this.state.active) this.setState({ active: idx });
+    };
+    this._scrollH = () => { if (!ticking) { ticking = true; requestAnimationFrame(pick); } };
+    window.addEventListener('scroll', this._scrollH, { passive: true });
+    window.addEventListener('resize', this._scrollH, { passive: true });
+    setTimeout(pick, 60);
+  }
+
+  _initProofCounts() {
+    if (!this.proofRow) return;
+    const nums = this.proofRow.querySelectorAll('[data-pcount]');
+    const run = () => nums.forEach((el) => {
+      const target = parseFloat(el.getAttribute('data-pcount'));
+      const dur = 1400, t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * e) + '%';
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    if (!('IntersectionObserver' in window)) { run(); return; }
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(en => { if (en.isIntersecting) { run(); io.disconnect(); } });
+    }, { threshold: 0.4 });
+    io.observe(this.proofRow);
+  }
+
+  _initCounts() {
+    if (!this.impactSec) return;
+    const nums = this.impactSec.querySelectorAll('[data-count]');
+    const run = () => nums.forEach((el) => {
+      const target = parseFloat(el.getAttribute('data-count'));
+      const suffix = el.getAttribute('data-suffix') || '';
+      const plain = el.getAttribute('data-plain') || '';
+      if (!target) { el.textContent = plain; return; }
+      const dur = 1400, t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * e) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    if (!('IntersectionObserver' in window)) { run(); return; }
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(en => { if (en.isIntersecting) { run(); io.disconnect(); } });
+    }, { threshold: 0.3 });
+    io.observe(this.impactSec);
+  }
+
+  _observe() {
+    const els = [];
+    if (this.howSec) els.push(...this.howSec.querySelectorAll('.na-rise'));
+    if (this.whatSec) els.push(...this.whatSec.querySelectorAll('.na-rise'));
+    if (this.impactSec) els.push(...this.impactSec.querySelectorAll('.na-rise'));
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('seen')); return; }
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(en => { if (en.isIntersecting) { en.target.classList.add('seen'); io.unobserve(en.target); } });
+    }, { threshold: 0.2 });
+    els.forEach(e => io.observe(e));
+  }
+
+  _buildHowFig() {
+    const cv = this.howFig;
+    if (!cv || !cv.getContext) return;
+    const ctx = cv.getContext('2d');
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+
+    // ---- timeline (seconds) ----
+    const INTRO_END = 2.1, CITY_FADE0 = 1.75, CITY_FADE1 = 2.7;
+    const MAP_START = 2.4, STEP = 0.34, EDGE_DUR = 0.62;
+    const TEXT_IN = 2.9, CONV = 7.0, CONV_DUR = 1.7;
+    const BLUE = "91,141,239", GREEN = "76,214,160", TOWER = "111,168,255";
+
+    // ---- city graph (normalized within city box) ----
+    const nodes = [
+      { t:'gate', nx:0.02, ny:0.50 },
+      { t:'tower', nx:0.19, ny:0.22 },
+      { t:'bldg',  nx:0.22, ny:0.53 },
+      { t:'refin', nx:0.17, ny:0.82 },
+      { t:'bldg',  nx:0.43, ny:0.15 },
+      { t:'bldg',  nx:0.46, ny:0.50 },
+      { t:'tower', nx:0.43, ny:0.85 },
+      { t:'refin', nx:0.67, ny:0.29 },
+      { t:'bldg',  nx:0.70, ny:0.62 },
+      { t:'tower', nx:0.90, ny:0.23 },
+      { t:'refin', nx:0.93, ny:0.57 },
+      { t:'bldg',  nx:0.73, ny:0.88 },
+    ];
+    const edgePairs = [
+      [0,2],[2,1],[2,3],[2,5],[1,4],[3,6],[5,8],[4,7,1],[6,11],[8,10],[7,9,1],
+      [5,4],[5,6],[8,7],[8,11],[10,9]
+    ];
+    // BFS order from gateway
+    const adj = nodes.map(()=>[]);
+    edgePairs.forEach(([a,b])=>{ adj[a].push(b); adj[b].push(a); });
+    const order = new Array(nodes.length).fill(-1);
+    let q=[0], oi=0; order[0]=0;
+    while(q.length){ const u=q.shift(); for(const v of adj[u]){ if(order[v]<0){ order[v]=++oi; q.push(v); } } }
+    nodes.forEach((n,i)=>{ n.order=order[i]; n.act = MAP_START + order[i]*STEP + EDGE_DUR*0.55; });
+    nodes[0].act = INTRO_END;
+    const edges = edgePairs.map(([a,b,pipe])=>{
+      const parent = order[a] < order[b] ? a : b;
+      const child = parent===a ? b : a;
+      return { parent, child, pipe:!!pipe, start: MAP_START + order[child]*STEP, seed: Math.random() };
+    });
+
+    // ---- static starfield ----
+    let stars = [];
+    // ---- intro trails ----
+    const NT = 6;
+    let trails = [];
+
+    let gx0=0, gy0=0, cx0=0, cy0=0;
+    const layout = () => {
+      const r = cv.getBoundingClientRect();
+      W = r.width; H = r.height;
+      cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      const bx = W*0.36, by = H*0.15, bw = W*0.60, bh = H*0.70;
+      nodes.forEach(n=>{ n.x = bx + n.nx*bw; n.y = by + n.ny*bh; });
+      gx0 = nodes[0].x; gy0 = nodes[0].y;
+      let sx=0, sy=0; nodes.forEach(n=>{ sx+=n.x; sy+=n.y; });
+      cx0 = sx/nodes.length; cy0 = sy/nodes.length;
+      stars = [];
+      const sn = Math.round(W*H/9000);
+      for(let i=0;i<sn;i++) stars.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.1+0.2, a:Math.random()*0.4+0.1 });
+      trails = [];
+      for(let i=0;i<NT;i++){
+        const y0 = H*(0.18 + 0.64*i/(NT-1));
+        trails.push({ x0:-W*0.05, y0, cx:W*0.16, cy:(y0+gy0)/2, delay:i*0.12, green:i%2===0 });
+      }
+    };
+    layout();
+    if (this._howRO) this._howRO.disconnect();
+    this._howRO = new ResizeObserver(layout);
+    this._howRO.observe(cv);
+
+    // ---- helpers ----
+    const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+    const ease=(t)=>1-Math.pow(1-t,3);
+    const qbez=(p0x,p0y,cx,cy,p1x,p1y,t)=>{ const m=1-t; return { x:m*m*p0x+2*m*t*cx+t*t*p1x, y:m*m*p0y+2*m*t*cy+t*t*p1y }; };
+    const glow=(x,y,r,rgb,a)=>{ const g=ctx.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0,`rgba(${rgb},${a})`); g.addColorStop(1,`rgba(${rgb},0)`); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); };
+    const dot=(x,y,r,rgb,a)=>{ ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=`rgba(${rgb},${a})`; ctx.fill(); };
+
+    const drawGlyph=(n,a)=>{
+      if(a<=0) return;
+      const rgb = n.t==='refin'?GREEN : n.t==='tower'?TOWER : BLUE;
+      ctx.save(); ctx.globalAlpha=a;
+      glow(n.x,n.y,14,rgb,0.32*a);
+      ctx.strokeStyle=`rgba(${rgb},0.95)`; ctx.fillStyle=`rgba(${rgb},0.95)`; ctx.lineWidth=1.4;
+      if(n.t==='refin'){
+        ctx.beginPath();
+        for(let k=0;k<6;k++){ const ang=Math.PI/6 + k*Math.PI/3; const px=n.x+Math.cos(ang)*7, py=n.y+Math.sin(ang)*7; k?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+        ctx.closePath(); ctx.stroke(); dot(n.x,n.y,1.8,rgb,0.95);
+      } else if(n.t==='tower'){
+        ctx.beginPath(); ctx.moveTo(n.x,n.y+7); ctx.lineTo(n.x,n.y-8); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(n.x-4,n.y+6); ctx.lineTo(n.x,n.y-8); ctx.lineTo(n.x+4,n.y+6); ctx.stroke();
+        dot(n.x,n.y-8,1.8,rgb,1);
+      } else {
+        ctx.strokeRect(n.x-6,n.y-6,12,12); dot(n.x-2.5,n.y-2.5,1.1,rgb,0.9); dot(n.x+2.5,n.y+2.5,1.1,rgb,0.9);
+      }
+      ctx.restore();
+    };
+
+    let raf, t0=null, started=false;
+    const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    const frame=(now)=>{
+      if(t0===null) t0=now;
+      let t=(now-t0)/1000;
+      if(reduced) t=99;
+      ctx.clearRect(0,0,W,H);
+
+      // starfield
+      for(const s of stars){ dot(s.x,s.y,s.r,"180,200,240",s.a*(0.5+0.5*Math.sin(t*1.5+s.x))); }
+
+      // reveal copy
+      if(!this._copyShown && t>=TEXT_IN && this.howCopy){ this.howCopy.style.opacity='1'; this.howCopy.style.transform='none'; this._copyShown=true; }
+
+      // intro trails L->R
+      const introFade = 1 - clamp((t-1.9)/0.7,0,1);
+      if(introFade>0){
+        for(const tr of trails){
+          const p = clamp((t-tr.delay)/1.55,0,1);
+          if(p<=0) continue;
+          const hp = ease(p);
+          const rgb = tr.green?GREEN:BLUE;
+          for(let j=0;j<16;j++){
+            const tt=hp-j*0.03; if(tt<0) break;
+            const pt=qbez(tr.x0,tr.y0,tr.cx,tr.cy,gx0,gy0,tt);
+            dot(pt.x,pt.y,2.2-j*0.12,rgb,(1-j/16)*0.85*introFade);
+          }
+          const hd=qbez(tr.x0,tr.y0,tr.cx,tr.cy,gx0,gy0,hp);
+          glow(hd.x,hd.y,7,rgb,0.9*introFade);
+        }
+      }
+
+      // gateway pulse when trails arrive
+      const gateAct = clamp((t-INTRO_END+0.3)/0.5,0,1);
+      if(gateAct>0) glow(gx0,gy0,10+6*Math.sin(t*3),BLUE,0.4*gateAct);
+
+      // city edges
+      const cityFade = clamp((t-CITY_FADE0)/(CITY_FADE1-CITY_FADE0),0,1);
+      for(const e of edges){
+        const A=nodes[e.parent], B=nodes[e.child];
+        const dp = clamp((t-e.start)/EDGE_DUR,0,1);
+        if(dp<=0) continue;
+        const rgb = e.pipe?GREEN:BLUE;
+        const de = ease(dp);
+        const tx=A.x+(B.x-A.x)*de, ty=A.y+(B.y-A.y)*de;
+        // established faint road
+        ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(tx,ty);
+        ctx.strokeStyle = e.pipe?`rgba(${GREEN},${0.34*cityFade})`:`rgba(150,180,230,${0.22*cityFade})`;
+        ctx.lineWidth = e.pipe?2.2:1.1;
+        if(e.pipe){ ctx.setLineDash([5,4]); } ctx.stroke(); ctx.setLineDash([]);
+        // drawing comet head
+        if(dp<1){ glow(tx,ty,6,rgb,0.9); dot(tx,ty,2,rgb,1); }
+        // idle pulse once road done
+        if(dp>=1){
+          const fr=((t*0.22+e.seed)%1);
+          const px=A.x+(B.x-A.x)*fr, py=A.y+(B.y-A.y)*fr;
+          dot(px,py,1.8,rgb,0.85);
+        }
+      }
+
+      // nodes
+      for(const n of nodes){
+        if(n.t==='gate') continue;
+        const a = clamp((t-n.act)/0.5,0,1);
+        if(a>0 && (t-n.act)<0.6){ const rp=ease(clamp((t-n.act)/0.6,0,1)); ctx.strokeStyle=`rgba(${BLUE},${0.5*(1-rp)})`; ctx.lineWidth=1.4; ctx.beginPath(); ctx.arc(n.x,n.y,4+rp*16,0,Math.PI*2); ctx.stroke(); }
+        drawGlyph(n, a);
+      }
+
+      // convergence to center
+      const cv2 = clamp((t-CONV)/CONV_DUR,0,1);
+      if(cv2>0){
+        const ce=ease(cv2);
+        for(const n of nodes){
+          if(n.t==='gate') continue;
+          const rgb = n.t==='refin'?GREEN:BLUE;
+          // faint converging line
+          ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(n.x+(cx0-n.x)*ce, n.y+(cy0-n.y)*ce);
+          ctx.strokeStyle=`rgba(${rgb},${0.28*ce})`; ctx.lineWidth=1; ctx.stroke();
+          // travelling pulse inward
+          const px=n.x+(cx0-n.x)*ce, py=n.y+(cy0-n.y)*ce;
+          dot(px,py,2,rgb,0.95); glow(px,py,5,rgb,0.6);
+        }
+        // center hub grows
+        const hr=6+18*ce;
+        glow(cx0,cy0,hr+22+6*Math.sin(t*3),BLUE,0.4*ce);
+        const cg=ctx.createRadialGradient(cx0-hr*0.3,cy0-hr*0.3,1,cx0,cy0,hr);
+        cg.addColorStop(0,"#Bcd4ff"); cg.addColorStop(1,"#5B8DEF");
+        ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(cx0,cy0,hr,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle="rgba(255,255,255,0.6)"; ctx.lineWidth=1.2; ctx.stroke();
+
+        // message-box icon appears at center
+        const mi = clamp((t-(CONV+0.7))/0.6,0,1);
+        if(mi>0){
+          const bob = Math.sin(t*2)*2;
+          const bw=26, bh=18, bxm=cx0-bw/2, bym=cy0-bh/2+bob;
+          ctx.save(); ctx.globalAlpha=mi;
+          glow(cx0,cy0+bob,26,BLUE,0.4);
+          ctx.fillStyle="#0b1730"; ctx.strokeStyle="rgba(150,190,255,0.95)"; ctx.lineWidth=1.5;
+          const rr=5;
+          ctx.beginPath();
+          ctx.moveTo(bxm+rr,bym); ctx.arcTo(bxm+bw,bym,bxm+bw,bym+bh,rr); ctx.arcTo(bxm+bw,bym+bh,bxm,bym+bh,rr);
+          ctx.lineTo(bxm+bw*0.42,bym+bh); ctx.lineTo(bxm+bw*0.30,bym+bh+6); ctx.lineTo(bxm+bw*0.24,bym+bh);
+          ctx.arcTo(bxm,bym+bh,bxm,bym,rr); ctx.arcTo(bxm,bym,bxm+bw,bym,rr); ctx.closePath();
+          ctx.fill(); ctx.stroke();
+          dot(cx0-6,bym+bh*0.5,1.4,"150,190,255",1); dot(cx0,bym+bh*0.5,1.4,"150,190,255",1); dot(cx0+6,bym+bh*0.5,1.4,"150,190,255",1);
+          ctx.restore();
+        }
+      }
+
+      raf=requestAnimationFrame(frame);
+    };
+
+    const begin=()=>{ if(started) return; started=true; t0=null; raf=requestAnimationFrame(frame); };
+    if('IntersectionObserver' in window){
+      const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ begin(); io.disconnect(); } }); },{ threshold:0.25 });
+      io.observe(cv);
+      this._howIO=io;
+    } else { begin(); }
+    this._howRAF=()=>cancelAnimationFrame(raf);
+  }
+
+  componentWillUnmount() {
+    if (this._howRAF) this._howRAF();
+    if (this._howRO) this._howRO.disconnect();
+    if (this._howIO) this._howIO.disconnect();
+    if (this._scrollH) { window.removeEventListener('scroll', this._scrollH); window.removeEventListener('resize', this._scrollH); }
+    if (this._whatRAF) this._whatRAF();
+    if (this._whatRO) this._whatRO.disconnect();
+  }
+
+  _buildWhatFig() {
+    const host = this.whatFig;
+    if (!host) return;
+    const cv = document.createElement('canvas');
+    cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block';
+    host.appendChild(cv);
+    const ctx = cv.getContext('2d');
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+    const resize = () => {
+      const r = host.getBoundingClientRect();
+      W = r.width; H = r.height;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    this._whatRO = new ResizeObserver(resize);
+    this._whatRO.observe(host);
+
+    const BLUE = "91,141,239", GREEN = "76,214,160", MUTE = "150,180,230";
+    const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); };
+    const glow = (x,y,r,rgb,a)=>{ const g=ctx.createRadialGradient(x,y,0,x,y,r); g.addColorStop(0,`rgba(${rgb},${a})`); g.addColorStop(1,`rgba(${rgb},0)`); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); };
+    const txt = (s,x,y,size,col,weight,mono,align) => { ctx.font = `${weight||400} ${size}px ${mono?"'IBM Plex Mono', monospace":"'Manrope', sans-serif"}`; ctx.fillStyle=col; ctx.textAlign=align||'left'; ctx.textBaseline='alphabetic'; ctx.fillText(s,x,y); ctx.textAlign='left'; };
+
+    const grid = () => {
+      ctx.strokeStyle = "rgba(120,150,200,0.06)"; ctx.lineWidth = 1;
+      const g = 34;
+      for (let x = (W*0.5)%g; x < W; x += g) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+      for (let y = 0; y < H; y += g) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    };
+
+    // ---- module scenes ----
+    const scInventory = (t) => {
+      const cx = W*0.5, cy = H*0.46;
+      // faux roads
+      ctx.strokeStyle = `rgba(${MUTE},0.16)`; ctx.lineWidth = 1.4;
+      [[0.12,0.2,0.9,0.35],[0.05,0.7,0.8,0.55],[0.3,0.1,0.5,0.9],[0.7,0.15,0.62,0.92]].forEach(r=>{
+        ctx.beginPath(); ctx.moveTo(W*r[0],H*r[1]); ctx.bezierCurveTo(W*(r[0]+r[2])/2,H*r[1],W*r[2],H*(r[1]+r[3])/2,W*r[2],H*r[3]); ctx.stroke();
+      });
+      const pins = [[0.28,0.34],[0.55,0.28],[0.72,0.5],[0.4,0.62],[0.62,0.72],[0.5,0.45]];
+      // connections
+      ctx.strokeStyle = `rgba(${BLUE},0.4)`; ctx.lineWidth = 1;
+      pins.forEach((p,i)=>{ if(i<pins.length-1){ ctx.beginPath(); ctx.moveTo(W*p[0],H*p[1]); ctx.lineTo(W*pins[5][0],H*pins[5][1]); ctx.stroke(); } });
+      pins.forEach((p,i)=>{
+        const x=W*p[0], y=H*p[1]; const on = i===Math.floor(t*1.2)%pins.length;
+        if(on) glow(x,y,16,GREEN,0.5);
+        ctx.fillStyle = i===5?`rgba(${BLUE},1)`:`rgba(${MUTE},0.9)`;
+        ctx.beginPath(); ctx.arc(x,y,i===5?6:4,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle="rgba(255,255,255,0.5)"; ctx.lineWidth=1; ctx.stroke();
+      });
+      // card
+      rr(W*0.62,H*0.16,W*0.3,64,12); ctx.fillStyle="rgba(255,255,255,0.07)"; ctx.fill(); ctx.strokeStyle="rgba(255,255,255,0.12)"; ctx.stroke();
+      txt("ASSETS TRACKED", W*0.64, H*0.16+24, 9.5, `rgba(${MUTE},0.7)`, 500, true);
+      txt("48,210", W*0.64, H*0.16+50, 22, "#EAF1FF", 700);
+    };
+
+    const scPlanner = (t) => {
+      const sx=W*0.16, sy=H*0.5;
+      const targets=[[0.8,0.24],[0.86,0.5],[0.78,0.76]];
+      // candidate dashed routes
+      ctx.setLineDash([4,4]); ctx.strokeStyle=`rgba(${MUTE},0.25)`; ctx.lineWidth=1;
+      targets.forEach(tp=>{ ctx.beginPath(); ctx.moveTo(sx,sy); ctx.bezierCurveTo(W*0.45,sy-40,W*0.55,H*tp[1]+50,W*tp[0],H*tp[1]); ctx.stroke(); });
+      ctx.setLineDash([]);
+      // optimal route (green solid) to middle target
+      const opt=targets[1];
+      ctx.strokeStyle=`rgba(${GREEN},0.9)`; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.moveTo(sx,sy); ctx.bezierCurveTo(W*0.45,sy,W*0.55,H*opt[1],W*opt[0],H*opt[1]); ctx.stroke();
+      // moving pulse on optimal
+      const pt=(tt)=>{ const m=1-tt; return { x:m*m*m*sx+3*m*m*tt*W*0.45+3*m*tt*tt*W*0.55+tt*tt*tt*W*opt[0], y:m*m*m*sy+3*m*m*tt*sy+3*m*tt*tt*H*opt[1]+tt*tt*tt*H*opt[1] }; };
+      const pp=pt((t*0.5)%1); glow(pp.x,pp.y,7,GREEN,0.9); ctx.fillStyle=`rgba(${GREEN},1)`; ctx.beginPath(); ctx.arc(pp.x,pp.y,2.5,0,Math.PI*2); ctx.fill();
+      // nodes
+      glow(sx,sy,14,BLUE,0.5); ctx.fillStyle=`rgba(${BLUE},1)`; ctx.beginPath(); ctx.arc(sx,sy,6,0,Math.PI*2); ctx.fill();
+      targets.forEach((tp,i)=>{ ctx.fillStyle=i===1?`rgba(${GREEN},1)`:`rgba(${MUTE},0.8)`; ctx.beginPath(); ctx.arc(W*tp[0],H*tp[1],5,0,Math.PI*2); ctx.fill(); ctx.strokeStyle="rgba(255,255,255,0.5)"; ctx.lineWidth=1; ctx.stroke(); });
+      // BOQ card
+      rr(W*0.12,H*0.72,W*0.42,H*0.2,12); ctx.fillStyle="rgba(255,255,255,0.07)"; ctx.fill(); ctx.strokeStyle="rgba(255,255,255,0.12)"; ctx.stroke();
+      txt("AUTO BOQ", W*0.14, H*0.72+22, 9.5, `rgba(${MUTE},0.7)`, 500, true);
+      const bx=W*0.14, by=H*0.72+H*0.2-16, bh=H*0.2-40, bw=(W*0.42-40)/5;
+      [0.5,0.8,0.4,1,0.65].forEach((v,i)=>{ const h=bh*v*Math.min(1,t*0.6); rr(bx+i*(bw+6), by-h, bw, h, 3); ctx.fillStyle=`rgba(${BLUE},0.85)`; ctx.fill(); });
+    };
+
+    const scProject = (t) => {
+      const x0=W*0.1, w=W*0.56, y0=H*0.24, rowH=44;
+      const tasks=[["Trenching",0.9],["Duct Laying",0.7],["Cabling",0.45],["Splicing",0.2]];
+      tasks.forEach((tk,i)=>{
+        const y=y0+i*rowH;
+        txt(tk[0], x0, y+14, 13, "#C6D2E8", 600);
+        rr(x0, y+22, w, 8, 4); ctx.fillStyle="rgba(255,255,255,0.08)"; ctx.fill();
+        const fw=w*tk[1]*Math.min(1,t*0.5);
+        rr(x0, y+22, fw, 8, 4); ctx.fillStyle= i<2?`rgba(${GREEN},0.9)`:`rgba(${BLUE},0.9)`; ctx.fill();
+        txt(Math.round(tk[1]*100)+"%", x0+w+12, y+30, 11, `rgba(${MUTE},0.8)`, 500, true);
+      });
+      // progress ring
+      const rx=W*0.8, ry=H*0.3, R=30, val=0.68*Math.min(1,t*0.5);
+      ctx.strokeStyle="rgba(255,255,255,0.1)"; ctx.lineWidth=6; ctx.beginPath(); ctx.arc(rx,ry,R,0,Math.PI*2); ctx.stroke();
+      ctx.strokeStyle=`rgba(${GREEN},0.95)`; ctx.lineCap="round"; ctx.beginPath(); ctx.arc(rx,ry,R,-Math.PI/2,-Math.PI/2+val*Math.PI*2); ctx.stroke(); ctx.lineCap="butt";
+      txt(Math.round(val*100)+"%", rx, ry+5, 18, "#EAF1FF", 700, false, "center");
+      txt("On track", rx, ry+R+22, 10.5, `rgba(${MUTE},0.8)`, 500, true, "center");
+    };
+
+    const scDepth = (t) => {
+      const pw=W*0.34, ph=H*0.66, px=W*0.5-pw/2, py=H*0.17;
+      // phone
+      rr(px,py,pw,ph,20); ctx.fillStyle="#0e1a30"; ctx.fill(); ctx.strokeStyle="rgba(150,180,230,0.25)"; ctx.lineWidth=1.5; ctx.stroke();
+      rr(px+pw/2-16,py+8,32,4,2); ctx.fillStyle="rgba(255,255,255,0.15)"; ctx.fill();
+      // map area
+      rr(px+12,py+20,pw-24,ph*0.5,10); ctx.fillStyle="rgba(91,141,239,0.1)"; ctx.fill();
+      ctx.strokeStyle=`rgba(${MUTE},0.18)`; ctx.lineWidth=1;
+      for(let k=1;k<4;k++){ ctx.beginPath(); ctx.moveTo(px+12,py+20+k*(ph*0.5/4)); ctx.lineTo(px+pw-12,py+20+k*(ph*0.5/4)); ctx.stroke(); }
+      // pin pulsing
+      const mx=px+pw*0.5, my=py+20+ph*0.24; const pr=6+4*Math.abs(Math.sin(t*2));
+      glow(mx,my,14,GREEN,0.5); ctx.fillStyle=`rgba(${GREEN},1)`; ctx.beginPath(); ctx.arc(mx,my,5,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=`rgba(${GREEN},0.5)`; ctx.beginPath(); ctx.arc(mx,my,pr+4,0,Math.PI*2); ctx.stroke();
+      // depth value
+      txt("DEPTH", px+20, py+ph*0.62, 9.5, `rgba(${MUTE},0.7)`, 500, true);
+      txt("1.42 m", px+20, py+ph*0.62+24, 20, "#EAF1FF", 700);
+      // chips
+      ["GEO-TAGGED","GNSS ±2cm","AS-BUILT"].forEach((c,i)=>{ const cyv=py+ph*0.72+i*26; rr(px+20,cyv,pw-40,20,10); ctx.fillStyle="rgba(76,214,160,0.12)"; ctx.fill(); txt(c, px+30, cyv+14, 10, `rgba(${GREEN},0.95)`, 500, true); });
+    };
+
+    const scOps = (t) => {
+      const x0=W*0.1, w=W*0.52, y0=H*0.22, rowH=54;
+      const rows=[["WO-4821","Fiber cut · Sector 7", GREEN, "Resolved"],["WO-4822","Cabinet fault · Node B", BLUE, "In progress"],["WO-4823","Preventive · Ring 3", MUTE, "Assigned"]];
+      rows.forEach((rw,i)=>{
+        const y=y0+i*rowH;
+        rr(x0,y,w,rowH-12,10); ctx.fillStyle="rgba(255,255,255,0.05)"; ctx.fill(); ctx.strokeStyle="rgba(255,255,255,0.09)"; ctx.stroke();
+        const dy=y+(rowH-12)/2;
+        const blink = i===1?0.5+0.5*Math.sin(t*4):1;
+        ctx.fillStyle=`rgba(${rw[2]},${blink})`; ctx.beginPath(); ctx.arc(x0+16,dy,5,0,Math.PI*2); ctx.fill();
+        txt(rw[0], x0+30, dy-3, 12, "#DCE6F7", 700, true);
+        txt(rw[1], x0+30, dy+13, 11.5, `rgba(${MUTE},0.8)`, 400);
+        txt(rw[3], x0+w-14, dy+4, 10.5, `rgba(${rw[2]},0.95)`, 500, true, "right");
+      });
+      // SLA ring
+      const rx=W*0.82, ry=H*0.32, R=28, val=Math.min(1,t*0.4);
+      ctx.strokeStyle="rgba(255,255,255,0.1)"; ctx.lineWidth=6; ctx.beginPath(); ctx.arc(rx,ry,R,0,Math.PI*2); ctx.stroke();
+      ctx.strokeStyle=`rgba(${BLUE},0.95)`; ctx.lineCap="round"; ctx.beginPath(); ctx.arc(rx,ry,R,-Math.PI/2,-Math.PI/2+0.92*val*Math.PI*2); ctx.stroke(); ctx.lineCap="butt";
+      txt("SLA", rx, ry+4, 13, "#EAF1FF", 700, false, "center");
+      txt("92% met", rx, ry+R+22, 10.5, `rgba(${MUTE},0.8)`, 500, true, "center");
+    };
+
+    const scSQ = (t) => {
+      const x0 = W*0.1, w = W*0.5;
+      const t1x=W*0.2, t2x=W*0.82, ty=H*0.24;
+      ctx.strokeStyle=`rgba(${GREEN},0.9)`; ctx.setLineDash([6,5]); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(t1x,ty); ctx.lineTo(t2x,ty); ctx.stroke(); ctx.setLineDash([]);
+      [[t1x,BLUE],[t2x,GREEN]].forEach(([tx,col])=>{
+        glow(tx,ty,12,col,0.5);
+        ctx.strokeStyle=`rgba(${col},1)`; ctx.lineWidth=1.6;
+        ctx.beginPath(); ctx.moveTo(tx,ty+9); ctx.lineTo(tx,ty-9); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(tx-5,ty+8); ctx.lineTo(tx,ty-9); ctx.lineTo(tx+5,ty+8); ctx.stroke();
+      });
+      txt("LINE OF SIGHT · CLEAR", W*0.5, ty-22, 9.5, `rgba(${GREEN},0.9)`, 500, true, "center");
+      const cy0=H*0.44;
+      const items=["Serviceability","Capacity validated","LOS analysis","Geo-coding"];
+      items.forEach((it,i)=>{
+        const y=cy0+i*36; const done=(t*1.1)>i+0.5;
+        const cxb=x0+10;
+        ctx.strokeStyle=done?`rgba(${GREEN},0.95)`:`rgba(${MUTE},0.4)`; ctx.lineWidth=1.6;
+        rr(cxb-9,y-11,18,18,5); ctx.stroke();
+        if(done){ ctx.strokeStyle=`rgba(${GREEN},1)`; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(cxb-4,y-1); ctx.lineTo(cxb-1,y+3); ctx.lineTo(cxb+5,y-5); ctx.stroke(); }
+        txt(it, cxb+18, y+4, 13.5, done?"#DCE6F7":`rgba(${MUTE},0.6)`, 500);
+      });
+      const bx=W*0.6, by=H*0.72, bw=W*0.32, bh=54;
+      rr(bx,by,bw,bh,12); ctx.fillStyle="rgba(76,214,160,0.12)"; ctx.fill(); ctx.strokeStyle=`rgba(${GREEN},0.6)`; ctx.lineWidth=1.2; ctx.stroke();
+      txt("FEASIBILITY", bx+18, by+22, 9.5, `rgba(${MUTE},0.7)`, 500, true);
+      txt("QUALIFIED", bx+18, by+44, 18, "#8FF0C6", 700);
+    };
+
+    const scenes = [scInventory, scPlanner, scProject, scDepth, scOps, scSQ];
+
+    let raf, disp = this.state.active, fade = 1, t = 0;
+    const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const draw = () => {
+      t += 1/60;
+      if (this.state.active !== disp) { disp = this.state.active; fade = 0; }
+      fade = Math.min(1, fade + (reduced ? 1 : 0.07));
+      ctx.clearRect(0, 0, W, H);
+      grid();
+      ctx.save();
+      ctx.globalAlpha = fade;
+      ctx.translate(0, (1 - fade) * 10);
+      (scenes[disp] || scInventory)(t);
+      ctx.restore();
+      raf = requestAnimationFrame(draw);
+    };
+    raf = requestAnimationFrame(draw);
+    this._whatRAF = () => cancelAnimationFrame(raf);
+  }
+}
+</script>
+</body>
+</html>

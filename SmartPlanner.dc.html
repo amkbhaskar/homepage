@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#FAFAF8; scroll-behavior:smooth; }
+  a{ color:#5B8DEF; text-decoration:none; }
+  a:hover{ color:#0F172A; }
+  @keyframes mpIn{ from{ opacity:0; transform:translateY(18px);} to{ opacity:1; transform:none;} }
+  @keyframes mpFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+  .mp-reveal{ opacity:0; }
+  .mp-reveal.in{ animation:mpIn .8s cubic-bezier(.2,.7,.2,1) both; }
+</style>
+</helmet>
+
+<div style="position:relative; width:100%; min-height:100vh; background:#FAFAF8; color:#1B2333; font-family:'Manrope',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;">
+
+  <!-- ===== TOP BAR ===== -->
+  <header style="position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; padding:18px clamp(22px,5vw,72px); background:rgba(250,250,248,0.82); backdrop-filter:blur(10px); border-bottom:1px solid rgba(18,28,70,0.06);">
+    <a href="Network Access.dc.html" style="display:flex; align-items:center; gap:11px; color:#0B1324;" style-hover="color:#5B8DEF;">
+      <span style="font-size:16px;">←</span>
+      <span style="width:11px; height:11px; background:#5B8DEF; display:inline-block; transform:rotate(45deg); border-radius:2px;"></span>
+      <span style="font-weight:600; letter-spacing:0.16em; font-size:14px;">NETWORKACCESS</span>
+    </a>
+    <a href="#book" style="background:#5B8DEF; color:#fff; font-weight:600; font-size:14px; padding:10px 20px; border-radius:9px; box-shadow:0 12px 26px -10px rgba(91,141,239,0.65);" style-hover="background:#3F73D8;">Book a Demo</a>
+  </header>
+
+  <!-- ===== 1 · HERO ===== -->
+  <section style="position:relative; overflow:hidden; padding:clamp(56px,9vh,120px) clamp(22px,5vw,72px) clamp(64px,10vh,120px); background:radial-gradient(120% 100% at 82% 20%, rgba(91,141,239,0.12), rgba(250,250,248,0) 60%);">
+    <div style="max-width:1220px; margin:0 auto; display:grid; grid-template-columns:1.02fr 1fr; gap:clamp(32px,5vw,72px); align-items:center;">
+      <div style="animation:mpIn .8s cubic-bezier(.2,.7,.2,1) both;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+          <span style="width:26px; height:1px; background:#5B8DEF; display:inline-block; opacity:.8;"></span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#5B8DEF;">{{ mod.eyebrow }}</span>
+        </div>
+        <h1 style="margin:0 0 22px; font-weight:700; font-size:clamp(38px,4.8vw,66px); line-height:1.04; letter-spacing:-0.032em; color:#0A1F44; text-wrap:balance;">{{ mod.heroTitle }}</h1>
+        <p style="margin:0 0 32px; max-width:560px; font-size:clamp(16px,1.2vw,19px); line-height:1.62; color:#5A647B; text-wrap:pretty;">{{ mod.heroSub }}</p>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <a href="#book" style="display:inline-flex; align-items:center; gap:8px; background:#5B8DEF; color:#fff; font-weight:600; font-size:15px; padding:13px 24px; border-radius:9px; box-shadow:0 14px 30px -10px rgba(91,141,239,0.7);" style-hover="background:#3F73D8;">Book a Demo <span>→</span></a>
+          <a href="#how" style="display:inline-flex; align-items:center; gap:8px; color:#0A1F44; font-weight:600; font-size:15px; padding:13px 22px; border-radius:9px; border:1px solid rgba(18,28,70,0.16);" style-hover="background:rgba(91,141,239,0.06);">See how it works</a>
+        </div>
+      </div>
+      <div style="position:relative; height:min(58vh,540px); animation:mpFloat 7s ease-in-out infinite;">
+        <div style="position:absolute; inset:0; border-radius:22px; overflow:hidden; background:linear-gradient(180deg,#0c1526,#0a1120); box-shadow:0 40px 90px -40px rgba(10,31,68,0.55); border:1px solid rgba(18,28,70,0.08);">
+          {{ mod.imgEl }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2 · HOW IT WORKS ===== -->
+  <section id="how" class="mp-reveal" ref="{{ reveal }}" style="position:relative; padding:clamp(72px,11vh,140px) clamp(22px,5vw,72px); border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="max-width:1120px; margin:0 auto; text-align:center;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#5B8DEF; margin-bottom:16px;">HOW IT WORKS</div>
+      <h2 style="margin:0 0 20px; font-weight:700; font-size:clamp(30px,3.6vw,50px); line-height:1.08; letter-spacing:-0.03em; color:#0A1F44;">{{ mod.howTitle }}</h2>
+      <p style="margin:0 auto clamp(44px,6vh,64px); max-width:680px; font-size:clamp(15px,1.15vw,18px); line-height:1.62; color:#5A647B; text-wrap:pretty;">{{ mod.howDesc }}</p>
+      <div style="display:flex; flex-wrap:wrap; align-items:stretch; justify-content:center; gap:14px;">
+        <sc-for list="{{ mod.flow }}" as="s" hint-placeholder-count="6">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="display:flex; align-items:center; gap:12px; background:#fff; border:1px solid rgba(18,28,70,0.1); border-radius:12px; padding:16px 20px; box-shadow:0 10px 26px -18px rgba(10,31,68,0.4);">
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:rgba(91,141,239,0.12); color:#5B8DEF; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500;">{{ s.n }}</span>
+              <span style="font-weight:600; font-size:14.5px; letter-spacing:-0.01em; color:#0A1F44; white-space:nowrap;">{{ s.label }}</span>
+            </div>
+            <sc-if value="{{ s.arrow }}" hint-placeholder-val="{{ true }}"><span style="color:#5B8DEF; font-size:18px;">→</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3 · CAPABILITIES ===== -->
+  <section class="mp-reveal" ref="{{ reveal }}" style="position:relative; padding:clamp(72px,11vh,140px) clamp(22px,5vw,72px); border-top:1px solid rgba(18,28,70,0.06); background:radial-gradient(90% 70% at 20% 0%, rgba(91,141,239,0.06), rgba(250,250,248,0) 60%);">
+    <div style="max-width:1220px; margin:0 auto;">
+      <div style="max-width:640px; margin-bottom:clamp(40px,6vh,60px);">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#5B8DEF; margin-bottom:16px;">CAPABILITIES</div>
+        <h2 style="margin:0; font-weight:700; font-size:clamp(30px,3.6vw,50px); line-height:1.08; letter-spacing:-0.03em; color:#0A1F44;">{{ mod.capTitle }}</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px;">
+        <sc-for list="{{ mod.caps }}" as="c" hint-placeholder-count="5">
+          <div style="background:#fff; border:1px solid rgba(18,28,70,0.09); border-radius:16px; padding:28px 26px; box-shadow:0 14px 34px -24px rgba(10,31,68,0.4); transition:transform .25s, box-shadow .25s;" style-hover="transform:translateY(-4px); box-shadow:0 26px 50px -28px rgba(10,31,68,0.5);">
+            <div style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px; background:rgba(91,141,239,0.12); color:#5B8DEF; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:500; margin-bottom:18px;">{{ c.n }}</div>
+            <h3 style="margin:0 0 10px; font-weight:700; font-size:19px; letter-spacing:-0.015em; color:#0A1F44;">{{ c.title }}</h3>
+            <p style="margin:0; font-size:14.5px; line-height:1.58; color:#5A647B; text-wrap:pretty;">{{ c.desc }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4 · BUSINESS IMPACT ===== -->
+  <section class="mp-reveal" ref="{{ reveal }}" style="position:relative; padding:clamp(72px,11vh,140px) clamp(22px,5vw,72px); border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="max-width:1220px; margin:0 auto;">
+      <div style="max-width:640px; margin-bottom:clamp(40px,6vh,60px);">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#5B8DEF; margin-bottom:16px;">BUSINESS IMPACT</div>
+        <h2 style="margin:0; font-weight:700; font-size:clamp(30px,3.6vw,50px); line-height:1.08; letter-spacing:-0.03em; color:#0A1F44;">{{ mod.impactTitle }}</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:0; border-top:1px solid rgba(18,28,70,0.1); border-left:1px solid rgba(18,28,70,0.1);">
+        <sc-for list="{{ mod.impact }}" as="i" hint-placeholder-count="5">
+          <div style="padding:30px 28px; border-right:1px solid rgba(18,28,70,0.1); border-bottom:1px solid rgba(18,28,70,0.1);">
+            <div style="font-weight:700; font-size:clamp(20px,1.7vw,24px); letter-spacing:-0.02em; color:#5B8DEF; margin-bottom:12px;">{{ i.title }}</div>
+            <p style="margin:0; font-size:14.5px; line-height:1.58; color:#5A647B; text-wrap:pretty;">{{ i.desc }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5 · CTA ===== -->
+  <section id="book" style="position:relative; padding:clamp(30px,6vh,60px) clamp(22px,5vw,72px) clamp(70px,10vh,110px);">
+    <div style="max-width:1120px; margin:0 auto; border-radius:26px; overflow:hidden; padding:clamp(48px,7vw,88px) clamp(28px,5vw,72px); text-align:center; background:linear-gradient(135deg,#0c1526,#12224a); box-shadow:0 40px 90px -46px rgba(10,31,68,0.7);">
+      <h2 style="margin:0 0 18px; font-weight:700; font-size:clamp(30px,3.8vw,52px); line-height:1.08; letter-spacing:-0.03em; color:#fff; text-wrap:balance;">{{ mod.ctaTitle }}</h2>
+      <p style="margin:0 auto 34px; max-width:620px; font-size:clamp(15px,1.2vw,18px); line-height:1.62; color:rgba(255,255,255,0.78); text-wrap:pretty;">{{ mod.ctaSub }}</p>
+      <a href="#" style="display:inline-flex; align-items:center; gap:9px; background:#5B8DEF; color:#fff; font-weight:700; font-size:16px; padding:15px 32px; border-radius:11px; box-shadow:0 18px 40px -14px rgba(91,141,239,0.8);" style-hover="background:#6f9bf3;">Book a Demo <span>→</span></a>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;module&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;smartplanner&quot;,&quot;options&quot;:[&quot;smartplanner&quot;,&quot;smartinventory&quot;,&quot;smartops&quot;,&quot;smartsq&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  _slug() { return 'smartplanner'; }
+
+  _data() {
+    return {
+      smartplanner: {
+        name: "SmartPlanner", eyebrow: "SMARTPLANNER", img: "assets/smartplanner.png",
+        heroTitle: "Plan Smarter. Build with Confidence.",
+        heroSub: "Plan, design, and optimize network expansion using AI-powered intelligence, geospatial data, and demand forecasting—reducing costs, minimizing redesigns, and accelerating deployment.",
+        howTitle: "From Demand to Deployment-Ready Plans",
+        howDesc: "SmartPlanner combines demand forecasting, geospatial intelligence, and AI-powered optimization to transform network planning into an efficient, data-driven process. It automates route design, validates feasibility, and generates deployment-ready plans.",
+        flow: ["Demand Analysis","Identify Opportunity","Design Network","Optimize Routes","Generate BOQ","Ready for Deployment"],
+        capTitle: "Everything You Need to Plan Better",
+        caps: [
+          ["Demand Forecasting","Identify where network expansion will create the greatest business impact."],
+          ["AI-powered Route Optimization","Automatically generate efficient routes while minimizing construction cost and complexity."],
+          ["Geospatial Planning","Leverage maps, terrain, infrastructure, and location intelligence to design accurate network layouts."],
+          ["BOQ & Design Automation","Generate Bills of Quantities, design outputs, splice plans, and deployment documents automatically."],
+        ],
+        impactTitle: "Why It Matters",
+        impact: [
+          ["Faster Planning","Reduce weeks of manual planning into hours."],
+          ["Lower Deployment Costs","Optimize routes and resource allocation before construction begins."],
+          ["Better Resource Utilization","Allocate materials, equipment, and teams more effectively."],
+          ["Fewer Redesigns","Validate network designs before execution to minimize costly changes."],
+          ["Confident Expansion Decisions","Build where demand, feasibility, and capacity align."],
+        ],
+        ctaTitle: "Ready to Plan Your Next Network Expansion?",
+        ctaSub: "See how SmartPlanner helps organizations design efficient, scalable, and deployment-ready networks.",
+      },
+      smartinventory: {
+        name: "SmartInventory", eyebrow: "SMARTINVENTORY", img: "assets/smartinventory.png",
+        heroTitle: "See Your Entire Network as One Connected System.",
+        heroSub: "Build a living Digital Twin of your infrastructure with a complete, real-time view of assets, connectivity, capacity, and utilization—so every team works from the same trusted source of truth.",
+        howTitle: "How SmartInventory Works",
+        howDesc: "SmartInventory continuously captures, connects, and updates network assets, creating a living Digital Twin that reflects the current state of your infrastructure in real time.",
+        flow: ["Discover Assets","Connect Relationships","Monitor Capacity","Track Changes","Update Digital Twin","Instant Network Visibility"],
+        capTitle: "Everything You Need to Manage Your Network",
+        caps: [
+          ["Asset Inventory","Maintain a complete digital record of towers, fiber, ducts, splitters, cabinets, poles, and customer connections."],
+          ["Connectivity Intelligence","Understand how every asset connects to the next with end-to-end topology and relationship mapping."],
+          ["Capacity & Utilization","Track available capacity, utilization, and network readiness before making operational or expansion decisions."],
+          ["Digital Twin","Keep your infrastructure synchronized with real-world changes through a continuously updated Digital Twin."],
+          ["Real-time Visibility","Provide engineering, operations, planning, and field teams with a single trusted source of network information."],
+        ],
+        impactTitle: "Business Impact",
+        impact: [
+          ["Better Planning","Design expansions using accurate network information."],
+          ["Faster Issue Resolution","Identify affected assets and dependencies instantly."],
+          ["Higher Asset Utilization","Optimize existing infrastructure before investing in new assets."],
+          ["Improved Data Accuracy","Replace fragmented spreadsheets with one trusted Digital Twin."],
+          ["One Source of Truth","Enable every team to work from the same connected network view."],
+        ],
+        ctaTitle: "Ready to Build Your Digital Twin?",
+        ctaSub: "See how SmartInventory gives every team a connected, real-time view of your infrastructure.",
+      },
+      smartops: {
+        name: "SmartOps", eyebrow: "SMARTOPS", img: "assets/smartops.png",
+        heroTitle: "Operate Smarter. Resolve Faster.",
+        heroSub: "Manage work orders, dispatch field teams, monitor SLAs, and track every operation from a single intelligent platform—so your network stays available and your teams stay productive.",
+        howTitle: "How SmartOps Works",
+        howDesc: "SmartOps automates the complete operational workflow—from detecting issues and assigning technicians to tracking field execution and updating the Digital Twin in real time.",
+        flow: ["Incident Detected","Automatic Work Order","Technician Assigned","Field Execution","Real-time Tracking","Issue Resolved","Digital Twin Updated"],
+        capTitle: "Everything You Need to Run Operations",
+        caps: [
+          ["Work Order Management","Create, prioritize, assign, and track work orders from a centralized dashboard."],
+          ["Field Force Management","Dispatch technicians based on skills, location, availability, and workload."],
+          ["Mobile Workforce App","Enable field teams to receive tasks, update job status, upload evidence, and close work orders directly from site."],
+          ["SLA & Performance Monitoring","Monitor SLAs, response times, task progress, and operational KPIs in real time."],
+          ["Preventive Maintenance","Plan recurring inspections and maintenance activities before failures occur."],
+          ["System Integrations","Connect with GIS, OSS/BSS, LDAP, SMS, WhatsApp, and enterprise systems for a unified operational workflow."],
+        ],
+        impactTitle: "Built for Operational Excellence",
+        impact: [
+          ["↓ MTTR","Resolve issues faster with automated workflows."],
+          ["↑ SLA Compliance","Meet service commitments consistently."],
+          ["↑ Field Productivity","Equip technicians with everything they need on site."],
+          ["↓ Operational Costs","Reduce manual coordination and repetitive tasks."],
+          ["↑ Network Uptime","Keep critical infrastructure running reliably."],
+        ],
+        ctaTitle: "Ready to Modernize Your Field Operations?",
+        ctaSub: "See how SmartOps helps organizations automate operations, improve service quality, and deliver faster resolutions.",
+      },
+      smartsq: {
+        name: "SmartSQ", eyebrow: "SMARTSQ", img: "assets/smartsq.png",
+        heroTitle: "Connect Customers with Confidence.",
+        heroSub: "Instantly determine whether a location can be served by analyzing network availability, capacity, connectivity, and feasibility—enabling faster customer onboarding and better service experiences.",
+        howTitle: "How SmartSQ Works",
+        howDesc: "SmartSQ automatically evaluates network availability, capacity, and connectivity to determine whether a customer can be served. It eliminates manual checks and provides instant qualification for faster service activation.",
+        flow: ["Customer Request","Check Network Availability","Analyze Capacity & Connectivity","Validate Service Feasibility","Recommend Best Connection","Activate Customer"],
+        capTitle: "Everything You Need to Qualify Every Connection",
+        caps: [
+          ["Network Availability","Instantly verify whether infrastructure exists at the requested location."],
+          ["Capacity Analysis","Ensure sufficient network capacity before committing to a new connection."],
+          ["Service Feasibility","Automatically validate whether the requested service can be delivered."],
+          ["Intelligent Recommendations","Recommend the best serving node, splitter, or connection path."],
+          ["Faster Customer Activation","Reduce manual verification and accelerate service delivery."],
+        ],
+        impactTitle: "Business Impact",
+        impact: [
+          ["Faster Customer Onboarding","Reduce the time between customer request and activation."],
+          ["Higher First-Time Success","Connect customers with confidence using validated network information."],
+          ["Better Customer Experience","Provide accurate commitments without repeated field visits."],
+          ["Improved Network Utilization","Use existing infrastructure more efficiently before expanding."],
+          ["Increased Revenue Opportunities","Activate more customers faster while avoiding unserviceable requests."],
+        ],
+        ctaTitle: "Ready to Accelerate Customer Connections?",
+        ctaSub: "See how SmartSQ helps telecom and infrastructure providers qualify service requests instantly, improve customer experience, and speed up network activation.",
+      },
+    };
+  }
+
+  reveal = (el) => {
+    if (!el) return;
+    if (!this._io) {
+      this._io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); this._io.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+    }
+    this._io.observe(el);
+  };
+
+  renderVals() {
+    const data = this._data();
+    const raw = data[this._slug()] || data.smartplanner;
+    const mod = {
+      ...raw,
+      flow: raw.flow.map((label, i) => ({ n: i + 1, label, arrow: i < raw.flow.length - 1 })),
+      caps: raw.caps.map((c, i) => ({ n: String(i + 1).padStart(2, '0'), title: c[0], desc: c[1] })),
+      impact: raw.impact.map(x => ({ title: x[0], desc: x[1] })),
+      imgEl: React.createElement('img', { src: raw.img, alt: raw.name, style: { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'contain', objectPosition:'center' } }),
+    };
+    return { mod, reveal: this.reveal };
+  }
+}
+</script>
+</body>
+</html>
