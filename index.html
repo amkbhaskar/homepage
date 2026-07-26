@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="image-slot.js"></script>
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#FAFAF8; }
+  a{ color:var(--accent); text-decoration:none; }
+  a:hover{ color:#0F172A; }
+  @keyframes navIn{ from{ opacity:0; transform:translateY(-6px);} to{ opacity:1; transform:none;} }
+  @keyframes textIn{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:none;} }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(10px) scale(.985); filter:blur(3px);} to{ opacity:1; transform:none; filter:none;} }
+  @keyframes coreGlow{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.35);} 100%{ opacity:1; transform:translate(-50%,-50%) scale(1);} }
+  @keyframes letterIn{ 0%{ opacity:0; filter:blur(9px); transform:translateY(5px);} 60%{ opacity:1;} 100%{ opacity:1; filter:blur(0); transform:none;} }
+  @keyframes tagIn{ from{ opacity:0;} to{ opacity:1;} }
+  @keyframes marquee{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+  @keyframes twinFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-7px);} }
+  @keyframes floatA{ 0%{transform:translate(0,0);}25%{transform:translate(4px,-6px);}50%{transform:translate(-4px,4px);}75%{transform:translate(4px,5px);}100%{transform:translate(0,0);} }
+  @keyframes floatB{ 0%{transform:translate(0,0);}25%{transform:translate(-5px,5px);}50%{transform:translate(4px,-5px);}75%{transform:translate(-3px,-5px);}100%{transform:translate(0,0);} }
+  @keyframes floatC{ 0%{transform:translate(0,0);}30%{transform:translate(4px,6px);}60%{transform:translate(-5px,-3px);}100%{transform:translate(0,0);} }
+  @keyframes floatD{ 0%{transform:translate(0,0);}33%{transform:translate(-4px,-6px);}66%{transform:translate(5px,3px);}100%{transform:translate(0,0);} }
+  @keyframes floatE{ 0%{transform:translate(0,0);}25%{transform:translate(6px,4px);}50%{transform:translate(-4px,-5px);}75%{transform:translate(-5px,3px);}100%{transform:translate(0,0);} }
+  /* ---- Transformation section (Two cities on boards) ---- */
+  .bs-wrap{ position:relative; max-width:1200px; margin:44px auto 0; }
+  #lepton-reduce{ position:relative; display:block; border-radius:22px; overflow:hidden; height:min(52vw,500px); background:linear-gradient(180deg,#0c1526,#0a1120); box-shadow:0 34px 80px -46px rgba(6,12,28,0.55); }
+  #lepton-reduce-canvas{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+  .bs-label{ position:absolute; bottom:20px; z-index:2; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.2em; padding:6px 12px; border-radius:999px; opacity:0; transition:opacity .7s ease; }
+  #lepton-reduce.seen .bs-label{ opacity:1; }
+  .bs-label-l{ left:8%; color:#aeb6c4; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); }
+  .bs-label-r{ right:8%; color:#bfe6cf; background:rgba(120,210,160,0.12); border:1px solid rgba(120,210,160,0.3); transition-delay:1.6s; }
+
+  /* ---- Industry Showcase (carousel) ---- */
+  #lepton-ind{ position:relative; padding:104px 0 116px; }
+  .ind-head{ max-width:760px; margin:0 auto 34px; padding:0 clamp(22px,5vw,72px); text-align:center; }
+  .ind-ey{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:var(--accent); margin-bottom:20px; }
+  .ind-hl{ font-size:clamp(30px,3.4vw,52px); font-weight:600; line-height:1.08; letter-spacing:-0.026em; color:#0A1F44; margin:0 0 20px; text-wrap:balance; }
+  .ind-sub{ font-size:clamp(15px,1.15vw,18px); line-height:1.6; color:#5A647B; max-width:560px; margin:0 auto; text-wrap:pretty; }
+  .ind-nav{ display:flex; justify-content:flex-start; gap:8px; max-width:1320px; margin:0 auto 26px; padding:0 clamp(22px,5vw,72px); overflow-x:auto; scrollbar-width:none; }
+  .ind-nav::-webkit-scrollbar{ display:none; }
+  .ind-navitem{ flex:0 0 auto; background:none; border:0; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; letter-spacing:-0.01em; color:#98A1B2; padding:8px 14px; border-radius:999px; transition:color .3s ease, background .3s ease; white-space:nowrap; }
+  .ind-navitem:hover{ color:#5A647B; }
+  .ind-navitem.on{ color:#0A1F44; font-weight:600; background:rgba(91,141,239,0.1); }
+  .ind-track{ display:flex; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory; padding:6px clamp(22px,5vw,72px) 20px; scrollbar-width:none; -ms-overflow-style:none; }
+  .ind-track::-webkit-scrollbar{ display:none; }
+  .ind-slide{ position:relative; flex:0 0 86%; scroll-snap-align:center; height:min(72vh,600px); border-radius:24px; overflow:hidden; box-shadow:0 30px 70px -40px rgba(6,12,28,0.7); }
+  .ind-slide canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  .ind-slide-media{ position:absolute; inset:0; }
+  .ind-slide-grad{ position:absolute; inset:0; pointer-events:none; }
+  .ind-slide-scrim{ position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, rgba(7,12,26,0.86) 0%, rgba(7,12,26,0.5) 42%, rgba(7,12,26,0.12) 72%, rgba(7,12,26,0) 100%); }
+  .ind-slide-body{ position:absolute; left:0; bottom:0; padding:clamp(28px,4vw,56px); max-width:560px; pointer-events:none; }
+  .ind-slide-body .ind-learn{ pointer-events:auto; }
+  .ind-tag{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.24em; margin-bottom:16px; }
+  .ind-name{ font-size:clamp(30px,3.4vw,52px); font-weight:700; line-height:1.02; letter-spacing:-0.03em; color:#F4F7FF; margin:0 0 16px; }
+  .ind-line{ font-size:clamp(16px,1.4vw,21px); line-height:1.45; color:#C3CBDC; margin:0 0 26px; max-width:440px; text-wrap:pretty; }
+  .ind-learn{ display:inline-flex; align-items:center; gap:9px; font-size:15px; font-weight:600; color:#ffffff; }
+  .ind-learn .ind-arrow{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; border:1px solid rgba(255,255,255,0.3); transition:background .3s ease, transform .3s ease; }
+  .ind-learn:hover .ind-arrow{ background:rgba(255,255,255,0.16); transform:translateX(3px); }
+  @media (max-width:820px){ .ind-slide{ flex:0 0 90%; height:70vh; } }
+  @media (max-width:520px){ .ind-slide{ flex:0 0 92%; } }
+
+  /* ---- How (Inside the Lepton Platform) ---- */
+  #lepton-how{ position:relative; max-width:1320px; margin:0 auto; padding:clamp(90px,12vh,150px) clamp(22px,5vw,72px) clamp(100px,14vh,170px); overflow:hidden; }
+  .how-intro{ text-align:center; max-width:1040px; margin:0 auto; display:flex; flex-direction:column; align-items:center; }
+  .how-ey{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:var(--accent); margin-bottom:24px; }
+  .how-hl{ font-size:clamp(46px,7.8vw,128px); font-weight:700; line-height:0.97; letter-spacing:-0.036em; color:#0A1F44; margin:0 0 28px; text-wrap:balance; }
+  .how-sub{ font-size:clamp(16px,1.35vw,21px); line-height:1.62; color:#5A647B; max-width:680px; margin:0; text-wrap:pretty; }
+  .how-explore{ margin-top:34px; }
+  .how-chapters{ display:flex; flex-direction:column; gap:clamp(64px,11vh,150px); margin-top:clamp(80px,13vh,160px); }
+  .how-chapter{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px,6vw,104px); align-items:center; min-height:min(64vh,560px); }
+  .how-copy{ will-change:transform,opacity; }
+  .how-chapter.right .how-copy{ grid-column:2; grid-row:1; }
+  .how-chapter.right .how-anim{ grid-column:1; grid-row:1; }
+  .how-anim{ position:relative; align-self:stretch; min-height:min(56vh,480px); border-radius:20px; border:1px dashed rgba(18,28,70,0.14); background:linear-gradient(180deg, rgba(91,141,239,0.045), rgba(91,141,239,0.012)); display:flex; align-items:center; justify-content:center; will-change:transform,opacity; }
+  .how-anim::after{ content:"ANIMATION"; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.26em; color:rgba(18,28,70,0.2); }
+  .how-anim-twin{ border:1px solid rgba(120,150,200,0.16); background:radial-gradient(115% 115% at 50% 10%, #FFFFFF 0%, #F4F7FD 50%, #E8EFFA 100%); overflow:hidden; box-shadow:0 30px 70px -50px rgba(40,70,130,0.32); }
+  .how-anim-twin::after{ display:none; }
+  .twin-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .twin-cap{ position:absolute; left:18px; bottom:15px; z-index:3; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.18em; color:rgba(70,92,132,0.55); pointer-events:none; }
+  .twin-cap b{ color:rgba(38,58,106,0.85); font-weight:500; }
+  .twin-card{ position:absolute; z-index:2; display:flex; align-items:center; gap:10px; padding:9px 13px 9px 11px; border-radius:13px; background:rgba(255,255,255,0.68); backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2); border:1px solid rgba(255,255,255,0.85); box-shadow:0 14px 34px -14px rgba(30,54,104,0.32), inset 0 1px 0 rgba(255,255,255,0.7); pointer-events:none; }
+  .twin-card .tc-dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(91,141,239,0.16); flex:0 0 8px; }
+  .twin-card .tc-tx{ display:flex; flex-direction:column; line-height:1.15; }
+  .twin-card .tc-l{ font-size:12.5px; font-weight:600; color:#1B2A48; letter-spacing:-0.01em; white-space:nowrap; }
+  .twin-card .tc-s{ font-size:9.5px; color:#8A93A8; font-family:'IBM Plex Mono',monospace; letter-spacing:0.05em; margin-top:2px; white-space:nowrap; }
+  @media (max-width:1180px){ .twin-card .tc-s{ display:none; } .twin-card{ padding:7px 11px; } }
+  .how-anim-loc{ border:1px solid rgba(120,150,200,0.16); background:radial-gradient(120% 120% at 50% 8%, #FFFFFF 0%, #F5F7FD 52%, #E9EEFA 100%); overflow:hidden; box-shadow:0 30px 70px -50px rgba(40,60,110,0.5); }
+  .loc-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .loc-cap{ position:absolute; left:18px; bottom:15px; z-index:3; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.16em; color:rgba(70,92,132,0.55); pointer-events:none; }
+  .loc-cap b{ color:rgba(38,58,106,0.85); font-weight:500; }
+  .lc-card{ position:absolute; z-index:2; width:130px; padding:11px 12px; border-radius:14px; background:rgba(255,255,255,0.66); backdrop-filter:blur(13px) saturate(1.4); -webkit-backdrop-filter:blur(13px) saturate(1.4); border:1px solid rgba(255,255,255,0.75); box-shadow:0 16px 36px -20px rgba(38,58,120,0.55), inset 0 1px 0 rgba(255,255,255,0.6); opacity:0; transform:translateY(12px) scale(0.98); transition:opacity 0.75s ease, transform 0.75s cubic-bezier(0.22,1,0.36,1); pointer-events:none; }
+  .lc-card.on{ opacity:1; transform:translateY(0) scale(1); }
+  .lc-h{ display:flex; align-items:center; gap:7px; font-size:10.5px; font-weight:600; color:#20335A; letter-spacing:-0.01em; white-space:nowrap; }
+  .lc-dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px rgba(91,141,239,0.16); flex:0 0 6px; }
+  .lc-metric{ display:flex; align-items:baseline; gap:3px; margin-top:8px; }
+  .lc-val{ font-size:23px; font-weight:600; color:#0F2247; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; line-height:1; }
+  .lc-unit{ font-size:10px; color:#8A93A8; font-family:'IBM Plex Mono',monospace; }
+  .lc-bar{ margin-top:9px; height:5px; border-radius:3px; background:rgba(120,140,180,0.16); overflow:hidden; }
+  .lc-fill{ display:block; height:100%; width:0; border-radius:3px; background:linear-gradient(90deg,#5B8DEF,#8A7CF0); }
+  .lc-chart{ display:flex; align-items:flex-end; gap:5px; height:40px; margin-top:10px; }
+  .lc-col{ flex:1; height:0; border-radius:3px 3px 2px 2px; background:linear-gradient(180deg,#9BBAF7,#5B8DEF); align-self:flex-end; }
+  .lc-sub{ font-size:8.5px; color:#8A93A8; font-family:'IBM Plex Mono',monospace; letter-spacing:0.04em; margin-top:8px; white-space:nowrap; }
+  @media (max-width:1180px){ .lc-card{ width:110px; padding:9px 10px; } .lc-chart{ height:32px; } .lc-val{ font-size:20px; } .lc-sub{ display:none; } }
+  .how-anim-dec{ border:1px solid rgba(120,150,200,0.16); background:radial-gradient(120% 120% at 40% 12%, #FFFFFF 0%, #F5F7FD 52%, #E9EEFA 100%); overflow:hidden; box-shadow:0 30px 70px -50px rgba(40,60,110,0.5); }
+  .dec-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .lc-rec{ font-size:12px; font-weight:600; color:#12244A; letter-spacing:-0.01em; line-height:1.25; margin-top:7px; }
+  .lc-card.di{ width:158px; }
+  .lc-card.di .lc-bar{ margin-top:7px; }
+  @media (max-width:1180px){ .lc-card.di{ width:132px; } }
+  .how-tag{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.24em; color:var(--accent); margin-bottom:14px; }
+  .how-title{ font-size:clamp(28px,3vw,46px); font-weight:600; line-height:1.05; letter-spacing:-0.026em; color:#0A1F44; margin:0 0 18px; text-wrap:balance; }
+  .how-desc{ font-size:clamp(16px,1.2vw,19px); line-height:1.6; color:#5A647B; max-width:480px; margin:0 0 22px; text-wrap:pretty; }
+  .how-powered{ display:flex; flex-wrap:wrap; gap:8px 9px; margin-bottom:22px; max-width:500px; }
+  .how-chip{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.06em; color:#5A647B; background:rgba(91,141,239,0.08); border:1px solid rgba(91,141,239,0.18); padding:5px 10px; border-radius:20px; }
+  .how-ans{ display:flex; flex-wrap:wrap; gap:8px 9px; margin-bottom:22px; max-width:500px; }
+  .how-ans .how-chip{ color:var(--accent); background:rgba(91,141,239,0.1); border-color:rgba(91,141,239,0.3); }
+  .how-close{ display:flex; align-items:center; gap:9px; font-size:15px; font-weight:500; color:#0A1F44; }
+  .how-close::before{ content:""; width:16px; height:1px; background:var(--accent); display:inline-block; flex:0 0 16px; }
+  @media (max-width:900px){
+    .how-hl{ font-size:clamp(38px,11vw,68px); }
+    .how-chapter{ grid-template-columns:1fr; gap:26px; min-height:0; }
+    .how-chapter.right .how-copy, .how-chapter.right .how-anim{ grid-column:1; grid-row:auto; }
+    .how-anim{ min-height:300px; order:2; }
+  }
+
+  /* ---- Outcomes ---- */
+  #lepton-outcomes .ogrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  #lepton-outcomes .ocard{ padding:30px 26px 34px; border-radius:16px; background:transparent; transition:background .4s ease, box-shadow .45s ease, transform .45s cubic-bezier(.2,.7,.2,1); }
+  #lepton-outcomes .ocard:hover{ background:#ffffff; box-shadow:0 24px 56px -28px rgba(24,34,90,0.26); transform:translateY(-5px); }
+  #lepton-outcomes .oicon{ font-size:22px; line-height:1; margin-bottom:20px; }
+  #lepton-outcomes .otitle{ font-size:clamp(19px,1.5vw,23px); font-weight:600; letter-spacing:-0.02em; color:#0A1F44; margin-bottom:12px; }
+  #lepton-outcomes .obody{ font-size:14.5px; line-height:1.62; color:#5A647B; margin-bottom:26px; }
+  #lepton-outcomes .vflow{ display:flex; flex-direction:column; align-items:flex-start; }
+  #lepton-outcomes .vstep{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#9098A6; transition:color .45s ease; }
+  #lepton-outcomes .vconn{ width:1px; height:12px; margin:5px 0 5px 2px; background:rgba(18,28,70,0.14); transition:background .45s ease; }
+  #lepton-outcomes .ocard:hover .vstep{ color:#33405C; }
+  #lepton-outcomes .ocard:hover .vfinal{ color:var(--accent); }
+  #lepton-outcomes .ocard:hover .vconn{ background:var(--accent); }
+  @media (max-width:1000px){ #lepton-outcomes .ogrid{ grid-template-columns:repeat(2,1fr); gap:8px; } }
+  @media (max-width:600px){ #lepton-outcomes .ogrid{ grid-template-columns:1fr; } }
+
+  @media (max-width:1080px){
+    .qcard-hide-md{ display:none !important; }
+  }
+  @media (max-width:900px){
+    #lepton-content{ max-width:100% !important; }
+    .qcard{ display:none !important; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .rd-inputs,.rd-core{ transition:none !important; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    [data-anim]{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
+    .qfloat{ animation:none !important; }
+    .hletter{ animation:none !important; opacity:1 !important; filter:none !important; }
+    .marquee-track{ animation:none !important; }
+  }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail" data-bg-color="#FAFAF8">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="760" cy="400" r="150" fill="none" stroke="#5B8DEF" stroke-width="3" opacity="0.5"></circle>
+    <circle cx="760" cy="400" r="150" fill="none" stroke="#5B8DEF" stroke-width="1" opacity="0.3" transform="rotate(60 760 400) scale(1 0.45)" transform-origin="760 400"></circle>
+    <ellipse cx="760" cy="400" rx="150" ry="66" fill="none" stroke="#5B8DEF" stroke-width="1" opacity="0.3"></ellipse>
+    <text x="760" y="418" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="#12275A" text-anchor="middle">HERE</text>
+    <text x="120" y="360" font-family="Arial, sans-serif" font-size="88" font-weight="700" fill="#12275A">Where</text>
+    <text x="120" y="430" font-family="Arial, sans-serif" font-size="56" font-weight="600" fill="#5B8DEF">are your assets?</text>
+  </svg>
+</template>
+<div id="lepton-page" style="--accent:#5B8DEF; position:relative; width:100%; background:#FAFAF8; color:#1B2333; font-family:'Manrope',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;">
+
+  <div id="lepton-hero-root" style="position:relative; min-height:100vh; width:100%; overflow:hidden; background:radial-gradient(120% 110% at 70% 47%, rgba(91,141,239,0.11), rgba(250,250,248,0) 55%), #FAFAF8;">
+
+    <div style="position:absolute; inset:0; z-index:0;">
+      <canvas ref="{{ setCanvas }}" style="width:100%; height:100%; display:block;"></canvas>
+    </div>
+
+    <div id="lepton-here" style="position:absolute; left:72.5%; top:50%; z-index:3; pointer-events:none; transform:translate(-50%,-50%); text-align:center;">
+      <div data-anim="" style="position:absolute; left:50%; top:50%; width:380px; height:380px; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.62) 16%, rgba(91,141,239,0.3) 40%, rgba(250,250,248,0) 70%); animation:coreGlow 1.2s ease 1.75s both; z-index:0;"></div>
+      <div style="position:relative; z-index:1; display:inline-flex; align-items:baseline; font-weight:700; font-size:clamp(68px,7.4vw,120px); letter-spacing:-0.045em; color:#12275A; line-height:0.9; transform:perspective(760px) rotateX(11deg); text-shadow:0 1px 0 #2a3f6b, 0 2px 0 #263a64, 0 3px 0 #22355d, 0 4px 0 #1e3056, 0 5px 0 #1a2b4f, 0 6px 0 #162647, 0 7px 1px rgba(9,18,40,0.2), 0 10px 22px rgba(9,18,40,0.42);">
+        <span class="hletter" style="display: inline-block; animation: letterIn .55s cubic-bezier(.2,.7,.2,1) 2s both; color: #FFFFFF">H</span>
+        <span class="hletter" style="display: inline-block; animation: letterIn .55s cubic-bezier(.2,.7,.2,1) 2.22s both; color: #FFFFFF">E</span>
+        <span class="hletter" style="display: inline-block; animation: letterIn .55s cubic-bezier(.2,.7,.2,1) 2.44s both; color: #FFFFFF">R</span>
+        <span class="hletter" style="display: inline-block; animation: letterIn .55s cubic-bezier(.2,.7,.2,1) 2.66s both; color: #FFFFFF">E</span>
+      </div>
+      
+    </div>
+
+    <header data-anim="" style="position:relative; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:26px clamp(22px,5vw,72px); animation:navIn .8s ease .05s both;">
+      <div style="display:flex; align-items:center; gap:11px;">
+        <span style="width:12px; height:12px; background:var(--accent); display:inline-block; transform:rotate(45deg); border-radius:2px;"></span>
+        <span style="font-weight:600; letter-spacing:0.16em; font-size:15px; color:#0B1324;">LEPTON</span>
+      </div>
+      <nav style="display:flex; align-items:center; gap:clamp(18px,2.4vw,36px);">
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">NetworkAccess</a>
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">Partners</a>
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">Products</a>
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">Industries&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Company</a>
+        
+      </nav>
+    </header>
+
+    <div style="position:relative; z-index:4; display:flex; align-items:center; min-height:calc(100vh - 88px); padding:0 clamp(22px,5vw,72px); pointer-events:none;">
+      <div id="lepton-content" style="max-width:472px; pointer-events:auto;">
+        <div data-anim="" style="display:flex; align-items:center; gap:12px; margin-bottom:26px; animation:textIn .8s cubic-bezier(.2,.7,.2,1) .15s both;">
+          <span style="width:26px; height:1px; background:var(--accent); display:inline-block; opacity:.8;"></span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.18em; color:var(--accent); white-space:nowrap;">INFRASTRUCTURE INTELLIGENCE</span>
+        </div>
+        <h1 data-anim="" style="margin:0 0 24px; font-weight:600; line-height:1.0; letter-spacing:-0.03em; color:#0A1F44; animation:textIn .85s cubic-bezier(.2,.7,.2,1) .3s both;">
+          <span style="display:block; font-size:clamp(52px,6.4vw,92px); font-weight:700;">Where</span>
+          <span style="display:block; position:relative; overflow:hidden; height:1.14em; margin-top:4px;">
+            <span ref="{{ setHeroRot }}" style="display:inline-block; font-size:clamp(30px,3.6vw,52px); font-weight:600; color:var(--accent); will-change:transform,opacity;">are your assets?</span>
+          </span>
+        </h1>
+        <p data-anim="" style="margin:0 0 34px; font-size:clamp(16px,1.2vw,18px); line-height:1.62; color:#5A647B; max-width:430px; text-wrap:pretty; animation:textIn .85s cubic-bezier(.2,.7,.2,1) .45s both;">When every infrastructure decision depends on location, Lepton gives you the intelligence to reduce complexity, optimize operations, and deliver better business outcomes.</p>
+        <div data-anim="" style="display:flex; align-items:center; gap:20px; animation:textIn .85s cubic-bezier(.2,.7,.2,1) .6s both;">
+          <a href="#" style="background:var(--accent); color:#ffffff; font-weight:600; font-size:14.5px; padding:13px 24px; border-radius:9px; box-shadow:0 12px 26px -10px rgba(91,141,239,0.65);" style-hover="filter:brightness(1.07);">Request a Demo</a>
+          <a href="#" style="color:var(--accent); font-size:14.5px; font-weight:500;" style-hover="color:#0A1F44;">Explore Platform →</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:absolute; inset:0; z-index:4; pointer-events:none;">
+      <div class="qcard" style="position:absolute; left:72.5%; top:14%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatA 20s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .5s both;">
+            <span style="font-size:17px; line-height:1;">📍</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where are your assets?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard qcard-hide-md" style="position:absolute; left:51%; top:37%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatB 23s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .56s both;">
+            <span style="font-size:17px; line-height:1;">👥</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where are your customers?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard qcard-hide-md" style="position:absolute; left:60%; top:72%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatC 21s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .62s both;">
+            <span style="font-size:17px; line-height:1;">📡</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where is your network?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard" style="position:absolute; left:87%; top:29%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatE 19s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .68s both;">
+            <span style="font-size:17px; line-height:1;">📈</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where should you expand next?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard" style="position:absolute; left:87%; top:80%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatD 22s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .74s both;">
+            <span style="font-size:17px; line-height:1;">🎯</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where are your opportunities?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <section style="position:relative; z-index:1; padding:44px clamp(22px,5vw,72px) 40px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="text-align:center; font-size:13.5px; letter-spacing:0.02em; color:#8A93A3; margin-bottom:30px;">Trusted by enterprises across 60+ countries</div>
+    <div style="position:relative; overflow:hidden; -webkit-mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);">
+      <div class="marquee-track" style="display:flex; width:max-content; align-items:center; gap:76px; animation:marquee 34s linear infinite;">
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">airtel</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Allianz</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Domino’s</span>
+        <span style="font-size:26px; font-weight:800; letter-spacing:0.04em; color:#A6ADB8; white-space:nowrap;">OYO</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Vodafone</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">HDFC Bank</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Indian Oil</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Maruti Suzuki</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">airtel</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Allianz</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Domino’s</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:800; letter-spacing:0.04em; color:#A6ADB8; white-space:nowrap;">OYO</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Vodafone</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">HDFC Bank</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Indian Oil</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Maruti Suzuki</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-stats" style="position:relative; z-index:1; padding:64px clamp(22px,5vw,72px) 96px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:40px 32px; max-width:1120px;">
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="425" data-suffix="">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Enterprise customers</div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="60" data-suffix="">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Countries deployed</div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="50" data-suffix="M">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Indian POIs mapped</div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="20" data-suffix="">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Years of geospatial work</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-transform" style="position:relative; z-index:1; padding:104px clamp(22px,5vw,72px) 116px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="max-width:900px; margin:0 auto 20px; text-align:center;">
+      
+      <h2 style="margin: 0 0 18px; font-size: 60px; font-weight: 700; line-height: 1.04; letter-spacing: -0.03em; color: #0A1F44; text-wrap: balance">Better lives begin with better infrastructure.</h2>
+      <p style="margin:0 auto 26px; max-width:640px; font-size:clamp(18px,1.6vw,24px); font-weight:500; line-height:1.35; letter-spacing:-0.01em; color:var(--accent); text-wrap:balance;">And better infrastructure begins with better intelligence.</p><p style="margin:0 auto; max-width:600px; font-size:clamp(15px,1.15vw,17px); line-height:1.65; color:#5A647B; text-wrap:pretty;">Whether it's building infrastructure, expanding into new markets, connecting cities, improving mobility, or delivering better public services, every decision shapes the lives of millions. We exist to ensure those decisions are made with intelligence, not guesswork.</p>
+      
+    </div>
+    <div class="bs-wrap">
+      <div id="lepton-reduce">
+        <canvas id="lepton-reduce-canvas" style="width: 908px; height: 468px; left: -1px; top: -20px; position: absolute"></canvas>
+        
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAIN INTRO ===== -->
+  <section style="position:relative; z-index:1; padding:clamp(90px,13vh,150px) clamp(22px,5vw,72px) clamp(70px,9vh,110px); border-top:1px solid rgba(18,28,70,0.06); text-align:center;">
+    <div style="max-width:860px; margin:0 auto;">
+      <div style="display:inline-flex; align-items:center; gap:12px; margin-bottom:26px;">
+        <span style="width:26px; height:1px; background:var(--accent); display:inline-block; opacity:.8;"></span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:var(--accent);">THE PROBLEM</span>
+        <span style="width:26px; height:1px; background:var(--accent); display:inline-block; opacity:.8;"></span>
+      </div>
+      <h2 style="margin:0 0 22px; font-size:clamp(34px,4.6vw,60px); font-weight:700; line-height:1.05; letter-spacing:-0.03em; color:#0A1F44; text-wrap:balance;">Infrastructure is moving faster than decisions can keep up.</h2>
+      <p style="margin:0 auto; max-width:640px; font-size:clamp(16px,1.25vw,19px); line-height:1.62; color:#5A647B; text-wrap:pretty;">Every expansion, rollout, inspection, and investment depends on timely, accurate intelligence — but most organizations still rely on disconnected information to make critical decisions.</p>
+    </div>
+  </section>
+
+  <!-- ===== THE COST ===== -->
+  <section style="position:relative; z-index:1; padding:clamp(70px,9vh,110px) clamp(22px,5vw,72px) clamp(90px,12vh,140px); background:radial-gradient(90% 70% at 50% 0%, rgba(228,84,78,0.05), rgba(250,250,248,0) 60%);">
+    <div style="max-width:1200px; margin:0 auto;">
+      <div style="text-align:center; max-width:720px; margin:0 auto clamp(46px,6vh,64px);">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:#E4544E; margin-bottom:16px;">THE COST</div>
+        <h2 style="margin:0; font-size:clamp(30px,3.8vw,52px); font-weight:700; line-height:1.06; letter-spacing:-0.03em; color:#0A1F44; text-wrap:balance;">When decisions lag, everything else does too.</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:22px;">
+        <div style="background:#fff; border:1px solid rgba(18,28,70,0.09); border-radius:18px; padding:34px 30px; box-shadow:0 18px 44px -28px rgba(10,31,68,0.4);">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.12em; color:#E4544E; margin-bottom:22px;">01</div>
+          <h3 style="margin:0 0 12px; font-weight:700; font-size:22px; letter-spacing:-0.02em; color:#0A1F44;">Wrong Investments <span style="color:#E4544E;">→ Wasted Capital</span></h3>
+          <p style="margin:0; font-size:15px; line-height:1.6; color:#5A647B; text-wrap:pretty;">Expand into the wrong markets, choose poor locations, and invest where demand doesn't exist—leading to wasted capital and lower returns.</p>
+        </div>
+        <div style="background:#fff; border:1px solid rgba(18,28,70,0.09); border-radius:18px; padding:34px 30px; box-shadow:0 18px 44px -28px rgba(10,31,68,0.4);">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.12em; color:#E4544E; margin-bottom:22px;">02</div>
+          <h3 style="margin:0 0 12px; font-weight:700; font-size:22px; letter-spacing:-0.02em; color:#0A1F44;">Slower Execution <span style="color:#E4544E;">→ Higher Costs</span></h3>
+          <p style="margin:0; font-size:15px; line-height:1.6; color:#5A647B; text-wrap:pretty;">Disconnected planning, delayed rollouts, and inefficient field operations increase project timelines and operational costs.</p>
+        </div>
+        <div style="background:#fff; border:1px solid rgba(18,28,70,0.09); border-radius:18px; padding:34px 30px; box-shadow:0 18px 44px -28px rgba(10,31,68,0.4);">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.12em; color:#E4544E; margin-bottom:22px;">03</div>
+          <h3 style="margin:0 0 12px; font-weight:700; font-size:22px; letter-spacing:-0.02em; color:#0A1F44;">Poor Experiences <span style="color:#E4544E;">→ Lost Customers</span></h3>
+          <p style="margin:0; font-size:15px; line-height:1.6; color:#5A647B; text-wrap:pretty;">Congestion, inaccurate locations, delayed services, and disconnected customer journeys frustrate users and drive customers away.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== THE SHIFT ===== -->
+  <section id="lepton-how">
+    <div class="how-intro">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:var(--accent); margin-bottom:18px;">THE BETTER WAY</div>
+      <h2 class="how-hl" style="font-size: 60px">One platform.<br>Better decisions everywhere.</h2>
+      <p class="how-sub">Bring together market, location, network, and operational intelligence to make every investment, expansion, and operational decision faster, more accurate, and more cost-effective.</p>
+      <div style="font-weight:600; font-size:15px; letter-spacing:0.01em; color:#0A1F44; margin:6px 0 22px;">Inside the Lepton Platform</div>
+      <a href="#" class="how-explore" style="display:inline-flex; align-items:center; gap:9px; background:var(--accent); color:#ffffff; font-weight:600; font-size:15px; padding:14px 28px; border-radius:10px; box-shadow:0 14px 30px -12px rgba(91,141,239,0.6);" style-hover="filter:brightness(1.07);">Explore all products <span style="font-size:16px;">→</span></a>
+    </div>
+
+    <div class="how-chapters">
+      <div class="how-chapter left" data-ch="0">
+        <div class="how-copy">
+          
+          <h3 class="how-title">Create a Living Digital Twin of Your Infrastructure</h3>
+          <p class="how-desc">We create a living digital twin by connecting your network assets, GIS, field operations, and infrastructure data into one real-time view—helping infrastructure teams plan faster, execute efficiently, and reduce operational costs.</p>
+        </div>
+        <div class="how-anim how-anim-twin" data-ch-anim="0"><canvas class="twin-canvas"></canvas><div class="twin-card" style="left:4%; top:8%; animation:twinFloat 6.4s ease-in-out infinite;"><span class="tc-dot"></span><span class="tc-tx"><span class="tc-l">Assets</span><span class="tc-s">12,480 TRACKED</span></span></div><div class="twin-card" style="left:55%; top:6%; animation:twinFloat 7.6s ease-in-out infinite; animation-delay:-2s;"><span class="tc-dot" style="background:#6E86E0;box-shadow:0 0 0 4px rgba(110,134,224,0.16);"></span><span class="tc-tx"><span class="tc-l">Real-time Insights</span><span class="tc-s">STREAMING</span></span></div><div class="twin-card" style="left:63%; top:45%; animation:twinFloat 8.2s ease-in-out infinite; animation-delay:-4s;"><span class="tc-dot"></span><span class="tc-tx"><span class="tc-l">Networks</span><span class="tc-s">98.7% UPTIME</span></span></div><div class="twin-card" style="left:5%; top:63%; animation:twinFloat 7.1s ease-in-out infinite; animation-delay:-1s;"><span class="tc-dot" style="background:#4FB477;box-shadow:0 0 0 4px rgba(79,180,119,0.16);"></span><span class="tc-tx"><span class="tc-l">Operations</span><span class="tc-s">NOMINAL</span></span></div><div class="twin-cap">LIVE DIGITAL TWIN &nbsp;·&nbsp; <b>EVERY ASSET CONNECTED</b></div></div>
+      </div>
+
+      <div class="how-chapter right" data-ch="1">
+        <div class="how-copy">
+          
+          <h3 class="how-title">Turn Location Into Your Competitive Advantage</h3>
+          <p class="how-desc">We transform location, market, customer, and mobility data into actionable intelligence—helping you identify the right opportunities, evaluate every investment, and maximize returns with confidence.</p>
+        </div>
+        <div class="how-anim how-anim-loc" data-ch-anim="1"><canvas class="loc-canvas"></canvas><div class="lc-card" data-t="3.0" style="left:3%; top:5%; animation:twinFloat 7.2s ease-in-out infinite;"><div class="lc-h"><span class="lc-dot"></span>Demand Forecast</div><div class="lc-chart"><span class="lc-col" data-h="42"></span><span class="lc-col" data-h="60"></span><span class="lc-col" data-h="74"></span><span class="lc-col" data-h="86"></span><span class="lc-col" data-h="96"></span></div><div class="lc-sub">PROJECTED · 12 MO</div></div><div class="lc-card" data-t="3.35" style="right:3%; top:6%; animation:twinFloat 8.1s ease-in-out infinite; animation-delay:-2s;"><div class="lc-h"><span class="lc-dot"></span>Accessibility Score</div><div class="lc-metric"><span class="lc-val" data-target="92">0</span><span class="lc-unit">/100</span></div><div class="lc-bar"><span class="lc-fill" data-w="92"></span></div></div><div class="lc-card" data-t="4.05" style="right:3%; top:38%; animation:twinFloat 7.6s ease-in-out infinite; animation-delay:-4s;"><div class="lc-h"><span class="lc-dot"></span>Competition Density</div><div class="lc-metric"><span class="lc-val" data-target="64">0</span><span class="lc-unit">/100</span></div><div class="lc-bar"><span class="lc-fill" data-w="64"></span></div></div><div class="lc-card" data-t="3.7" style="right:4%; bottom:6%; animation:twinFloat 8.4s ease-in-out infinite; animation-delay:-1s;"><div class="lc-h"><span class="lc-dot"></span>Movement Analysis</div><div class="lc-chart"><span class="lc-col" data-h="50"></span><span class="lc-col" data-h="68"></span><span class="lc-col" data-h="58"></span><span class="lc-col" data-h="80"></span><span class="lc-col" data-h="92"></span></div><div class="lc-sub">PEAK FLOW · WEEKDAY</div></div><div class="lc-card" data-t="4.4" style="left:3%; bottom:14%; animation:twinFloat 7.9s ease-in-out infinite; animation-delay:-3s;"><div class="lc-h"><span class="lc-dot"></span>Opportunity Index</div><div class="lc-metric"><span class="lc-val" data-target="87">0</span><span class="lc-unit">/100</span></div><div class="lc-bar"><span class="lc-fill" data-w="87"></span></div></div><div class="lc-card" data-t="4.75" style="left:2%; top:40%; animation:twinFloat 8.7s ease-in-out infinite; animation-delay:-5s;"><div class="lc-h"><span class="lc-dot"></span>Investment Score</div><div class="lc-metric"><span class="lc-val" data-target="8.6" data-dec="1">0</span><span class="lc-unit">/10</span></div><div class="lc-bar"><span class="lc-fill" data-w="86"></span></div></div><div class="loc-cap">LOCATION INTELLIGENCE &nbsp;·&nbsp; <b style="width: 347px; height: 27px">DEMAND · ACCESS · MOVEMENT · OPPORTUNITY</b></div></div>
+      </div>
+
+      <div class="how-chapter left" data-ch="2">
+        <div class="how-copy">
+          
+          <h3 class="how-title">Predict Problems Before Customers Experience Them</h3>
+          <p class="how-desc">We transform millions of operational and location data points into real-time recommendations that reduce congestion, improve service delivery, and create seamless customer experiences.</p>
+          <div class="how-close">Stay ahead of disruption. Stay ahead of expectations.</div>
+        </div>
+        <div class="how-anim how-anim-dec" data-ch-anim="2"><canvas class="dec-canvas"></canvas><div class="lc-card" data-t="4.8" style="right:4%; top:6%; width:184px; animation:twinFloat 8.2s ease-in-out infinite;"><div class="lc-h"><span class="lc-dot"></span>Next Best Action</div><div class="lc-rec">Prioritize North Corridor expansion</div><div class="lc-metric"><span class="lc-val" data-target="96">0</span><span class="lc-unit">% confidence</span></div><div class="lc-bar"><span class="lc-fill" data-w="96"></span></div></div><div class="lc-card di" data-t="3.2" style="right:4%; top:37%; animation:twinFloat 7.4s ease-in-out infinite; animation-delay:-1s;"><div class="lc-h"><span class="lc-dot" style="background:#4FB477; box-shadow:0 0 0 3px rgba(79,180,119,0.18);"></span>Coverage Gap Detected</div><div class="lc-bar"><span class="lc-fill" data-w="94"></span></div></div><div class="lc-card di" data-t="3.6" style="right:4%; top:50%; animation:twinFloat 8.0s ease-in-out infinite; animation-delay:-3s;"><div class="lc-h"><span class="lc-dot" style="background:#4FB477; box-shadow:0 0 0 3px rgba(79,180,119,0.18);"></span>Expansion Opportunity</div><div class="lc-bar"><span class="lc-fill" data-w="91"></span></div></div><div class="lc-card di" data-t="4.0" style="right:4%; top:63%; animation:twinFloat 7.7s ease-in-out infinite; animation-delay:-2s;"><div class="lc-h"><span class="lc-dot" style="background:#E0A23C; box-shadow:0 0 0 3px rgba(224,162,60,0.18);"></span>Maintenance Priority</div><div class="lc-bar"><span class="lc-fill" data-w="88"></span></div></div><div class="lc-card di" data-t="4.4" style="right:4%; top:76%; animation:twinFloat 8.5s ease-in-out infinite; animation-delay:-4s;"><div class="lc-h"><span class="lc-dot"></span>Traffic Hotspot Predicted</div><div class="lc-bar"><span class="lc-fill" data-w="96"></span></div></div><div class="loc-cap">DECISION INTELLIGENCE &nbsp;·&nbsp; <b>ONE CONFIDENT NEXT BEST ACTION</b></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-ind">
+    <h2 class="ind-hl" style="font-size: 60px; position: static; text-align: center; color: #031432; font-weight: 700">Built for the World’s<br>&nbsp;Critical Industries</h2><div class="ind-head">
+      
+      
+      <p class="ind-sub">One intelligence platform, adapted to the unique challenges of every industry.</p>
+    </div>
+    <div class="ind-nav" id="ind-nav">
+      <button class="ind-navitem on" data-go="0">Telecom</button>
+      <button class="ind-navitem" data-go="1">Banking &amp; Finance</button>
+      <button class="ind-navitem" data-go="2">FMCG &amp; Retail</button>
+      <button class="ind-navitem" data-go="3">Automobile</button>
+      <button class="ind-navitem" data-go="4">Logistics</button>
+      <button class="ind-navitem" data-go="5">Government &amp; Defense</button>
+      <button class="ind-navitem" data-go="6">Broadband</button>
+    </div>
+    <div class="ind-track" id="ind-track">
+      <div class="ind-slide" data-scene="telecom" data-tone="#5B8DEF" data-bg="#0A1730"><div class="ind-slide-media"><image-slot id="ind-telecom" shape="rect" fit="cover" placeholder="Drop a Telecom image — cell towers, antennas, fiber"></image-slot></div><div class="ind-slide-grad"></div><div class="ind-slide-scrim"></div><div class="ind-slide-body"><div class="ind-tag" style="color:#8FB0F6;">📡 &nbsp;TELECOM</div><h3 class="ind-name">Telecom</h3><p class="ind-line">Plan, build, and optimize network coverage with location intelligence.</p><a href="#" class="ind-learn">Learn More <span class="ind-arrow">→</span></a></div></div>
+      <div class="ind-slide" data-scene="banking" data-tone="#4FA98A" data-bg="#062018"><div class="ind-slide-media"><image-slot id="ind-banking" shape="rect" fit="cover" placeholder="Drop a Banking &amp; Finance image — branches, ATMs, city finance district"></image-slot></div><div class="ind-slide-grad"></div><div class="ind-slide-scrim"></div><div class="ind-slide-body"><div class="ind-tag" style="color:#7BCBAE;">🏦 &nbsp;BANKING &amp; FINANCE</div><h3 class="ind-name">Banking &amp; Finance</h3><p class="ind-line">Site new branches and ATMs where demand and catchment are strongest.</p><a href="#" class="ind-learn">Learn More <span class="ind-arrow">→</span></a></div></div>
+      <div class="ind-slide" data-scene="fmcg" data-tone="#E0965A" data-bg="#241608"><div class="ind-slide-media"><image-slot id="ind-fmcg" shape="rect" fit="cover" placeholder="Drop an FMCG &amp; Retail image — storefront, shopping district, distribution"></image-slot></div><div class="ind-slide-grad"></div><div class="ind-slide-scrim"></div><div class="ind-slide-body"><div class="ind-tag" style="color:#EBB07C;">🏪 &nbsp;FMCG &amp; RETAIL</div><h3 class="ind-name">FMCG &amp; Retail</h3><p class="ind-line">Optimize distribution and retail expansion with demand intelligence.</p><a href="#" class="ind-learn">Learn More <span class="ind-arrow">→</span></a></div></div>
+      <div class="ind-slide" data-scene="automobile" data-tone="#E4544E" data-bg="#2A0C0B"><div class="ind-slide-media"><image-slot id="ind-automobile" shape="rect" fit="cover" placeholder="Drop an Automobile image — dealership, EV charging, assembly line"></image-slot></div><div class="ind-slide-grad"></div><div class="ind-slide-scrim"></div><div class="ind-slide-body"><div class="ind-tag" style="color:#F08D88;">🚗 &nbsp;AUTOMOBILE</div><h3 class="ind-name">Automobile</h3><p class="ind-line">Locate dealerships, service, and EV charging around real-world movement.</p><a href="#" class="ind-learn">Learn More <span class="ind-arrow">→</span></a></div></div>
+      <div class="ind-slide" data-scene="logistics" data-tone="#4FB477" data-bg="#08241A"><div class="ind-slide-media"><image-slot id="ind-logistics" shape="rect" fit="cover" placeholder="Drop a Logistics image — warehouse, trucks, shipping port"></image-slot></div><div class="ind-slide-grad"></div><div class="ind-slide-scrim"></div><div class="ind-slide-body"><div class="ind-tag" style="color:#79C99A;">🚚 &nbsp;LOGISTICS</div><h3 class="ind-name">Logistics</h3><p class="ind-line">Optimize every route, hub, and delivery decision across the network.</p><a href="#" class="ind-learn">Learn More <span class="ind-arrow">→</span></a></div></div>
+      <div class="ind-slide" data-scene="gov" data-tone="#8A8FE0" data-bg="#131233"><div class="ind-slide-media"><image-slot id="ind-gov" shape="rect" fit="cover" placeholder="Drop a Government &amp; Defense image — civic infrastructure, mapping, security"></image-slot></div><div class="ind-slide-grad"></div><div class="ind-slide-scrim"></div><div class="ind-slide-body"><div class="ind-tag" style="color:#A7ABEB;">🛡 &nbsp;GOVERNMENT &amp; DEFENSE</div><h3 class="ind-name">Government &amp; Defense</h3><p class="ind-line">Plan resilient infrastructure and mission-critical situational awareness.</p><a href="#" class="ind-learn">Learn More <span class="ind-arrow">→</span></a></div></div>
+      <div class="ind-slide" data-scene="broadband" data-tone="#6E9BF6" data-bg="#0C1A34"><div class="ind-slide-media"><image-slot id="ind-broadband" shape="rect" fit="cover" placeholder="Drop a Broadband image — fiber rollout, cabinets, connected homes"></image-slot></div><div class="ind-slide-grad"></div><div class="ind-slide-scrim"></div><div class="ind-slide-body"><div class="ind-tag" style="color:#97B6F8;">🌐 &nbsp;BROADBAND</div><h3 class="ind-name">Broadband</h3><p class="ind-line">Design fiber rollout and prioritize homes-passed with precision.</p><a href="#" class="ind-learn">Learn More <span class="ind-arrow">→</span></a></div></div>
+    </div>
+  </section>
+
+  <section id="lepton-partners" style="padding:20px clamp(22px,5vw,72px) 70px;">
+    <div style="max-width:1200px; margin:0 auto;">
+      <h2 style="font-size:clamp(24px,2.4vw,34px); font-weight:600; letter-spacing:-0.02em; color:#5A647B; margin:0 0 44px;">Our <span style="color:var(--accent);">Trusted</span> Partners</h2>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:clamp(24px,5vw,72px); flex-wrap:wrap;">
+        <span style="flex:1 1 0; text-align:center; font-size:clamp(22px,2.4vw,32px); font-weight:700; letter-spacing:-0.01em; color:#9AA2AF; white-space:nowrap;">Google</span>
+        <span style="flex:1 1 0; text-align:center; font-size:clamp(22px,2.4vw,32px); font-weight:700; letter-spacing:-0.01em; color:#9AA2AF; white-space:nowrap;">precisely</span>
+        <span style="flex:1 1 0; text-align:center; font-size:clamp(22px,2.4vw,32px); font-weight:700; letter-spacing:0.01em; color:#9AA2AF; white-space:nowrap;">infovista</span>
+        <span style="flex:1 1 0; text-align:center; font-size:clamp(22px,2.4vw,32px); font-weight:700; letter-spacing:-0.01em; color:#9AA2AF; white-space:nowrap;">Navicat</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-cta" style="padding:20px clamp(22px,5vw,72px) 110px;">
+    <div style="position:relative; overflow:hidden; max-width:1200px; margin:0 auto; border-radius:26px; padding:clamp(64px,9vw,120px) clamp(24px,6vw,80px); text-align:center; background:radial-gradient(120% 130% at 50% 0%, #12244A 0%, #0B1730 46%, #070E1F 100%); box-shadow:0 40px 90px -50px rgba(6,12,28,0.9);">
+      <div style="position:absolute; left:50%; top:-30%; width:60%; height:120%; transform:translateX(-50%); background:radial-gradient(circle, rgba(91,141,239,0.28), rgba(7,14,31,0) 68%); pointer-events:none;"></div>
+      <h2 style="position:relative; margin:0 0 22px; font-size:clamp(34px,5vw,74px); font-weight:700; line-height:1.02; letter-spacing:-0.035em; color:#F4F7FF; text-wrap:balance;">Your Next Better Decision <span style="color:#6E9BF6;">Starts Here.</span></h2>
+      <p style="position:relative; margin:0 auto 40px; max-width:520px; font-size:clamp(15px,1.2vw,18px); line-height:1.6; color:#96A2BC; text-wrap:pretty;">Tell us the location problem. We will show you the data and the product that solves it.</p>
+      <div style="position:relative; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <a href="#" style="display:inline-flex; align-items:center; gap:9px; background:var(--accent); color:#ffffff; font-weight:600; font-size:15px; padding:14px 28px; border-radius:999px; box-shadow:0 16px 34px -14px rgba(91,141,239,0.7);" style-hover="filter:brightness(1.08);">Talk to sales <span style="font-size:16px;">→</span></a>
+        <a href="#" style="display:inline-flex; align-items:center; gap:9px; color:#EAEEF6; font-weight:600; font-size:15px; padding:14px 26px; border-radius:999px; border:1px solid rgba(255,255,255,0.22);" style-hover="background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.4);">Explore products</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accent&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#5B8DEF&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#5B8DEF&quot;, &quot;#3E63DD&quot;, &quot;#22B8CF&quot;, &quot;#0A2540&quot;] },
+  &quot;railsVisible&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot; },
+  &quot;motion&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Standard&quot;, &quot;options&quot;: [&quot;Standard&quot;, &quot;Calm&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Motion&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      setCanvas: (el) => { this.canvas = el; },
+      setHeroRot: (el) => { this.heroRot = el; }
+    };
+  }
+
+  _readParams() {
+    this.accent = this.props.accent || '#5B8DEF';
+    this.railsVisible = this.props.railsVisible !== false;
+    this.calm = (this.props.motion || 'Standard') === 'Calm';
+  }
+
+  componentDidMount() {
+    this._readParams();
+    const root = document.getElementById('lepton-page');
+    if (root && this.props.accent) root.style.setProperty('--accent', this.props.accent);
+    this.reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this._initStats();
+    this._initTransform();
+    this._initHow();
+    this._initInd();
+    this._initTwin();
+    this._initLoc();
+    this._initDecide();
+    this._initHeroRotator();
+    this._initReveal();
+    this._initSmoothScroll();
+    this._wait();
+  }
+
+  // Lerp momentum scrolling — glides the whole page (hero included) like the Apple
+  // reference. It drives the REAL scroll position, so every existing scroll-linked
+  // animation stays perfectly in sync and simply inherits the smoothing.
+  _initSmoothScroll() {
+    if (this.reduced) return;
+    if (!(window.matchMedia && window.matchMedia('(pointer:fine)').matches)) return; // skip touch — native momentum is better
+    const maxScroll = () => (document.documentElement.scrollHeight - window.innerHeight);
+    let target = window.scrollY || window.pageYOffset || 0;
+    let current = target;
+    let raf = null;
+    const tick = () => {
+      current += (target - current) * 0.11; // lower = smoother/longer glide
+      if (Math.abs(target - current) < 0.4) { current = target; raf = null; window.scrollTo(0, current); return; }
+      window.scrollTo(0, current);
+      raf = requestAnimationFrame(tick);
+    };
+    const onWheel = (e) => {
+      if (e.ctrlKey) return; // let pinch-zoom through
+      // Over the industries carousel, do nothing — let the trackpad scroll it
+      // natively (horizontal two-finger swipe), exactly like before.
+      const track = document.getElementById('ind-track');
+      if (track && track.contains(e.target)) return;
+      let d = e.deltaY;
+      if (e.deltaMode === 1) d *= 16; else if (e.deltaMode === 2) d *= window.innerHeight;
+      e.preventDefault();
+      target = Math.max(0, Math.min(maxScroll(), target + d));
+      if (raf === null) raf = requestAnimationFrame(tick);
+    };
+    // keep the smoother in step when scroll comes from elsewhere (bar drag, keys, jumps)
+    const onScroll = () => { if (raf === null) { target = window.scrollY; current = target; } };
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    this._ssWheel = onWheel; this._ssScroll = onScroll;
+    this._ssStop = () => { if (raf) cancelAnimationFrame(raf); };
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.accent !== this.props.accent && this.props.accent) {
+      this.accent = this.props.accent;
+      const root = document.getElementById('lepton-page');
+      if (root) root.style.setProperty('--accent', this.props.accent);
+      if (this.accentCol) this.accentCol.set(this.props.accent);
+      if (this.pMat) this.pMat.color.set(this.props.accent);
+      if (this.arcMat) this.arcMat.color.set(this.props.accent);
+      if (this.icMat) this.icMat.color.set(this.props.accent);
+      if (this.rMat) this.rMat.color.set(this.props.accent);
+    }
+    if (prev.railsVisible !== this.props.railsVisible) this.railsVisible = this.props.railsVisible !== false;
+    if (prev.motion !== this.props.motion) this.calm = (this.props.motion || 'Standard') === 'Calm';
+  }
+
+  _initStats(retry) {
+    const els = [...document.querySelectorAll('#lepton-stats [data-count]')];
+    if (!els.length) {
+      if ((retry || 0) < 50) this._stimer = setTimeout(() => this._initStats((retry || 0) + 1), 80);
+      return;
+    }
+    const ease = (x) => 1 - Math.pow(1 - x, 3);
+    const run = () => {
+      els.forEach((el) => {
+        const target = +el.getAttribute('data-count');
+        const suf = el.getAttribute('data-suffix') || '';
+        const dur = 1600, t0 = performance.now();
+        const step = (now) => {
+          const p = Math.min(1, (now - t0) / dur);
+          el.textContent = Math.round(target * ease(p)) + suf;
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    };
+    if (this.reduced) {
+      els.forEach((el) => { el.textContent = el.getAttribute('data-count') + (el.getAttribute('data-suffix') || ''); });
+      return;
+    }
+    const sec = document.getElementById('lepton-stats');
+    if (!sec) { run(); return; }
+    let done = false;
+    const check = () => {
+      if (done) return;
+      const r = sec.getBoundingClientRect();
+      const vh = window.innerHeight || 800;
+      if (r.top < vh * 0.9 && r.bottom > 0) { done = true; run(); return; }
+      this._statRaf = requestAnimationFrame(check);
+    };
+    check();
+  }
+
+  _initTransform(retry) {
+    const stage = document.getElementById('lepton-reduce');
+    const canvas = document.getElementById('lepton-reduce-canvas');
+    if (!stage || !canvas) {
+      if ((retry || 0) < 50) this._ttimer = setTimeout(() => this._initTransform((retry || 0) + 1), 80);
+      return;
+    }
+    const acc = this._hexRgb(this.accent);
+    const AC = (a) => 'rgba(' + acc.r + ',' + acc.g + ',' + acc.b + ',' + a + ')';
+    const rr = (s) => { const x = Math.sin(s * 127.1) * 43758.5453; return x - Math.floor(x); };
+    // fresh 2D context (drop any prior webgl binding on the persisted canvas node)
+    const cv = canvas.cloneNode(false); canvas.parentNode.replaceChild(cv, canvas);
+    const ctx = cv.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0;
+    const setSize = () => { const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return; W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    setSize();
+    this._rro = new ResizeObserver(setSize); this._rro.observe(cv);
+    const palette = ['#5B8DEF', '#35C4C4', '#4FB477', '#E4B24A', '#8A8FE0', '#E0708f'];
+    const mkCity = (seed, n) => { const a = []; for (let i = 0; i < n; i++) { const s = seed + i * 3.3; a.push({ u: (i + 0.5) / n * 2 - 1 + (rr(s) - 0.5) * 0.12, depth: rr(s * 2), w: 0.1 + rr(s * 5) * 0.07, h: 0.1 + rr(s * 7) * 0.2, seed: s, tower: rr(s * 9) < 0.28, store: rr(s * 11) < 0.5, col: palette[Math.floor(rr(s * 13) * palette.length)] }); } a.sort((p, q) => p.depth - q.depth); return a; };
+    const leftCity = mkCity(4, 7), rightCity = mkCity(60, 5);
+    rightCity.forEach((b, i) => { b.tower = i % 2 === 1; b.store = i % 2 === 0; b.h *= 0.82; });
+    const rPins = [[-0.55, 0.28], [0.12, -0.3], [0.6, 0.15], [-0.1, 0.42]];
+    const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+    const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    const qb = (a, b, c, t) => { const m = 1 - t; return [m * m * a[0] + 2 * m * t * b[0] + t * t * c[0], m * m * a[1] + 2 * m * t * b[1] + t * t * c[1]]; };
+    this._rp = 0;
+
+    const board = (cx, cy, rx, ryy, appear, warm) => {
+      ctx.save(); ctx.globalAlpha = appear;
+      const g = ctx.createRadialGradient(cx, cy, 2, cx, cy, rx);
+      if (warm) { g.addColorStop(0, 'rgba(70,120,95,0.5)'); g.addColorStop(1, 'rgba(20,40,34,0.15)'); }
+      else { g.addColorStop(0, 'rgba(70,78,92,0.5)'); g.addColorStop(1, 'rgba(22,26,34,0.12)'); }
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ryy, 0, 0, 6.283); ctx.fill();
+      ctx.strokeStyle = warm ? 'rgba(150,220,180,0.5)' : 'rgba(150,160,180,0.35)'; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.ellipse(cx, cy, rx, ryy, 0, 0, 6.283); ctx.stroke();
+      ctx.restore();
+    };
+    const drawCity = (city, cx, cy, rx, ryy, colorful, appear, now) => {
+      const t = now * 0.001;
+      city.forEach((b) => {
+        const bx = cx + b.u * rx * 0.82;
+        const baseY = cy + (b.depth - 0.5) * ryy * 1.2;
+        const persp = 0.8 + b.depth * 0.4;
+        const grow = ease(Math.min(1, appear / 0.7));
+        const bw = b.w * rx * persp, bh = b.h * H * persp * grow;
+        if (bh < 1) return;
+        const bxL = bx - bw / 2, byT = baseY - bh;
+        if (colorful) {
+          const col = smooth(0.15, 1, appear);
+          ctx.fillStyle = b.col; ctx.globalAlpha = 0.35 + 0.55 * col;
+          ctx.fillRect(bxL, byT, bw, bh);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = 'rgba(255,255,255,0.14)'; ctx.fillRect(bxL, byT, bw, 2);
+          const lit = smooth(0.4, 1, appear);
+          const cols = Math.max(1, Math.floor(bw / 7)), rows = Math.max(1, Math.floor(bh / 9));
+          for (let c2 = 0; c2 < cols; c2++) for (let r2 = 0; r2 < rows; r2++) {
+            const sd = rr(b.seed * (c2 + 2) * (r2 + 3)); if (sd > lit * 0.85) continue;
+            ctx.fillStyle = rr(sd * 9) < 0.4 ? 'rgba(255,214,140,0.95)' : 'rgba(150,230,190,0.9)';
+            ctx.fillRect(bxL + 2 + c2 * ((bw - 4) / cols), byT + 3 + r2 * ((bh - 4) / rows), Math.max(1.4, (bw - 4) / cols * 0.55), Math.max(1.4, (bh - 4) / rows * 0.55));
+          }
+          if (b.store) { ctx.fillStyle = 'rgba(255,200,110,' + (0.85 * col) + ')'; ctx.fillRect(bxL, baseY - 4, bw, 4); }
+          if (b.tower) {
+            const tx = bx, ty = byT; ctx.strokeStyle = AC(0.8); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx, ty - 16 * persp); ctx.stroke();
+            for (let k = 0; k < 2; k++) { const ph = (t * 0.7 + k * 0.5 + b.seed) % 1; ctx.strokeStyle = AC((1 - ph) * 0.6 * col); ctx.beginPath(); ctx.arc(tx, ty - 16 * persp, 4 + ph * 16, Math.PI, 2 * Math.PI); ctx.stroke(); }
+            ctx.fillStyle = AC(col); ctx.beginPath(); ctx.arc(tx, ty - 16 * persp, 2, 0, 6.283); ctx.fill();
+          }
+        } else {
+          const v = 0.42 + rr(b.seed) * 0.16;
+          ctx.fillStyle = 'rgba(' + Math.round(v * 150) + ',' + Math.round(v * 158) + ',' + Math.round(v * 172) + ',0.92)';
+          ctx.fillRect(bxL, byT, bw, bh);
+          ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(bxL, byT, bw, 2);
+          const cols = Math.max(1, Math.floor(bw / 7)), rows = Math.max(1, Math.floor(bh / 9));
+          for (let c2 = 0; c2 < cols; c2++) for (let r2 = 0; r2 < rows; r2++) { if (rr(b.seed * (c2 + 2) * (r2 + 5)) > 0.12) continue; ctx.fillStyle = 'rgba(200,206,216,0.35)'; ctx.fillRect(bxL + 2 + c2 * ((bw - 4) / cols), byT + 3 + r2 * ((bh - 4) / rows), Math.max(1.2, (bw - 4) / cols * 0.5), Math.max(1.2, (bh - 4) / rows * 0.5)); }
+        }
+        ctx.globalAlpha = 1;
+      });
+    };
+
+    const draw = (now) => {
+      const p = this._rp, t = now * 0.001;
+      ctx.clearRect(0, 0, W, H);
+      const cyB = H * 0.66, rx = Math.min(W * 0.2, 240), ryy = rx * 0.28;
+      const cxL = W * 0.25, cxR = W * 0.75, lx = W * 0.5, ly = H * 0.38;
+      const pL = smooth(0.0, 0.32, p), pWire = smooth(0.3, 0.62, p), pR = smooth(0.55, 1, p);
+      // boards
+      board(cxL, cyB, rx, ryy, pL, false);
+      board(cxR, cyB, rx, ryy, pR, true);
+      // left B&W city
+      if (pL > 0.01) drawCity(leftCity, cxL, cyB, rx, ryy, false, pL, now);
+      // light wires: left board -> lepton -> right board
+      if (pWire > 0.01) {
+        const aL = [cxL, cyB - ryy * 0.4], aR = [cxR, cyB - ryy * 0.4], hub = [lx, ly];
+        const cL = [(cxL + lx) / 2, ly - 40], cR = [(cxR + lx) / 2, ly - 40];
+        ctx.lineWidth = 1.6;
+        ctx.strokeStyle = AC(0.35 * pWire); ctx.beginPath(); ctx.moveTo(aL[0], aL[1]); ctx.quadraticCurveTo(cL[0], cL[1], hub[0], hub[1]); ctx.stroke();
+        ctx.strokeStyle = AC(0.35 * Math.max(0, pWire) * (0.3 + 0.7 * pR)); ctx.beginPath(); ctx.moveTo(hub[0], hub[1]); ctx.quadraticCurveTo(cR[0], cR[1], aR[0], aR[1]); ctx.stroke();
+        for (let i = 0; i < 4; i++) {
+          const ph = ((t * 0.5) + i * 0.25) % 1;
+          const pt1 = qb(aL, cL, hub, ph); ctx.fillStyle = AC(0.9 * pWire); ctx.beginPath(); ctx.arc(pt1[0], pt1[1], 2.4, 0, 6.283); ctx.fill();
+          if (pR > 0.05) { const pt2 = qb(hub, cR, aR, ph); ctx.fillStyle = 'rgba(120,225,165,' + (0.9 * pR) + ')'; ctx.beginPath(); ctx.arc(pt2[0], pt2[1], 2.4, 0, 6.283); ctx.fill(); }
+        }
+        // waves around lepton
+        for (let i = 0; i < 3; i++) { const rr2 = 16 + i * 9 + Math.sin(t * 1.4 + i) * 2.5; ctx.strokeStyle = AC((0.5 - i * 0.13) * pWire); ctx.lineWidth = 1.3; ctx.beginPath(); ctx.ellipse(lx, ly, rr2 * (1 + i * 0.1), rr2 * 0.7, t * (0.4 + i * 0.2), 0, 6.283); ctx.stroke(); }
+        // lepton core
+        const cg = ctx.createRadialGradient(lx, ly, 0, lx, ly, 26); cg.addColorStop(0, AC(0.9 * pWire)); cg.addColorStop(1, AC(0)); ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(lx, ly, 26, 0, 6.283); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,' + pWire + ')'; ctx.beginPath(); ctx.arc(lx, ly, 6, 0, 6.283); ctx.fill();
+        ctx.fillStyle = AC(pWire); ctx.font = '600 12px Manrope, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('lepton', lx, ly + 34);
+      }
+      // right side: real illuminated roads + network towers + location pins (clean)
+      if (pR > 0.01) {
+        const roadA = smooth(0.05, 0.5, pR);
+        const roads = [-0.42, 0.5]; // vertical offsets (frac of ryy) for two roads across the board
+        roads.forEach((yf, i) => {
+          const yo = yf * ryy, x0 = cxR - rx * 0.86, x1 = cxR + rx * 0.86, cy2 = cyB + yo, cyc = cyB + yo + ryy * 0.28;
+          const rw = 9 + i * 2; // road width (perspective-ish)
+          // asphalt ribbon
+          ctx.strokeStyle = 'rgba(24,32,50,' + (0.9 * roadA) + ')'; ctx.lineWidth = rw; ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(x0, cy2); ctx.quadraticCurveTo(cxR, cyc, x1, cy2); ctx.stroke();
+          // glowing edges
+          ctx.strokeStyle = 'rgba(120,225,175,' + (0.4 * roadA) + ')'; ctx.lineWidth = 1; 
+          ctx.beginPath(); ctx.moveTo(x0, cy2 - rw / 2); ctx.quadraticCurveTo(cxR, cyc - rw / 2, x1, cy2 - rw / 2); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x0, cy2 + rw / 2); ctx.quadraticCurveTo(cxR, cyc + rw / 2, x1, cy2 + rw / 2); ctx.stroke();
+          // dashed centre line
+          ctx.setLineDash([7, 7]); ctx.lineDashOffset = -(t * 26) % 14;
+          ctx.strokeStyle = 'rgba(220,240,225,' + (0.5 * roadA) + ')'; ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.moveTo(x0, cy2); ctx.quadraticCurveTo(cxR, cyc, x1, cy2); ctx.stroke(); ctx.setLineDash([]);
+          // moving vehicle lights
+          for (let v = 0; v < 3; v++) { const fp = ((t * (0.24 + i * 0.06)) + v / 3) % 1; const pt = qb([x0, cy2], [cxR, cyc], [x1, cy2], fp); ctx.fillStyle = 'rgba(255,236,190,' + roadA + ')'; ctx.beginPath(); ctx.arc(pt[0], pt[1], 1.8, 0, 6.283); ctx.fill(); }
+        });
+        drawCity(rightCity, cxR, cyB, rx, ryy, true, pR, now);
+        // network towers standing beside the roads
+        const netTowers = [[-0.6, -0.42], [0.05, 0.5], [0.62, -0.42]];
+        netTowers.forEach((nt, i) => {
+          const pop = ease(Math.min(1, (pR - 0.35 - i * 0.08) / 0.4)); if (pop <= 0) return;
+          const tx = cxR + nt[0] * rx * 0.82, base = cyB + nt[1] * ryy, hh = 34 * pop, top = base - hh, halfB = 7;
+          ctx.strokeStyle = AC(0.85); ctx.lineWidth = 1.3;
+          ctx.beginPath(); ctx.moveTo(tx - halfB, base); ctx.lineTo(tx, top); ctx.lineTo(tx + halfB, base); ctx.stroke();
+          for (let r2 = 1; r2 <= 3; r2++) { const yy = base - (hh / 4) * r2, hw = halfB * (1 - r2 / 4); ctx.beginPath(); ctx.moveTo(tx - hw, yy); ctx.lineTo(tx + hw, yy); ctx.stroke(); }
+          ctx.beginPath(); ctx.moveTo(tx - 5, top - 5); ctx.lineTo(tx, top); ctx.lineTo(tx + 5, top - 5); ctx.stroke();
+          for (let k = 0; k < 2; k++) { const ph = (t * 0.8 + k * 0.5 + i) % 1; ctx.strokeStyle = AC((1 - ph) * 0.6 * pop); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(tx, top - 3, 4 + ph * 18, Math.PI, 2 * Math.PI); ctx.stroke(); }
+          ctx.fillStyle = AC(pop); ctx.beginPath(); ctx.arc(tx, top - 3, 2, 0, 6.283); ctx.fill();
+        });
+        rPins.forEach((pn, i) => {
+          const pop = ease(Math.min(1, (pR - 0.55 - i * 0.1) / 0.35)); if (pop <= 0) return;
+          const px = cxR + pn[0] * rx * 0.78, py = cyB + pn[1] * ryy * 1.1, r = 5 * pop;
+          ctx.fillStyle = AC(0.95); ctx.beginPath(); ctx.arc(px, py - r * 1.6, r, Math.PI * 0.75, Math.PI * 2.25); ctx.lineTo(px, py); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(px, py - r * 1.6, r * 0.42, 0, 6.283); ctx.fill();
+        });
+      }
+    };
+
+    let startT = this.reduced ? -6000 : null;
+    if (this.reduced) { this._rp = 1; stage.classList.add('seen'); }
+    const loop = () => { const now = performance.now(); if (startT !== null) this._rp = Math.min(1, (now - startT) / 3400); draw(now); this._rRaf = requestAnimationFrame(loop); };
+    const trigger = () => {
+      if (startT !== null) return false;
+      const r = stage.getBoundingClientRect(); const vh = window.innerHeight || 800;
+      if (r.top < vh * 0.72 && r.bottom > 0) { window.removeEventListener('scroll', trigger, true); stage.classList.add('seen'); startT = performance.now(); return true; }
+      return false;
+    };
+    this._tScroll = trigger; window.addEventListener('scroll', trigger, true);
+    this._rRaf = requestAnimationFrame(loop);
+    trigger();
+  }
+
+  _initHeroRotator(retry) {
+    const el = this.heroRot;
+    if (!el) {
+      if ((retry || 0) < 50) this._hrTimer = setTimeout(() => this._initHeroRotator((retry || 0) + 1), 80);
+      return;
+    }
+    if (this.reduced) return;
+    const phrases = ['are your assets?', 'is your network?', 'should you expand?', 'are your opportunities?', 'are your customers?'];
+    let i = 0;
+    const EIN = 'transform .5s cubic-bezier(.2,.7,.2,1), opacity .5s ease';
+    this._hrInt = setInterval(() => {
+      el.style.transition = EIN;
+      el.style.transform = 'translateY(-72%)';
+      el.style.opacity = '0';
+      this._hrT = setTimeout(() => {
+        i = (i + 1) % phrases.length;
+        el.style.transition = 'none';
+        el.style.transform = 'translateY(72%)';
+        el.textContent = phrases[i];
+        void el.offsetWidth;
+        el.style.transition = EIN;
+        el.style.transform = 'translateY(0)';
+        el.style.opacity = '1';
+      }, 500);
+    }, 2600);
+  }
+
+  _loadRealEarth(mat) {
+    const THREE = window.THREE;
+    const base = 'https://unpkg.com/three-globe/example/img/';
+    const loader = new THREE.TextureLoader(); loader.setCrossOrigin('anonymous');
+    loader.load(base + 'earth-topology.png', (tx) => { mat.bumpMap = tx; mat.bumpScale = 0.07; mat.needsUpdate = true; });
+    loader.load(base + 'earth-water.png', (tx) => { mat.roughnessMap = tx; mat.needsUpdate = true; });
+    const img = new Image(); img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const W = 2048, H = 1024, c = document.createElement('canvas'); c.width = W; c.height = H;
+        const x = c.getContext('2d');
+        x.drawImage(img, 0, 0, W, H);
+        // recolor real Earth to a light-blue palette (keeps real continents + luminance)
+        x.globalCompositeOperation = 'color'; x.fillStyle = '#6f9bd6'; x.fillRect(0, 0, W, H);
+        x.globalCompositeOperation = 'source-over'; x.fillStyle = 'rgba(232,241,255,0.16)'; x.fillRect(0, 0, W, H);
+        const tex = new THREE.CanvasTexture(c);
+        if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+        mat.map = tex; mat.needsUpdate = true;
+      } catch (e) { console.warn('earth recolor failed', e); }
+    };
+    img.src = base + 'earth-blue-marble.jpg';
+  }
+
+  _globeTex() {
+    const THREE = window.THREE;
+    const W = 1024, H = 512;
+    const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
+    const cCol = mk(), cLit = mk(), cBump = mk(), cRough = mk(), cCloud = mk();
+    const col = cCol.getContext('2d'), lit = cLit.getContext('2d'), bmp = cBump.getContext('2d'), rgh = cRough.getContext('2d'), cld = cCloud.getContext('2d');
+    const rnd = (i, j) => { const s = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return s - Math.floor(s); };
+    const lerp = (a, b, t) => a + (b - a) * t; const sm = (t) => t * t * (3 - 2 * t);
+    const vn = (px, py, sc) => { const gx = px / sc, gy = py / sc; const x0 = Math.floor(gx), y0 = Math.floor(gy); const fx = sm(gx - x0), fy = sm(gy - y0); return lerp(lerp(rnd(x0, y0), rnd(x0 + 1, y0), fx), lerp(rnd(x0, y0 + 1), rnd(x0 + 1, y0 + 1), fx), fy); };
+    const fbm = (i, j) => { let a = 0, amp = 0.5, sc = 190; for (let o = 0; o < 5; o++) { a += vn(i + o * 57, j - o * 31, sc) * amp; amp *= 0.5; sc *= 0.5; } return a; };
+    const land = (i, j) => { const wx = vn(i, j, 90) * 44, wy = vn(i + 99, j + 7, 90) * 44; let n = fbm(i + wx, j + wy); n -= Math.abs(j / H - 0.5) * 2 * 0.12; return n; };
+    const cI = col.createImageData(W, H), cd = cI.data;
+    const bI = bmp.createImageData(W, H), bd = bI.data;
+    const rI = rgh.createImageData(W, H), rd = rI.data;
+    const SEA = 0.5;
+    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+      const idx = (j * W + i) * 4, n = land(i, j);
+      if (n <= SEA) {
+        const dep = Math.min(1, (SEA - n) * 3.2);
+        cd[idx] = lerp(150, 116, dep); cd[idx + 1] = lerp(192, 156, dep); cd[idx + 2] = lerp(233, 212, dep); cd[idx + 3] = 255;
+        const bv = 76; bd[idx] = bd[idx + 1] = bd[idx + 2] = bv; bd[idx + 3] = 255;
+        const rv = 58; rd[idx] = rd[idx + 1] = rd[idx + 2] = rv; rd[idx + 3] = 255;
+      } else {
+        const h = Math.min(1, (n - SEA) * 2.3);
+        cd[idx] = lerp(212, 240, h); cd[idx + 1] = lerp(223, 246, h); cd[idx + 2] = lerp(237, 251, h); cd[idx + 3] = 255;
+        const bv = Math.floor(120 + h * 135); bd[idx] = bd[idx + 1] = bd[idx + 2] = bv; bd[idx + 3] = 255;
+        const rv = Math.floor(205 + h * 45); rd[idx] = rd[idx + 1] = rd[idx + 2] = rv; rd[idx + 3] = 255;
+      }
+    }
+    col.putImageData(cI, 0, 0); bmp.putImageData(bI, 0, 0); rgh.putImageData(rI, 0, 0);
+    lit.fillStyle = '#000'; lit.fillRect(0, 0, W, H);
+    for (let k = 0; k < 3200; k++) {
+      const i = Math.random() * W | 0, j = Math.random() * H | 0;
+      if (land(i, j) <= 0.54) continue;
+      const warm = Math.random() < 0.45, b = 0.45 + Math.random() * 0.55;
+      lit.fillStyle = warm ? 'rgba(255,236,198,' + b + ')' : 'rgba(200,226,255,' + b + ')';
+      const r = Math.random() < 0.12 ? 1.8 : 0.85;
+      lit.beginPath(); lit.arc(i, j, r, 0, 6.283); lit.fill();
+    }
+    const clI = cld.createImageData(W, H), cc = clI.data;
+    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+      const idx = (j * W + i) * 4;
+      let cn = fbm(i * 1.25 + 400, j * 1.25) * 1.12; cn -= Math.abs(j / H - 0.5) * 2 * 0.08;
+      const a = Math.max(0, cn - 0.52) * 3.4;
+      cc[idx] = 255; cc[idx + 1] = 255; cc[idx + 2] = 255; cc[idx + 3] = Math.min(235, a * 255);
+    }
+    cld.putImageData(clI, 0, 0);
+    const T = (cv) => { const t = new THREE.CanvasTexture(cv); if (THREE.SRGBColorSpace) t.colorSpace = THREE.SRGBColorSpace; return t; };
+    const D = (cv) => new THREE.CanvasTexture(cv);
+    return { map: T(cCol), lights: T(cLit), bump: D(cBump), rough: D(cRough), clouds: T(cCloud) };
+  }
+
+  _initReveal(retry) {
+    const page = document.getElementById('lepton-page');
+    if (!page) { if ((retry || 0) < 50) this._rvTimer = setTimeout(() => this._initReveal((retry || 0) + 1), 90); return; }
+    if (this.reduced) return;
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    const smoother = (x) => x * x * x * (x * (x * 6 - 15) + 10);
+
+    // ---- One unified reveal wave for the WHOLE page ----------------------------
+    // Every registered element rises + fades + de-blurs into the reading band and
+    // reverses cleanly on scroll-up, all driven by the (smoothed) scroll position,
+    // so the entire page shares one continuous motion. `mode:'exit'` elements (the
+    // hero) stay put and only drift/fade away as they leave — keeping their own
+    // entrance animation intact.
+    const items = [];
+    const reg = (sel, pull, stagger, mode) => {
+      [].slice.call(page.querySelectorAll(sel)).forEach((el, i) => {
+        el.style.willChange = 'opacity, transform';
+        el._pull = pull; el._phase = (stagger || 0) * i; el._mode = mode || 'both';
+        items.push(el);
+      });
+    };
+    // The whole section rises as one block, so nothing appears before its headline —
+    // by the time a heading is in view its section has fully arrived. The headline,
+    // being the largest thing in the block, is what you actually notice moving.
+    reg('#lepton-transform > div:first-child', 46, 0);
+    reg('#lepton-transform .bs-wrap', 46, 0);
+    reg('#lepton-ind .ind-head', 46, 0);
+    reg('#lepton-ind .ind-nav', 42, 0);
+    reg('#lepton-ind .ind-track', 44, 0);
+    reg('#lepton-partners > div', 44, 0);
+    reg('#lepton-stats > div', 44, 0);
+    reg('#lepton-cta > div', 44, 0);
+
+    const waveOne = (el, vh) => {
+      const r = el.getBoundingClientRect();
+      let v;
+      if (el._mode === 'exit') {
+        v = smoother(clamp(r.bottom / (vh * 0.55), 0, 1));
+      } else {
+        const center = r.top + r.height / 2 + (el._phase || 0);
+        v = smoother(clamp((vh - center) / (vh * 0.52), 0, 1));
+      }
+      // latch — once revealed it stays; never fades/drops back when scrolling up
+      if (el._vmax === undefined) el._vmax = 0;
+      if (v > el._vmax) el._vmax = v; else v = el._vmax;
+      if (el._v !== undefined && Math.abs(v - el._v) < 0.0015) return;
+      el._v = v;
+      const y = (el._mode === 'exit' ? -1 : 1) * (1 - v) * el._pull;
+      el.style.transform = 'translate3d(0,' + y.toFixed(2) + 'px,0)';
+      el.style.opacity = v.toFixed(3);
+    };
+    const onScreen = (el, vh) => { const r = el.getBoundingClientRect(); return r.bottom > -260 && r.top < vh + 260; };
+    const apply = () => { const vh = window.innerHeight; for (const el of items) if (onScreen(el, vh)) waveOne(el, vh); };
+    // event-driven: the smooth-scroll fires a scroll event every frame while gliding,
+    // so we ride those (rAF-throttled) and do zero work when the page is idle.
+    let ticking = false;
+    const onScroll = () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { apply(); ticking = false; }); };
+    apply();
+    this._rvCheck = onScroll;
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+  }
+
+  _hexRgb(hex) {
+    hex = (hex || '#5B8DEF').replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+    const n = parseInt(hex, 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+
+  _initHow(retry) {
+    const sec = document.getElementById('lepton-how');
+    if (!sec) {
+      if ((retry || 0) < 50) this._htimer2 = setTimeout(() => this._initHow((retry || 0) + 1), 80);
+      return;
+    }
+    const chapters = [].slice.call(sec.querySelectorAll('.how-chapter'));
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    // smootherstep — no overshoot, gentle accel + decel so the path is traced slowly
+    const smoother = (x) => x * x * x * (x * (x * 6 - 15) + 10);
+
+    const intro = sec.querySelector('.how-intro');
+    const introEls = intro ? [].slice.call(intro.children) : [];
+
+    // The whole intro block and each whole chapter rise together as one unit — so the
+    // subtext/animation never appear before the headline; the headline (the biggest
+    // element) is what you see leading the motion.
+    const heads = [];
+    if (intro) heads.push(intro);
+    chapters.forEach((ch) => heads.push(ch));
+
+    if (this.reduced) {
+      heads.forEach((el) => { el.style.transform = 'none'; el.style.opacity = 1; });
+      return;
+    }
+    heads.forEach((e) => { e.style.willChange = 'opacity, transform'; });
+
+    const waveOne = (el, vh, pull) => {
+      const r = el.getBoundingClientRect();
+      const center = r.top + r.height / 2;
+      const inP = clamp((vh - center) / (vh * 0.52), 0, 1);
+      let v = smoother(inP);
+      // latch — once the block has risen in, it stays; scrolling back up won't hide it
+      if (el._vmax === undefined) el._vmax = 0;
+      if (v > el._vmax) el._vmax = v; else v = el._vmax;
+      if (el._v !== undefined && Math.abs(v - el._v) < 0.0015) return; // skip redundant style thrash
+      el._v = v;
+      el.style.transform = 'translate3d(0,' + ((1 - v) * pull).toFixed(2) + 'px,0)';
+      el.style.opacity = v.toFixed(3);
+    };
+
+    const apply = () => {
+      const vh = window.innerHeight;
+      for (const el of heads) waveOne(el, vh, 46);
+    };
+    // only touch the DOM while the section is on/near screen
+    const visible = () => { const r = sec.getBoundingClientRect(); return r.bottom > -240 && r.top < window.innerHeight + 240; };
+    const update = () => { if (visible()) apply(); };
+
+    this._hScroll = update;
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    update();
+    const loop = () => { this._hRaf = requestAnimationFrame(loop); if (visible()) apply(); };
+    loop();
+  }
+
+  _initInd(retry) {
+    const sec = document.getElementById('lepton-ind');
+    const track = document.getElementById('ind-track');
+    const slides = sec ? [].slice.call(sec.querySelectorAll('.ind-slide')) : [];
+    if (!sec || !track || !slides.length) {
+      if ((retry || 0) < 50) this._itimer = setTimeout(() => this._initInd((retry || 0) + 1), 80);
+      return;
+    }
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const navitems = [].slice.call(sec.querySelectorAll('.ind-navitem'));
+    let cur = { r: 91, g: 141, b: 239 };
+    const A = (r, g, b, al) => 'rgba(' + r + ',' + g + ',' + b + ',' + al + ')';
+    const AC = (al) => A(cur.r, cur.g, cur.b, al);
+    const SL = (al) => A(255, 255, 255, al);
+
+    const cards = slides.map((el) => {
+      const tone = this._hexRgb(el.getAttribute('data-tone'));
+      const bgHex = (el.getAttribute('data-bg') || '#0A1730').slice(0, 7);
+      const bg = this._hexRgb(bgHex);
+      el.style.background = bgHex; // fallback behind the image while it loads
+      // Preserve the industry gradient AS AN OVERLAY on top of the real image:
+      // brand-tone glow top-right + a soft darkening from the base color.
+      const grad = el.querySelector('.ind-slide-grad');
+      if (grad) grad.style.background =
+        'linear-gradient(0deg, rgba(' + bg.r + ',' + bg.g + ',' + bg.b + ',0.72), rgba(' + bg.r + ',' + bg.g + ',' + bg.b + ',0.10) 58%), ' +
+        'radial-gradient(120% 120% at 78% 6%, rgba(' + tone.r + ',' + tone.g + ',' + tone.b + ',0.55), rgba(' + tone.r + ',' + tone.g + ',' + tone.b + ',0) 55%)';
+      return { el, tone, scene: el.getAttribute('data-scene') };
+    });
+
+    const draw = {
+      telecom: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150;
+        const towers = [[0.16, 0.72], [0.34, 0.5], [0.5, 0.66], [0.66, 0.44], [0.82, 0.6], [0.42, 0.28], [0.72, 0.26]];
+        ctx.strokeStyle = AC(0.22 + 0.14 * h); ctx.lineWidth = S;
+        ctx.beginPath();
+        for (let i = 0; i < towers.length; i++) { const a = towers[i], b = towers[(i + 2) % towers.length]; ctx.moveTo(a[0] * W, a[1] * H); ctx.lineTo(b[0] * W, b[1] * H); }
+        ctx.stroke();
+        towers.forEach((n, i) => {
+          const x = n[0] * W, y = n[1] * H;
+          ctx.strokeStyle = AC(0.7); ctx.lineWidth = 1.6 * S; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 22 * S); ctx.stroke();
+          for (let k = 0; k < 2; k++) { const ph = (t * 0.5 + i * 0.3 + k * 0.5) % 1, rr = (8 + ph * 46) * S; ctx.strokeStyle = AC((1 - ph) * (0.4 + 0.2 * h)); ctx.lineWidth = S; ctx.beginPath(); ctx.arc(x, y - 22 * S, rr, 0, 6.283); ctx.stroke(); }
+          ctx.fillStyle = AC(0.95); ctx.beginPath(); ctx.arc(x, y - 22 * S, 3.4 * S, 0, 6.283); ctx.fill();
+        });
+      },
+      mobility: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150;
+        const lanes = [0.28, 0.42, 0.56, 0.7];
+        lanes.forEach((y) => { ctx.strokeStyle = SL(0.08); ctx.lineWidth = 10 * S; ctx.beginPath(); ctx.moveTo(0.05 * W, y * H); ctx.lineTo(0.95 * W, y * H); ctx.stroke(); });
+        const cnt = 8 + Math.round(h * 5);
+        lanes.forEach((y, li) => {
+          for (let i = 0; i < cnt; i++) {
+            const dir = li % 2 === 0 ? 1 : -1, sp = 0.05 + li * 0.01 + h * 0.03;
+            const off = ((t * sp * dir + i / cnt) % 1 + 1) % 1, x = 0.05 + off * 0.9;
+            ctx.fillStyle = li % 2 === 0 ? AC(0.9) : SL(0.4);
+            ctx.fillRect(x * W - 7 * S, y * H - 3 * S, 14 * S, 6 * S);
+          }
+        });
+      },
+      retail: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150;
+        const blobs = [[0.3, 0.42, 0.4], [0.6, 0.58, 0.46], [0.48, 0.3, 0.32], [0.72, 0.4, 0.3]];
+        blobs.forEach((b) => { const pulse = 0.12 + 0.05 * Math.sin(t * 1.6 + b[0] * 10); const g = ctx.createRadialGradient(b[0] * W, b[1] * H, 0, b[0] * W, b[1] * H, b[2] * Math.min(W, H)); g.addColorStop(0, AC(pulse + h * 0.08)); g.addColorStop(1, AC(0)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); });
+        const stores = [[0.28, 0.4], [0.62, 0.56], [0.48, 0.3], [0.4, 0.64], [0.74, 0.42]];
+        stores.forEach((n, i) => { const best = i === 2, x = n[0] * W, y = n[1] * H; if (best) { const rr = (12 + ((t * 0.5) % 1) * 40) * S; ctx.strokeStyle = AC(0.5 - ((t * 0.5) % 1) * 0.4); ctx.lineWidth = 1.4 * S; ctx.beginPath(); ctx.arc(x, y, rr, 0, 6.283); ctx.stroke(); } ctx.fillStyle = best ? AC(0.98) : SL(0.5); ctx.beginPath(); ctx.arc(x, y, (best ? 6 : 4) * S, 0, 6.283); ctx.fill(); });
+      },
+      utilities: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150;
+        const pylons = [[0.12, 0.72], [0.31, 0.52], [0.5, 0.64], [0.69, 0.46], [0.88, 0.6]];
+        ctx.strokeStyle = AC(0.42); ctx.lineWidth = 1.4 * S; ctx.beginPath();
+        for (let i = 0; i < pylons.length - 1; i++) { const a = pylons[i], b = pylons[i + 1]; const mx = (a[0] + b[0]) / 2 * W, my = (a[1] + b[1]) / 2 * H + 16 * S; ctx.moveTo(a[0] * W, a[1] * H); ctx.quadraticCurveTo(mx, my, b[0] * W, b[1] * H); }
+        ctx.stroke();
+        pylons.forEach((n) => { const x = n[0] * W, y = n[1] * H; ctx.strokeStyle = SL(0.5); ctx.lineWidth = 1.6 * S; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 26 * S); ctx.moveTo(x - 10 * S, y - 16 * S); ctx.lineTo(x + 10 * S, y - 16 * S); ctx.stroke(); });
+        const ph = (t * 0.5) % 1, seg = Math.min(pylons.length - 2, Math.floor(ph * (pylons.length - 1))), lt = ph * (pylons.length - 1) - seg;
+        const a = pylons[seg], b = pylons[seg + 1], px = (a[0] + (b[0] - a[0]) * lt) * W, py = (a[1] + (b[1] - a[1]) * lt) * H;
+        ctx.fillStyle = AC(0.95); ctx.beginPath(); ctx.arc(px, py, (3.4 + h) * S, 0, 6.283); ctx.fill();
+        const apr = (t * 0.7) % 1, an = pylons[3]; ctx.strokeStyle = AC((1 - apr) * (0.5 + 0.2 * h)); ctx.lineWidth = 1.6 * S; ctx.beginPath(); ctx.arc(an[0] * W, an[1] * H, (6 + apr * 34) * S, 0, 6.283); ctx.stroke();
+      },
+      gov: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150, bw = W / 11;
+        for (let i = 0; i < 10; i++) {
+          const base = 0.28 + ((o.seed + i * 53) % 42) / 100;
+          const bh = (base + 0.05 * Math.sin(t * 1.1 + i)) * H * (0.5 + 0.5 * h);
+          const x = 0.07 * W + i * bw, y = 0.9 * H;
+          ctx.fillStyle = i % 3 === 0 ? AC(0.5) : SL(0.22);
+          ctx.fillRect(x, y - bh, bw * 0.66, bh);
+          if (i % 3 === 0) { ctx.fillStyle = AC(0.9); ctx.fillRect(x + bw * 0.28, y - bh - 4 * S, 3 * S, 3 * S); }
+        }
+        ctx.strokeStyle = AC(0.16 + 0.14 * h); ctx.lineWidth = S; ctx.beginPath();
+        for (let i = 0; i < 8; i++) { ctx.moveTo((0.1 + i * 0.11) * W, 0.9 * H); ctx.lineTo((0.16 + i * 0.11) * W, 0.58 * H); } ctx.stroke();
+      },
+      logistics: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150, hub = [0.5, 0.5], stops = [[0.16, 0.28], [0.84, 0.3], [0.82, 0.74], [0.18, 0.72], [0.5, 0.18], [0.5, 0.84]];
+        ctx.strokeStyle = SL(0.14); ctx.lineWidth = S; ctx.setLineDash([4 * S, 5 * S]);
+        stops.forEach((s) => { ctx.beginPath(); ctx.moveTo(hub[0] * W, hub[1] * H); ctx.lineTo(s[0] * W, s[1] * H); ctx.stroke(); });
+        ctx.setLineDash([]);
+        stops.forEach((s, i) => {
+          const ph = (t * (0.4 + h * 0.3) + i * 0.18) % 1;
+          const x = (hub[0] + (s[0] - hub[0]) * ph) * W, y = (hub[1] + (s[1] - hub[1]) * ph) * H;
+          ctx.fillStyle = AC(0.9); ctx.fillRect(x - 4 * S, y - 4 * S, 8 * S, 8 * S);
+          ctx.fillStyle = SL(0.5); ctx.beginPath(); ctx.arc(s[0] * W, s[1] * H, 4 * S, 0, 6.283); ctx.fill();
+        });
+        ctx.fillStyle = AC(0.98); ctx.beginPath(); ctx.arc(hub[0] * W, hub[1] * H, 7 * S, 0, 6.283); ctx.fill();
+        ctx.strokeStyle = AC(0.4); ctx.lineWidth = 1.6 * S; ctx.beginPath(); ctx.arc(hub[0] * W, hub[1] * H, (13 + Math.sin(t * 3) * 2) * S, 0, 6.283); ctx.stroke();
+      },
+      infra: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150;
+        const cols = 8, rows = 5, gx = 0.1, gw = 0.8, gy = 0.28, gh = 0.56;
+        const pt = (i, j) => { const px = gx + (i / (cols - 1)) * gw, base = gy + (j / (rows - 1)) * gh; const skew = (i - (cols - 1) / 2) * (j / (rows - 1)) * 0.03; return [ (px + skew) * W, (base - (j / (rows - 1)) * 0.06 * (0.5 + 0.5 * h)) * H ]; };
+        ctx.strokeStyle = AC(0.26 + 0.12 * h); ctx.lineWidth = S; ctx.beginPath();
+        for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) { const p = pt(i, j); if (i < cols - 1) { const q = pt(i + 1, j); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); } if (j < rows - 1) { const q = pt(i, j + 1); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); } }
+        ctx.stroke();
+        for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) { const p = pt(i, j), ph = (t * 0.5 + (i + j) * 0.1) % 1; ctx.fillStyle = AC(0.35 + 0.5 * (0.5 + 0.5 * Math.sin(ph * 6.283))); ctx.beginPath(); ctx.arc(p[0], p[1], 2.4 * S, 0, 6.283); ctx.fill(); }
+      },
+      construction: (o, t, h) => {
+        const { ctx, W, H } = o, S = Math.min(W, H) / 150;
+        const bx = 0.34, bw = 0.32, by = 0.18, bh = 0.66, floors = 6, cols = 3;
+        const x0 = bx * W, x1 = (bx + bw) * W, yTop = by * H, yBot = (by + bh) * H, fH = (yBot - yTop) / floors, cw = (x1 - x0) / cols;
+        const prog = (t * 0.16) % 1.4;
+        ctx.strokeStyle = AC(0.5); ctx.lineWidth = 1.4 * S; ctx.strokeRect(x0, yTop, x1 - x0, yBot - yTop);
+        for (let c = 1; c < cols; c++) { ctx.strokeStyle = AC(0.28); ctx.lineWidth = S; ctx.beginPath(); ctx.moveTo(x0 + c * cw, yTop); ctx.lineTo(x0 + c * cw, yBot); ctx.stroke(); }
+        for (let f = 0; f < floors; f++) {
+          const fy = yBot - (f + 1) * fH;
+          ctx.strokeStyle = AC(0.3); ctx.lineWidth = S; ctx.beginPath(); ctx.moveTo(x0, fy); ctx.lineTo(x1, fy); ctx.stroke();
+          const fillLevel = Math.min(1, Math.max(0, prog * floors - f));
+          if (fillLevel > 0) { ctx.fillStyle = AC(0.16 + 0.08 * h); ctx.fillRect(x0, yBot - (f + 1) * fH, x1 - x0, fH * fillLevel); }
+        }
+        const cx = x1 + 16 * S; ctx.strokeStyle = SL(0.45); ctx.lineWidth = 1.6 * S; ctx.beginPath(); ctx.moveTo(cx, yBot); ctx.lineTo(cx, yTop - 20 * S); ctx.lineTo(x0 + 10 * S, yTop - 20 * S); ctx.stroke();
+        const hookX = x0 + 10 * S + (Math.sin(t * 0.8) * 0.5 + 0.5) * (cx - x0 - 20 * S);
+        ctx.strokeStyle = AC(0.65); ctx.lineWidth = S; ctx.beginPath(); ctx.moveTo(hookX, yTop - 20 * S); ctx.lineTo(hookX, yTop - 20 * S + (16 + Math.sin(t * 2) * 5) * S); ctx.stroke();
+      }
+    };
+
+    const setActive = (idx) => {
+      if (idx < 0 || idx >= cards.length) return;
+      navitems.forEach((n, i) => n.classList.toggle('on', i === idx));
+      const o = cards[idx];
+      if (o && !o.activated) { o.activated = true; o.born = performance.now(); }
+      this._iActive = idx;
+    };
+    const go = (i) => {
+      const s = cards[i] && cards[i].el; if (!s) return;
+      const left = s.offsetLeft - (track.clientWidth - s.offsetWidth) / 2;
+      track.scrollTo({ left: left, behavior: 'smooth' });
+      setActive(i);
+    };
+    navitems.forEach((n) => n.addEventListener('click', () => go(+n.getAttribute('data-go'))));
+    const onScroll = () => {
+      const c = track.getBoundingClientRect(), cx = c.left + c.width / 2;
+      let best = 0, bd = 1e9;
+      cards.forEach((o, i) => { const r = o.el.getBoundingClientRect(); const d = Math.abs((r.left + r.width / 2) - cx); if (d < bd) { bd = d; best = i; } });
+      if (best !== this._iActive) setActive(best);
+    };
+    track.addEventListener('scroll', onScroll, { passive: true });
+    this._iTrack = track; this._iOnScroll = onScroll;
+
+    // Native trackpad scrolling handles horizontal sliding — nothing to intercept.
+
+    setActive(0);
+  }
+
+  _initTwin(retry) {
+    const slot = document.querySelector('#lepton-how [data-ch-anim="0"]');
+    const canvas = slot && slot.querySelector('.twin-canvas');
+    if (!slot || !canvas) { if ((retry || 0) < 50) this._twTimer = setTimeout(() => this._initTwin((retry || 0) + 1), 90); return; }
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0;
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const smooth = (v) => { v = clamp(v); return v * v * (3 - 2 * v); };
+    const ease = (now, s, d) => smooth((now - s) / d);
+    const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    const rgb = (c, a) => 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',' + a + ')';
+    // enterprise palette — white / off-white / light gray / soft blue / indigo
+    const BLUE = [74, 120, 214], GRAY = [150, 165, 192];
+    const BL = (a) => rgb(BLUE, a);
+    const GREEN = [52, 168, 83]; // final digital-twin mesh — google-map green
+    const GR = (a) => rgb(GREEN, a);
+    const RC = [214, 221, 233], LC = [231, 236, 245]; // right / left face grays
+
+    // isometric projection, auto-fitted to a fixed 0..7 plot
+    const IW = 1, IH = 0.5, IZ = 0.62;
+    const rp = (x, y, z) => [(x - y) * IW, (x + y) * IH - z * IZ];
+    let sc = 1, ox = 0, oy = 0, pX = 0, pY = 0;
+    const layout = () => {
+      let mnX = 1e9, mxX = -1e9, mnY = 1e9, mxY = -1e9;
+      const ac = (p) => { if (p[0] < mnX) mnX = p[0]; if (p[0] > mxX) mxX = p[0]; if (p[1] < mnY) mnY = p[1]; if (p[1] > mxY) mxY = p[1]; };
+      for (let gx = 0; gx <= 7; gx++) for (let gy = 0; gy <= 7; gy++) ac(rp(gx, gy, 0));
+      ac(rp(1.2, 2.2, 2.1)); // tower reach
+      const spanX = (mxX - mnX) || 1, spanY = (mxY - mnY) || 1;
+      sc = Math.min((W * 0.88) / spanX, (H * 0.8) / spanY);
+      ox = (W - (mxX + mnX) * sc) / 2; oy = (H - (mxY + mnY) * sc) / 2;
+    };
+    const S = (x, y, z) => { const p = rp(x, y, z); return [ox + pX + p[0] * sc, oy + pY + p[1] * sc]; };
+    const setSize = () => { const r = canvas.getBoundingClientRect(); W = r.width; H = r.height; canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); layout(); };
+    setSize();
+    this._twro = new ResizeObserver(setSize); this._twro.observe(slot);
+
+    // ---- scene constants ----
+    const wx0 = 2.72, wx1 = 3.32;          // vertical water channel
+    const ry0 = 3.26, ry1 = 3.54, rxA = 0.3, rxB = 6.7; // road band along y≈3.4
+    const xStart = 1.2, xEnd = 5.9;        // pulse travel range along road
+    // activation fractions along the pulse (bridge → factory → office …)
+    const F_SUB = 0.04, F_BRIDGE = 0.39, F_WARE = 0.585, F_FACT = 0.72, F_OFF = 0.99;
+
+    // isometric building: faces + window facade + blue activation outline + green twin tracing
+    const box = (x0, y0, x1, y1, h, prog, topCol, green) => {
+      green = green || 0;
+      const tTL = S(x0, y0, h), tTR = S(x1, y0, h), tBR = S(x1, y1, h), tBL = S(x0, y1, h);
+      const bTR = S(x1, y0, 0), bBR = S(x1, y1, 0), bBL = S(x0, y1, 0);
+      const top = topCol || [255, 255, 255];
+      ctx.fillStyle = rgb(RC, 1); ctx.beginPath(); ctx.moveTo(bTR[0], bTR[1]); ctx.lineTo(bBR[0], bBR[1]); ctx.lineTo(tBR[0], tBR[1]); ctx.lineTo(tTR[0], tTR[1]); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = rgb(LC, 1); ctx.beginPath(); ctx.moveTo(bBL[0], bBL[1]); ctx.lineTo(bBR[0], bBR[1]); ctx.lineTo(tBR[0], tBR[1]); ctx.lineTo(tBL[0], tBL[1]); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = rgb(top, 1); ctx.beginPath(); ctx.moveTo(tTL[0], tTL[1]); ctx.lineTo(tTR[0], tTR[1]); ctx.lineTo(tBR[0], tBR[1]); ctx.lineTo(tBL[0], tBL[1]); ctx.closePath(); ctx.fill();
+      // window facade on the two visible faces — reads as a building, not a box
+      const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+      const floors = Math.max(2, Math.round(h * 3.4));
+      const cols = Math.max(2, Math.round((x1 - x0) * 4.2));
+      const facade = (bA, bB, tA, tB, style, w) => {
+        ctx.strokeStyle = style; ctx.lineWidth = w;
+        for (let k = 1; k < floors; k++) { const t = k / floors, A = lerp(bA, tA, t), B = lerp(bB, tB, t); ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); }
+        for (let k = 1; k < cols; k++) { const t = k / cols, A = lerp(bA, bB, t), B = lerp(tA, tB, t); ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); }
+      };
+      facade(bTR, bBR, tTR, tBR, 'rgba(120,140,175,0.20)', 1); // right face
+      facade(bBL, bBR, tBL, tBR, 'rgba(120,140,175,0.14)', 1); // left face
+      // outline stroker (shared by blue activation + green twin passes)
+      const edges = [[bTR, tTR], [bBR, tBR], [bBL, tBL]];
+      const ring = [tTL, tTR, tBR, tBL];
+      const strokeAll = (style, w, blur, blurCol) => {
+        ctx.strokeStyle = style; ctx.lineWidth = w; if (blur) { ctx.shadowColor = blurCol; ctx.shadowBlur = blur; }
+        edges.forEach((e) => { ctx.beginPath(); ctx.moveTo(e[0][0], e[0][1]); ctx.lineTo(e[1][0], e[1][1]); ctx.stroke(); });
+        ctx.beginPath(); ring.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.stroke();
+        ctx.shadowBlur = 0;
+      };
+      strokeAll(rgb(mix(GRAY, BLUE, prog), 0.45 + 0.55 * prog), 1 + 0.4 * prog, prog > 0.01 ? 9 * prog : 0, BL(0.7 * prog));
+      if (green > 0.01) {
+        facade(bTR, bBR, tTR, tBR, GR(0.4 * green), 1);
+        facade(bBL, bBR, tBL, tBR, GR(0.3 * green), 1);
+        strokeAll(GR(0.9 * green), 1.3, 8 * green, GR(0.85 * green));
+      }
+    };
+    const roadQuad = (x0, x1, col) => { const a = S(x0, ry0, 0), b = S(x1, ry0, 0), c = S(x1, ry1, 0), d = S(x0, ry1, 0); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath(); ctx.fill(); };
+
+    // draw(now = continuous seconds, seq = scripted-timeline seconds)
+    const draw = (now, seq) => {
+      ctx.clearRect(0, 0, W, H);
+      // very subtle scroll parallax — camera almost static
+      const rc = slot.getBoundingClientRect();
+      const par = Math.max(-1, Math.min(1, -((rc.top + rc.height / 2) - window.innerHeight / 2) / window.innerHeight));
+      pX = par * 4; pY = par * 8;
+
+      // timeline phases
+      const towerOn = ease(seq, 0.2, 0.6);
+      const pp = smooth((seq - 0.5) / 2.7);      // pulse front travels the road
+      const subOn = smooth((pp - F_SUB) / 0.13);
+      const brOn = smooth((pp - F_BRIDGE) / 0.13);
+      const waOn = smooth((pp - F_WARE) / 0.13);
+      const faOn = smooth((pp - F_FACT) / 0.13);
+      const ofOn = smooth((pp - F_OFF) / 0.13);
+      const mkP = ease(seq, 3.3, 0.7);           // asset markers rise in
+      const netP = ease(seq, 3.9, 1.0);          // network connections fade in
+      const prtP = ease(seq, 4.7, 0.9);          // data particles begin flowing
+      const gridP = ease(seq, 5.2, 1.1);         // digital grid appears beneath
+
+      // 1 · faint transparent digital grid beneath everything
+      if (gridP > 0.001) {
+        ctx.lineWidth = 1;
+        for (let gx = 0; gx <= 7; gx++) { const p = S(gx, 0, 0), q = S(gx, 7, 0); ctx.strokeStyle = BL(0.09 * gridP); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); }
+        for (let gy = 0; gy <= 7; gy++) { const p = S(0, gy, 0), q = S(7, gy, 0); ctx.strokeStyle = BL(0.09 * gridP); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); }
+      }
+
+      // 2 · water channel + gentle shimmer
+      {
+        const a = S(wx0, 0, 0), b = S(wx1, 0, 0), c = S(wx1, 7, 0), d = S(wx0, 7, 0);
+        ctx.fillStyle = 'rgba(150,186,232,0.18)';
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath(); ctx.fill();
+        const u = (now * 0.09) % 1, s1 = S(wx0 + 0.04, u * 7, 0), s2 = S(wx1 - 0.04, u * 7, 0);
+        ctx.strokeStyle = 'rgba(176,206,244,0.45)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s1[0], s1[1]); ctx.lineTo(s2[0], s2[1]); ctx.stroke();
+      }
+
+      // 3 · road — asphalt band with curbs + dashed centre lane
+      roadQuad(rxA - 0.03, rxB + 0.03, 'rgba(196,202,214,1)'); // curb/shoulder
+      roadQuad(rxA, rxB, 'rgba(214,219,229,1)');                // asphalt
+      const pulseX = xStart + pp * (xEnd - xStart);
+      const lit = Math.max(0.001, towerOn) * (pp > 0 ? 1 : 0);
+      if (lit > 0.01) roadQuad(xStart, pulseX, BL(0.16 * lit));
+      { // dashed centre lane markings
+        const p = S(rxA + 0.15, 3.4, 0.01), q = S(rxB - 0.15, 3.4, 0.01);
+        ctx.setLineDash([5, 6]); ctx.lineDashOffset = -(now * 9) % 11;
+        ctx.strokeStyle = 'rgba(246,247,250,0.9)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+        ctx.setLineDash([]); ctx.lineDashOffset = 0;
+      }
+      if (netP > 0.01) { // green digital-twin tracing along the road + live traffic
+        ctx.shadowColor = GR(0.55 * netP); ctx.shadowBlur = 6 * netP; ctx.strokeStyle = GR(0.7 * netP); ctx.lineWidth = 1.3;
+        [ry0, ry1, 3.4].forEach((yy) => { const p = S(rxA, yy, 0.01), q = S(rxB, yy, 0.01); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); });
+        ctx.shadowBlur = 0;
+        for (let k = 0; k < 3; k++) { const u = (now * 0.16 + k / 3) % 1, dx = rxA + u * (rxB - rxA), gp = S(dx, 3.4, 0.02); ctx.shadowColor = GR(0.9); ctx.shadowBlur = 7 * netP; ctx.fillStyle = GR(0.95 * netP); ctx.beginPath(); ctx.arc(gp[0], gp[1], 1.7, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0; }
+      }
+      // steady faint data dots travelling the lit road after the sweep
+      if (pp >= 0.999 && netP < 0.01) {
+        for (let k = 0; k < 3; k++) {
+          const u = (now * 0.14 + k / 3) % 1, dx = xStart + u * (xEnd - xStart), gp = S(dx, 3.4, 0.02);
+          ctx.shadowColor = BL(0.7); ctx.shadowBlur = 7 * prtP; ctx.fillStyle = BL(0.7 * prtP); ctx.beginPath(); ctx.arc(gp[0], gp[1], 1.7, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+        }
+      }
+      // 4 · bridge deck spanning the water on the road
+      {
+        const z = 0.15;
+        const a = S(wx0 - 0.06, ry0, z), b = S(wx1 + 0.06, ry0, z), c = S(wx1 + 0.06, ry1, z), d = S(wx0 - 0.06, ry1, z);
+        const e = S(wx0 - 0.06, ry1, 0), f = S(wx1 + 0.06, ry1, 0);
+        ctx.fillStyle = 'rgba(215,221,233,1)'; ctx.beginPath(); ctx.moveTo(d[0], d[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(f[0], f[1]); ctx.lineTo(e[0], e[1]); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = 'rgba(240,243,248,1)'; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = rgb(mix(GRAY, BLUE, brOn), 0.55 + 0.45 * brOn); ctx.lineWidth = 1 + brOn;
+        if (brOn > 0.01) { ctx.shadowColor = BL(0.8 * brOn); ctx.shadowBlur = 8 * brOn; }
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(d[0], d[1]); ctx.lineTo(c[0], c[1]); ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+      // leading blue pulse dot on the road
+      if (pp > 0 && pp < 1 && towerOn > 0.2) {
+        const gp = S(pulseX, 3.4, 0.02);
+        ctx.shadowColor = BL(0.95); ctx.shadowBlur = 13; ctx.fillStyle = BL(0.95); ctx.beginPath(); ctx.arc(gp[0], gp[1], 3.2, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+      }
+
+      // 5 · assets — telecom tower, substation, factory, warehouse, office + trees (depth sorted)
+      const drawTower = () => {
+        const prog = towerOn;
+        box(0.98, 2.4, 1.42, 2.8, 0.32, prog, null, netP); // equipment shelter at base
+        const cx = 1.18, cy = 2.05, half = 0.24, apex = 2.05;
+        const corners = [[cx - half, cy - half], [cx + half, cy - half], [cx + half, cy + half], [cx - half, cy + half]];
+        const ap = S(cx, cy, apex);
+        const ringPt = (c, z) => { const t = z / apex; return S(cx + (c[0] - cx) * (1 - t), cy + (c[1] - cy) * (1 - t), z); };
+        // four tapering legs
+        if (prog > 0.01) { ctx.shadowColor = BL(0.4 * prog); ctx.shadowBlur = 5 * prog; }
+        ctx.strokeStyle = rgb(mix(GRAY, BLUE, prog), 0.8); ctx.lineWidth = 1.5;
+        corners.forEach((c) => { const b = S(c[0], c[1], 0); ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.lineTo(ap[0], ap[1]); ctx.stroke(); });
+        ctx.shadowBlur = 0;
+        // horizontal rings + X cross-bracing on the two visible faces
+        ctx.lineWidth = 1; ctx.strokeStyle = rgb(mix(GRAY, BLUE, prog), 0.5);
+        const levels = [0.0, 0.55, 1.1, 1.55];
+        levels.forEach((z) => { const pts = corners.map((c) => ringPt(c, z)); ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.stroke(); });
+        for (let li = 0; li < levels.length - 1; li++) { const z0 = levels[li], z1 = levels[li + 1]; [[0, 1], [1, 2]].forEach((pr) => { const a0 = ringPt(corners[pr[0]], z0), a1 = ringPt(corners[pr[1]], z1), b0 = ringPt(corners[pr[1]], z0), b1 = ringPt(corners[pr[0]], z1); ctx.beginPath(); ctx.moveTo(a0[0], a0[1]); ctx.lineTo(a1[0], a1[1]); ctx.moveTo(b0[0], b0[1]); ctx.lineTo(b1[0], b1[1]); ctx.stroke(); }); }
+        const beacon = S(cx, cy, apex + 0.05), bl = 0.5 + 0.5 * Math.sin(now * 3);
+        for (let k = 0; k < 2; k++) { const rr = (now * 0.5 + k / 2) % 1; ctx.strokeStyle = BL((1 - rr) * 0.32 * towerOn); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(beacon[0], beacon[1], 3 + rr * 20, 0, 6.283); ctx.stroke(); }
+        for (let k = 0; k < 2; k++) { const rr = (now * 0.5 + k / 2) % 1; ctx.strokeStyle = BL((1 - rr) * 0.32 * prog); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(beacon[0], beacon[1], 3 + rr * 20, 0, 6.283); ctx.stroke(); }
+        ctx.shadowColor = BL(0.9); ctx.shadowBlur = 6 + 8 * prog; ctx.fillStyle = BL(0.35 + 0.6 * prog * bl); ctx.beginPath(); ctx.arc(beacon[0], beacon[1], 2.4, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+      };
+      const drawSub = () => {
+        box(0.7, 4.2, 1.5, 5.0, 0.4, subOn, null, netP);
+        const p1 = S(0.85, 4.35, 0.4), p1t = S(0.85, 4.35, 0.82), p2 = S(1.35, 4.35, 0.4), p2t = S(1.35, 4.35, 0.82);
+        ctx.strokeStyle = rgb(mix(GRAY, BLUE, subOn), 0.7); ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p1t[0], p1t[1]); ctx.moveTo(p2[0], p2[1]); ctx.lineTo(p2t[0], p2t[1]); ctx.stroke();
+        ctx.strokeStyle = rgb(mix(GRAY, BLUE, subOn), 0.45); ctx.beginPath(); ctx.moveTo(p1t[0], p1t[1]); ctx.lineTo(p2t[0], p2t[1]); ctx.stroke();
+      };
+      const drawFactory = () => {
+        box(4.05, 1.35, 5.15, 2.55, 0.62, faOn, null, netP);
+        const cb = S(4.95, 1.6, 0.62), ct = S(4.95, 1.6, 1.12);
+        ctx.lineCap = 'round'; ctx.lineWidth = 3.2; ctx.strokeStyle = rgb(mix(GRAY, BLUE, faOn), 0.7);
+        ctx.beginPath(); ctx.moveTo(cb[0], cb[1]); ctx.lineTo(ct[0], ct[1]); ctx.stroke(); ctx.lineCap = 'butt'; ctx.lineWidth = 1;
+      };
+      const drawWare = () => { box(3.55, 4.3, 4.35, 5.1, 0.42, waOn, [248, 250, 253], netP); };
+      const drawOffice = () => {
+        box(5.5, 4.1, 6.3, 5.3, 1.5, ofOn, [252, 253, 255], netP);
+        ctx.strokeStyle = BL(0.28 * ofOn); ctx.lineWidth = 1;
+        for (let k = 1; k <= 4; k++) { const z = 1.5 * k / 5, p = S(6.3, 4.1, z), q = S(6.3, 5.3, z); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); }
+      };
+      const drawTree = (x, y) => {
+        const tr = S(x, y, 0), tt = S(x, y, 0.22);
+        ctx.strokeStyle = 'rgba(150,140,128,0.7)'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(tr[0], tr[1]); ctx.lineTo(tt[0], tt[1]); ctx.stroke();
+        const cc = S(x, y, 0.5);
+        ctx.fillStyle = 'rgba(196,214,202,0.95)'; ctx.beginPath(); ctx.arc(cc[0], cc[1], 7, 0, 6.283); ctx.fill();
+        ctx.fillStyle = 'rgba(216,229,221,0.9)'; ctx.beginPath(); ctx.arc(cc[0] - 2, cc[1] - 2.4, 4, 0, 6.283); ctx.fill();
+      };
+      const items = [
+        { d: 1.2 + 2.2, f: drawTower },
+        { d: 1.1 + 4.6, f: drawSub },
+        { d: 4.6 + 1.95, f: drawFactory },
+        { d: 3.95 + 4.7, f: drawWare },
+        { d: 5.9 + 4.7, f: drawOffice },
+        { d: 0.6 + 2.9, f: () => drawTree(0.6, 2.9) },
+        { d: 6.3 + 2.0, f: () => drawTree(6.3, 2.0) },
+        { d: 2.0 + 5.4, f: () => drawTree(2.0, 5.4) },
+        { d: 4.9 + 5.5, f: () => drawTree(4.9, 5.5) }
+      ];
+      items.sort((a, b) => a.d - b.d).forEach((it) => it.f());
+
+      // 6 · network connections (above buildings) + flowing data particles
+      const nodes = [
+        { x: 1.2, y: 2.2, z: 2.1 },   // tower
+        { x: 4.6, y: 1.95, z: 1.35 }, // factory
+        { x: 5.9, y: 4.7, z: 1.7 },   // office
+        { x: 3.95, y: 4.7, z: 0.6 },  // warehouse
+        { x: 1.1, y: 4.6, z: 0.65 },  // substation
+        { x: 3.02, y: 3.4, z: 0.45 }  // bridge
+      ];
+      const links = [[0, 1], [0, 5], [0, 4], [1, 2], [1, 3], [3, 2], [5, 3]];
+      if (netP > 0.001) {
+        links.forEach((lk, idx) => {
+          const a = nodes[lk[0]], b = nodes[lk[1]], p = S(a.x, a.y, a.z), q = S(b.x, b.y, b.z);
+          ctx.shadowColor = GR(0.55 * netP); ctx.shadowBlur = 6 * netP;
+          ctx.strokeStyle = GR(0.55 * netP); ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); ctx.shadowBlur = 0;
+          if (prtP > 0) { const u = (now * 0.25 + idx * 0.37) % 1, gx = p[0] + (q[0] - p[0]) * u, gy = p[1] + (q[1] - p[1]) * u; ctx.shadowColor = GR(0.9); ctx.shadowBlur = 8 * prtP; ctx.fillStyle = GR(0.95 * prtP); ctx.beginPath(); ctx.arc(gx, gy, 1.8, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0; }
+        });
+        nodes.forEach((nn) => { const p = S(nn.x, nn.y, nn.z); ctx.fillStyle = GR(0.2 * netP); ctx.beginPath(); ctx.arc(p[0], p[1], 4.5, 0, 6.283); ctx.fill(); ctx.shadowColor = GR(0.9); ctx.shadowBlur = 8 * netP; ctx.fillStyle = GR(0.85 * netP); ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0; });
+      }
+
+      // 7 · asset markers (map pins) rise in
+      const pins = [[1.2, 2.2, 2.3], [4.6, 1.95, 1.45], [5.9, 4.7, 1.85], [3.95, 4.7, 0.75], [1.1, 4.6, 0.85]];
+      if (mkP > 0.001) {
+        pins.forEach((pn, i) => {
+          const app = smooth((mkP - i * 0.06) / 0.5); if (app <= 0) return;
+          const rise = (1 - app) * 8, pr = (now * 0.6 + i * 0.22) % 1, p = S(pn[0], pn[1], pn[2]), py = p[1] - rise;
+          ctx.strokeStyle = BL((1 - pr) * 0.35 * app); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(p[0], py + 5, 2 + pr * 8, 0, 6.283); ctx.stroke();
+          ctx.fillStyle = BL(0.9 * app); ctx.beginPath(); ctx.arc(p[0], py, 3.2, 0, 6.283); ctx.moveTo(p[0], py + 6); ctx.lineTo(p[0] - 2.4, py + 1.6); ctx.lineTo(p[0] + 2.4, py + 1.6); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(p[0], py, 1.2, 0, 6.283); ctx.fill();
+        });
+      }
+    };
+
+    if (this.reduced) { draw(3.4, 12); return; }
+    const vis = () => { const r = slot.getBoundingClientRect(); return r.bottom > -40 && r.top < window.innerHeight - 60; };
+    let t0 = null, wasVis = false;
+    const loop = () => {
+      this._twRaf = requestAnimationFrame(loop);
+      const now = performance.now() / 1000;
+      const v = vis();
+      if (v && !wasVis) t0 = performance.now(); // (re)start sequence each time it enters
+      wasVis = v;
+      if (!v || t0 === null) return;
+      draw(now, (performance.now() - t0) / 1000);
+    };
+    loop();
+  }
+
+  _initLoc(retry) {
+    const slot = document.querySelector('#lepton-how [data-ch-anim="1"]');
+    const canvas = slot && slot.querySelector('.loc-canvas');
+    if (!slot || !canvas) { if ((retry || 0) < 50) this._locTimer = setTimeout(() => this._initLoc((retry || 0) + 1), 90); return; }
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0;
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const smooth = (v) => { v = clamp(v); return v * v * (3 - 2 * v); };
+    const ease = (now, s, d) => smooth((now - s) / d);
+    const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const rgb = (c, a) => 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',' + a + ')';
+    const BLUE = [64, 116, 220], SKY = [143, 178, 245], INDIGO = [99, 102, 214], VIOLET = [140, 122, 240], GRAY = [150, 165, 192];
+    const BL = (a) => rgb(BLUE, a), IN = (a) => rgb(INDIGO, a), VI = (a) => rgb(VIOLET, a);
+    const RC = [214, 221, 233], LC = [231, 236, 245], PARK = [206, 226, 210];
+
+    // ---- seeded city ----
+    let seed = 481207;
+    const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+    const GRID = 8, C = GRID / 2;
+    const isPlaza = (i, j) => (i === 3 || i === 4) && (j === 3 || j === 4);
+    const parkCells = new Set(['1,6', '2,6', '1,5']);
+    const builds = [];
+    for (let i = 0; i < GRID; i++) for (let j = 0; j < GRID; j++) {
+      if (isPlaza(i, j) || parkCells.has(i + ',' + j)) continue;
+      const r = rnd(); let type, fp, h, roof;
+      if (r < 0.24) { type = 'office'; fp = 0.66; h = 1.5 + rnd() * 1.5; roof = [252, 253, 255]; }
+      else if (r < 0.52) { type = 'retail'; fp = 0.86; h = 0.42 + rnd() * 0.28; roof = [246, 248, 252]; }
+      else { type = 'res'; fp = 0.74; h = 0.7 + rnd() * 0.7; roof = [255, 255, 255]; }
+      builds.push({ i, j, type, fp, h, roof, blink: rnd() * 6.28 });
+    }
+    // tall offices → connectable assets; a few demand hotspots + opportunity zones
+    const offices = builds.filter((b) => b.type === 'office').sort((a, b) => b.h - a.h).slice(0, 5);
+    const hotspots = [[6, 2], [2, 1], [5, 6]];
+    const oppZones = [[6, 5], [1, 3]];
+
+    // ---- isometric projection, auto-fit ----
+    const IW = 1, IH = 0.5, IZ = 0.62;
+    const rp = (x, y, z) => [(x - y) * IW, (x + y) * IH - z * IZ];
+    let sc = 1, ox = 0, oy = 0, pX = 0, pY = 0;
+    const layout = () => {
+      let mnX = 1e9, mxX = -1e9, mnY = 1e9, mxY = -1e9;
+      const ac = (p) => { if (p[0] < mnX) mnX = p[0]; if (p[0] > mxX) mxX = p[0]; if (p[1] < mnY) mnY = p[1]; if (p[1] > mxY) mxY = p[1]; };
+      for (let g = 0; g <= GRID; g++) { ac(rp(0, g, 0)); ac(rp(GRID, g, 0)); ac(rp(g, 0, 0)); ac(rp(g, GRID, 0)); }
+      ac(rp(C, C, 3.4));
+      const spanX = (mxX - mnX) || 1, spanY = (mxY - mnY) || 1;
+      sc = Math.min((W * 0.82) / spanX, (H * 0.72) / spanY);
+      ox = (W - (mxX + mnX) * sc) / 2; oy = (H - (mxY + mnY) * sc) / 2;
+    };
+    const S = (x, y, z) => { const p = rp(x, y, z); return [ox + pX + p[0] * sc, oy + pY + p[1] * sc]; };
+    const setSize = () => { const r = canvas.getBoundingClientRect(); W = r.width; H = r.height; canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); layout(); };
+    setSize();
+    this._locro = new ResizeObserver(setSize); this._locro.observe(slot);
+
+    const quad = (a, b, c, d) => { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath(); ctx.fill(); };
+    const line = (p, q) => { ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke(); };
+    const isoRing = (r, style, w) => { ctx.strokeStyle = style; ctx.lineWidth = w; ctx.beginPath(); for (let a = 0; a <= 40; a++) { const ang = a / 40 * 6.2832, p = S(C + Math.cos(ang) * r, C + Math.sin(ang) * r, 0.02); a ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); } ctx.closePath(); ctx.stroke(); };
+
+    // ---- dashboard cards ----
+    const cards = [].slice.call(slot.querySelectorAll('.lc-card')).map((c) => ({ el: c, t: parseFloat(c.dataset.t), cols: [].slice.call(c.querySelectorAll('.lc-col')), fill: c.querySelector('.lc-fill'), val: c.querySelector('.lc-val') }));
+    const updateCards = (seq) => {
+      cards.forEach((c) => {
+        const on = seq > c.t; c.el.classList.toggle('on', on);
+        const cp = smooth((seq - (c.t + 0.18)) / 1.15);
+        c.cols.forEach((col) => { col.style.height = (parseFloat(col.dataset.h) * cp) + '%'; });
+        if (c.fill) c.fill.style.width = (parseFloat(c.fill.dataset.w) * cp) + '%';
+        if (c.val) { const tg = parseFloat(c.val.dataset.target), v = tg * cp; c.val.textContent = c.val.dataset.dec ? v.toFixed(1) : Math.round(v); }
+      });
+    };
+
+    const draw = (now, seq) => {
+      ctx.clearRect(0, 0, W, H);
+      const rc = slot.getBoundingClientRect();
+      const par = Math.max(-1, Math.min(1, -((rc.top + rc.height / 2) - window.innerHeight / 2) / window.innerHeight));
+      pX = par * 5; pY = par * 10;
+
+      // phase progress
+      const ringP = ease(seq, 0.6, 1.2);
+      const roadP = ease(seq, 1.0, 1.3);
+      const bldgP = ease(seq, 1.6, 1.4);
+      const accP = ease(seq, 2.2, 1.2);
+      const movP = ease(seq, 2.6, 1.2);
+      const hotP = ease(seq, 3.0, 1.2);
+      const oppP = ease(seq, 3.4, 1.2);
+      const netP = ease(seq, 3.8, 1.3);
+      const mON = ease(seq, 0.2, 0.6);
+
+      // ground plane wash
+      { const a = S(0, 0, 0), b = S(GRID, 0, 0), c = S(GRID, GRID, 0), d = S(0, GRID, 0); ctx.fillStyle = 'rgba(255,255,255,0.35)'; quad(a, b, c, d); }
+      // faint base grid
+      ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(96,124,178,0.08)';
+      for (let g = 0; g <= GRID; g++) { line(S(0, g, 0), S(GRID, g, 0)); line(S(g, 0, 0), S(g, GRID, 0)); }
+
+      // parks
+      parkCells.forEach((k) => { const p = k.split(','), i = +p[0], j = +p[1]; ctx.fillStyle = rgb(PARK, 0.85); quad(S(i + 0.04, j + 0.04, 0), S(i + 0.96, j + 0.04, 0), S(i + 0.96, j + 0.96, 0), S(i + 0.04, j + 0.96, 0)); });
+
+      // demand hotspots — soft radial glow on the ground
+      if (hotP > 0.01) hotspots.forEach((hs, k) => {
+        const p = S(hs[0] + 0.5, hs[1] + 0.5, 0.02), pulse = 0.6 + 0.4 * Math.sin(now * 1.6 + k * 1.7), rad = 34 * sc / 60 + 8 * pulse;
+        const g = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], Math.max(12, rad * 1.4));
+        g.addColorStop(0, rgb(SKY, 0.42 * hotP * pulse)); g.addColorStop(1, rgb(SKY, 0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p[0], p[1], Math.max(12, rad * 1.4), 0, 6.283); ctx.fill();
+      });
+
+      // opportunity zones — subtle violet highlight + dashed outline
+      if (oppP > 0.01) oppZones.forEach((oz) => {
+        const a = S(oz[0] + 0.06, oz[1] + 0.06, 0.01), b = S(oz[0] + 0.94, oz[1] + 0.06, 0.01), c = S(oz[0] + 0.94, oz[1] + 0.94, 0.01), d = S(oz[0] + 0.06, oz[1] + 0.94, 0.01);
+        ctx.fillStyle = VI(0.14 * oppP); quad(a, b, c, d);
+        ctx.setLineDash([4, 4]); ctx.lineDashOffset = -(now * 8) % 8; ctx.strokeStyle = VI(0.6 * oppP); ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath(); ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0;
+      });
+
+      // roads illuminate + flowing movement light along the network
+      for (let g = 0; g <= GRID; g++) {
+        const axis = (g === Math.round(C)); // central corridors = accessibility routes
+        const baseA = 0.30 + 0.35 * roadP + (axis ? 0.2 * accP : 0);
+        ctx.strokeStyle = axis ? BL(0.35 * accP + 0.12) : rgb(mix(GRAY, BLUE, 0.5 * roadP), baseA * 0.5);
+        ctx.lineWidth = axis ? 2.4 : 1.4;
+        line(S(0, g, 0.01), S(GRID, g, 0.01)); line(S(g, 0, 0.01), S(g, GRID, 0.01));
+        if (movP > 0.01) {
+          const dots = axis ? 3 : 2;
+          for (let k = 0; k < dots; k++) {
+            const u = (now * (axis ? 0.16 : 0.11) + g * 0.13 + k / dots) % 1;
+            const hp = S(u * GRID, g, 0.03), vp = S(g, u * GRID, 0.03), a = (axis ? 0.95 : 0.6) * movP;
+            ctx.shadowColor = BL(0.9); ctx.shadowBlur = axis ? 8 : 5;
+            ctx.fillStyle = BL(a); ctx.beginPath(); ctx.arc(hp[0], hp[1], axis ? 1.9 : 1.4, 0, 6.283); ctx.fill();
+            ctx.beginPath(); ctx.arc(vp[0], vp[1], axis ? 1.9 : 1.4, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+          }
+        }
+      }
+
+      // concentric analysis rings expanding from the marker
+      if (ringP > 0.01) for (let k = 0; k < 3; k++) { const rr = (now * 0.2 + k / 3) % 1, r = rr * (GRID * 0.62); isoRing(r, BL((1 - rr) * 0.4 * ringP), 1.2); }
+
+      // buildings, back-to-front, with digital overlay fading in
+      builds.slice().sort((a, b) => (a.i + a.j) - (b.i + b.j)).forEach((b) => {
+        const o = (1 - b.fp) / 2, x0 = b.i + o, x1 = b.i + 1 - o, y0 = b.j + o, y1 = b.j + 1 - o, h = b.h;
+        const tTL = S(x0, y0, h), tTR = S(x1, y0, h), tBR = S(x1, y1, h), tBL = S(x0, y1, h);
+        const bTR = S(x1, y0, 0), bBR = S(x1, y1, 0), bBL = S(x0, y1, 0);
+        ctx.fillStyle = rgb(RC, 1); quad(bTR, bBR, tBR, tTR);
+        ctx.fillStyle = rgb(LC, 1); quad(bBL, bBR, tBR, tBL);
+        ctx.fillStyle = rgb(b.roof, 1); quad(tTL, tTR, tBR, tBL);
+        // facade windows on taller buildings
+        if (h > 0.7) {
+          const floors = Math.max(2, Math.round(h * 3.2)), colN = 3;
+          ctx.strokeStyle = 'rgba(120,140,175,0.18)'; ctx.lineWidth = 1;
+          for (let k = 1; k < floors; k++) { const t = k / floors; line(lerp(bTR, tTR, t), lerp(bBR, tBR, t)); line(lerp(bBL, tBL, t), lerp(bBR, tBR, t)); }
+          for (let k = 1; k < colN; k++) { const t = k / colN; line(lerp(bTR, bBR, t), lerp(tTR, tBR, t)); line(lerp(bBL, bBR, t), lerp(tBL, tBR, t)); }
+        }
+        // digital overlay outline
+        ctx.strokeStyle = rgb(mix(GRAY, BLUE, bldgP), 0.2 + 0.55 * bldgP); ctx.lineWidth = 1;
+        if (bldgP > 0.02) { ctx.shadowColor = BL(0.4 * bldgP); ctx.shadowBlur = 6 * bldgP; }
+        line(bTR, tTR); line(bBR, tBR); line(bBL, tBL);
+        ctx.beginPath(); ctx.moveTo(tTL[0], tTL[1]); ctx.lineTo(tTR[0], tTR[1]); ctx.lineTo(tBR[0], tBR[1]); ctx.lineTo(tBL[0], tBL[1]); ctx.closePath(); ctx.stroke(); ctx.shadowBlur = 0;
+      });
+
+      // nearby assets connect through thin glowing lines to the marker
+      if (netP > 0.01) {
+        const m = S(C, C, 0.85);
+        offices.forEach((b, k) => {
+          const p = S(b.i + 0.5, b.j + 0.5, b.h + 0.35);
+          ctx.strokeStyle = IN(0.28 * netP); ctx.lineWidth = 1; ctx.shadowColor = IN(0.5 * netP); ctx.shadowBlur = 4 * netP; line(m, p); ctx.shadowBlur = 0;
+          const u = (now * 0.3 + k * 0.25) % 1, gp = [m[0] + (p[0] - m[0]) * u, m[1] + (p[1] - m[1]) * u];
+          ctx.shadowColor = IN(0.9); ctx.shadowBlur = 6 * netP; ctx.fillStyle = IN(0.85 * netP); ctx.beginPath(); ctx.arc(gp[0], gp[1], 1.6, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+          ctx.fillStyle = IN(0.7 * netP); ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, 6.283); ctx.fill();
+        });
+      }
+
+      // central location marker — the intelligence engine
+      const gm = S(C, C, 0.02), pulse = 0.5 + 0.5 * Math.sin(now * 1.8);
+      const gg = ctx.createRadialGradient(gm[0], gm[1], 0, gm[0], gm[1], 46);
+      gg.addColorStop(0, BL(0.34 * mON)); gg.addColorStop(1, BL(0));
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(gm[0], gm[1], 46, 0, 6.283); ctx.fill();
+      for (let k = 0; k < 2; k++) { const rr = (now * 0.5 + k / 2) % 1; ctx.strokeStyle = BL((1 - rr) * 0.45 * mON); ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(gm[0], gm[1], 6 + rr * 30, 0, 6.283); ctx.stroke(); }
+      const mtop = S(C, C, 0.85);
+      ctx.strokeStyle = IN(0.5 * mON); ctx.lineWidth = 2; line(gm, mtop);
+      ctx.shadowColor = BL(0.95); ctx.shadowBlur = 12 + 8 * pulse; ctx.fillStyle = BL(0.55 + 0.45 * mON * pulse); ctx.beginPath(); ctx.arc(mtop[0], mtop[1], 4.6, 0, 6.283); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.beginPath(); ctx.arc(mtop[0], mtop[1], 1.8, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+
+      updateCards(seq);
+    };
+
+    if (this.reduced) { draw(4, 12); return; }
+    const vis = () => { const r = slot.getBoundingClientRect(); return r.bottom > -40 && r.top < window.innerHeight - 60; };
+    let t0 = null, wasVis = false;
+    const loop = () => {
+      this._locRaf = requestAnimationFrame(loop);
+      const now = performance.now() / 1000, v = vis();
+      if (v && !wasVis) t0 = performance.now();
+      wasVis = v;
+      if (!v || t0 === null) return;
+      draw(now, (performance.now() - t0) / 1000);
+    };
+    loop();
+  }
+
+  _initDecide(retry) {
+    const slot = document.querySelector('#lepton-how [data-ch-anim="2"]');
+    const canvas = slot && slot.querySelector('.dec-canvas');
+    if (!slot || !canvas) { if ((retry || 0) < 50) this._decTimer = setTimeout(() => this._initDecide((retry || 0) + 1), 90); return; }
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0;
+    const clamp = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
+    const smooth = (v) => { v = clamp(v); return v * v * (3 - 2 * v); };
+    const ease = (now, s, d) => smooth((now - s) / d);
+    const rgb = (c, a) => 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',' + a + ')';
+    const BLUE = [64, 116, 220], SKY = [143, 178, 245], INDIGO = [99, 102, 214], GRAY = [140, 156, 186];
+    const BL = (a) => rgb(BLUE, a), IN = (a) => rgb(INDIGO, a);
+    let seed = 90218;
+    const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+
+    // three data sources; each with a faint cluster of raw data points
+    const labels = ['OPERATIONAL', 'SPATIAL', 'BUSINESS'];
+    const sources = labels.map((lb, i) => ({ lb, yf: 0.28 + i * 0.22, pts: Array.from({ length: 11 }, () => ({ ax: (rnd() - 0.5) * 0.09, ay: (rnd() - 0.5) * 0.13, ph: rnd() * 6.28, r: 0.6 + rnd() * 1.1 })), ph: rnd() }));
+
+    const setSize = () => { const r = canvas.getBoundingClientRect(); W = r.width; H = r.height; canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    setSize();
+    this._decro = new ResizeObserver(setSize); this._decro.observe(slot);
+
+    const cards = [].slice.call(slot.querySelectorAll('.lc-card')).map((c) => ({ el: c, t: parseFloat(c.dataset.t), fill: c.querySelector('.lc-fill'), val: c.querySelector('.lc-val') }));
+    const updateCards = (seq) => cards.forEach((c) => {
+      const on = seq > c.t; c.el.classList.toggle('on', on);
+      const cp = smooth((seq - (c.t + 0.18)) / 1.1);
+      if (c.fill) c.fill.style.width = (parseFloat(c.fill.dataset.w) * cp) + '%';
+      if (c.val) { const tg = parseFloat(c.val.dataset.target); c.val.textContent = c.val.dataset.dec ? (tg * cp).toFixed(1) : Math.round(tg * cp); }
+    });
+    const anchor = (c) => { const r = c.el.getBoundingClientRect(), s = slot.getBoundingClientRect(); return [r.left - s.left, r.top - s.top + r.height / 2]; };
+
+    const qbez = (p0, cp, p1, u) => { const v = 1 - u; return [v * v * p0[0] + 2 * v * u * cp[0] + u * u * p1[0], v * v * p0[1] + 2 * v * u * cp[1] + u * u * p1[1]]; };
+
+    const draw = (now, seq) => {
+      ctx.clearRect(0, 0, W, H);
+      const rc = slot.getBoundingClientRect();
+      const par = Math.max(-1, Math.min(1, -((rc.top + rc.height / 2) - window.innerHeight / 2) / window.innerHeight));
+      const pX = par * 5, pY = par * 9;
+      ctx.save(); ctx.translate(pX, pY);
+
+      const ptsP = ease(seq, 0.2, 1.0);
+      const streamP = ease(seq, 0.5, 1.3);
+      const coreP = ease(seq, 1.4, 1.2);
+      const beamP = ease(seq, 2.4, 1.3);
+
+      const core = [W * 0.44, H * 0.52];
+      const dnode = [W * 0.6, H * 0.52];
+      const sx = W * 0.13;
+
+      // sources: raw data-point clusters + label + converging stream
+      sources.forEach((s, si) => {
+        const sp = [sx, H * s.yf];
+        // raw data points
+        s.pts.forEach((pt) => {
+          const tw = 0.55 + 0.45 * Math.sin(now * 1.4 + pt.ph);
+          ctx.fillStyle = rgb(GRAY, (0.12 + 0.16 * tw) * ptsP);
+          ctx.beginPath(); ctx.arc(sp[0] + pt.ax * W, sp[1] + pt.ay * H, pt.r, 0, 6.283); ctx.fill();
+        });
+        // source node
+        ctx.fillStyle = rgb(GRAY, 0.16 * ptsP); ctx.beginPath(); ctx.arc(sp[0], sp[1], 8, 0, 6.283); ctx.fill();
+        ctx.fillStyle = BL(0.5 * ptsP); ctx.beginPath(); ctx.arc(sp[0], sp[1], 3, 0, 6.283); ctx.fill();
+        ctx.font = "600 9px 'IBM Plex Mono', monospace"; ctx.fillStyle = rgb([90, 108, 146], 0.7 * ptsP); ctx.textBaseline = 'middle';
+        ctx.fillText(s.lb, sp[0] + 14, sp[1]);
+        // converging stream curve
+        const cp = [(sp[0] + core[0]) / 2, sp[1] + (core[1] - sp[1]) * 0.15];
+        ctx.strokeStyle = BL(0.14 * streamP); ctx.lineWidth = 1.3; ctx.beginPath();
+        for (let u = 0; u <= 1.001; u += 0.05) { const p = qbez(sp, cp, core, u); u ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }
+        ctx.stroke();
+        // flowing data along the stream (into the core)
+        for (let k = 0; k < 4; k++) {
+          const u = (now * 0.28 + s.ph + k / 4) % 1, p = qbez(sp, cp, core, u), a = streamP * (0.35 + 0.65 * u);
+          ctx.shadowColor = BL(0.9); ctx.shadowBlur = 7; ctx.fillStyle = BL(0.85 * a); ctx.beginPath(); ctx.arc(p[0], p[1], 1.7, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+        }
+      });
+
+      // decision core — the intelligence lens
+      const pulse = 0.5 + 0.5 * Math.sin(now * 1.8);
+      const g = ctx.createRadialGradient(core[0], core[1], 0, core[0], core[1], 60);
+      g.addColorStop(0, BL(0.4 * coreP)); g.addColorStop(0.5, rgb(SKY, 0.16 * coreP)); g.addColorStop(1, BL(0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(core[0], core[1], 60, 0, 6.283); ctx.fill();
+      for (let k = 0; k < 2; k++) { const rr = (now * 0.45 + k / 2) % 1; ctx.strokeStyle = BL((1 - rr) * 0.4 * coreP); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(core[0], core[1], 10 + rr * 34, 0, 6.283); ctx.stroke(); }
+      ctx.shadowColor = BL(0.95); ctx.shadowBlur = 16 + 8 * pulse; ctx.fillStyle = BL(0.55 + 0.4 * coreP * pulse); ctx.beginPath(); ctx.arc(core[0], core[1], 7.5, 0, 6.283); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.beginPath(); ctx.arc(core[0], core[1], 3, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+
+      // single confident beam from core to the decision node
+      if (beamP > 0.01) {
+        const ex = core[0] + (dnode[0] - core[0]) * beamP, ey = core[1];
+        ctx.strokeStyle = IN(0.5 * beamP); ctx.lineWidth = 2; ctx.shadowColor = IN(0.6 * beamP); ctx.shadowBlur = 6; ctx.beginPath(); ctx.moveTo(core[0] + 8, core[1]); ctx.lineTo(ex, ey); ctx.stroke(); ctx.shadowBlur = 0;
+        if (beamP > 0.6) { ctx.shadowColor = IN(0.9); ctx.shadowBlur = 8; ctx.fillStyle = IN(0.85); ctx.beginPath(); ctx.arc(dnode[0], dnode[1], 4, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.beginPath(); ctx.arc(dnode[0], dnode[1], 1.6, 0, 6.283); ctx.fill(); }
+      }
+
+      // conclusions branch from the decision node to each surfaced card
+      cards.forEach((c, k) => {
+        const app = smooth((seq - c.t) / 0.6); if (app <= 0.02) return;
+        const a = anchor(c), mx = (dnode[0] + a[0]) / 2;
+        ctx.strokeStyle = IN(0.24 * app); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(dnode[0], dnode[1]); ctx.bezierCurveTo(mx, dnode[1], mx, a[1], a[0] - 4, a[1]); ctx.stroke();
+        const u = (now * 0.35 + k * 0.2) % 1, t = u, v = 1 - t;
+        const bx = v * v * v * dnode[0] + 3 * v * v * t * mx + 3 * v * t * t * mx + t * t * t * (a[0] - 4);
+        const by = v * v * v * dnode[1] + 3 * v * v * t * dnode[1] + 3 * v * t * t * a[1] + t * t * t * a[1];
+        ctx.shadowColor = IN(0.9); ctx.shadowBlur = 6 * app; ctx.fillStyle = IN(0.8 * app); ctx.beginPath(); ctx.arc(bx, by, 1.5, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+      });
+
+      ctx.restore();
+      updateCards(seq);
+    };
+
+    if (this.reduced) { draw(4, 12); return; }
+    const vis = () => { const r = slot.getBoundingClientRect(); return r.bottom > -40 && r.top < window.innerHeight - 60; };
+    let t0 = null, wasVis = false;
+    const loop = () => {
+      this._decRaf = requestAnimationFrame(loop);
+      const now = performance.now() / 1000, v = vis();
+      if (v && !wasVis) t0 = performance.now();
+      wasVis = v;
+      if (!v || t0 === null) return;
+      draw(now, (performance.now() - t0) / 1000);
+    };
+    loop();
+  }
+
+  _wait() {    if (window.THREE) { try { this._init(); } catch (err) { console.error('Lepton sphere init failed', err); } return; }
+    this._t = setTimeout(() => this._wait(), 60);
+  }
+
+  _init() {
+    const THREE = window.THREE;
+    const canvas = this.canvas;
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    let W = parent.clientWidth || window.innerWidth;
+    let H = parent.clientHeight || window.innerHeight;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(W, H, false);
+    this.renderer = renderer;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+    camera.position.set(0, 0, 6);
+    this.camera = camera;
+    this.scene = scene;
+
+    const group = new THREE.Group();
+    group.position.set(W < 900 ? 0.35 : 1.7, 0, 0);
+    scene.add(group);
+    this.group = group;
+
+    this._pmx = 0; this._pmy = 0;
+    this._pmove = (e) => { this._pmx = (e.clientX / (window.innerWidth || 1) - 0.5); this._pmy = (e.clientY / (window.innerHeight || 1) - 0.5); };
+    window.addEventListener('pointermove', this._pmove, { passive: true });
+
+    const sphere = new THREE.Group();
+    sphere.rotation.x = 0.3;
+    group.add(sphere);
+    this.sphere = sphere;
+
+    const Rg = 1.5;
+    const steel = new THREE.Color('#6E86D8');
+    const nodeSteel = new THREE.Color('#2A3566');
+    const accent = new THREE.Color(this.accent);
+    this.accentCol = accent;
+
+    // ---- Real shaded 3D globe (lit sphere + atmosphere) ----
+    scene.add(new THREE.AmbientLight(0xe6edfd, 0.72));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.3); keyLight.position.set(-2.6, 2.5, 3.4); scene.add(keyLight);
+    const rimLight = new THREE.DirectionalLight(0x9db8ff, 0.6); rimLight.position.set(3.2, -1.6, -2.4); scene.add(rimLight);
+    const gtex = this._globeTex();
+    const ballGeo = new THREE.SphereGeometry(Rg * 0.99, 128, 128);
+    const ballMat = new THREE.MeshStandardMaterial({ map: gtex.map, bumpMap: gtex.bump, bumpScale: 0.05, roughnessMap: gtex.rough, roughness: 1, metalness: 0, emissive: new THREE.Color('#ffffff'), emissiveMap: gtex.lights, emissiveIntensity: 0, transparent: true, opacity: 0 });
+    sphere.add(new THREE.Mesh(ballGeo, ballMat)); this.ballMat = ballMat;
+    this._loadRealEarth(ballMat);
+    const cloudMat = new THREE.MeshStandardMaterial({ map: gtex.clouds, transparent: true, opacity: 0, roughness: 1, metalness: 0, depthWrite: false });
+    const cloudMesh = new THREE.Mesh(new THREE.SphereGeometry(Rg * 1.015, 96, 96), cloudMat);
+    sphere.add(cloudMesh); this.cloudMat = cloudMat; this.cloudMesh = cloudMesh;
+    const atmoU = { uColor: { value: new THREE.Color('#9CC0FF') }, uOpacity: { value: 0 } };
+    const atmoMat = new THREE.ShaderMaterial({
+      uniforms: atmoU,
+      vertexShader: 'varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+      fragmentShader: 'uniform vec3 uColor; uniform float uOpacity; varying vec3 vN; void main(){ float i = pow(0.68 - dot(vN, vec3(0.0,0.0,1.0)), 3.0); i = clamp(i, 0.0, 1.0); gl_FragColor = vec4(uColor, i * uOpacity); }',
+      transparent: true, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    const atmoGeo = new THREE.SphereGeometry(Rg * 1.18, 64, 64);
+    group.add(new THREE.Mesh(atmoGeo, atmoMat)); this.atmoU = atmoU;
+
+    // ---- Wireframe network lines ----
+    const gridPos = [];
+    const seg = 90;
+    const lats = [-64, -46, -28, -10, 10, 28, 46, 64];
+    lats.forEach((deg) => {
+      const lat = deg * Math.PI / 180;
+      const y = Rg * Math.sin(lat), r = Rg * Math.cos(lat);
+      for (let i = 0; i < seg; i++) {
+        const a0 = (i / seg) * Math.PI * 2, a1 = ((i + 1) / seg) * Math.PI * 2;
+        gridPos.push(r * Math.cos(a0), y, r * Math.sin(a0), r * Math.cos(a1), y, r * Math.sin(a1));
+      }
+    });
+    const meridians = 14;
+    for (let m = 0; m < meridians; m++) {
+      const lon = (m / meridians) * Math.PI * 2;
+      const half = seg / 2;
+      for (let i = 0; i < half; i++) {
+        const t0 = -Math.PI / 2 + (i / half) * Math.PI, t1 = -Math.PI / 2 + ((i + 1) / half) * Math.PI;
+        gridPos.push(
+          Rg * Math.cos(t0) * Math.cos(lon), Rg * Math.sin(t0), Rg * Math.cos(t0) * Math.sin(lon),
+          Rg * Math.cos(t1) * Math.cos(lon), Rg * Math.sin(t1), Rg * Math.cos(t1) * Math.sin(lon)
+        );
+      }
+    }
+    const gGeom = new THREE.BufferGeometry();
+    gGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(gridPos), 3));
+    const gMat = new THREE.LineBasicMaterial({ color: new THREE.Color('#DCE6FF'), transparent: true, opacity: 0 });
+    sphere.add(new THREE.LineSegments(gGeom, gMat));
+    this.gMat = gMat;
+
+    // ---- Surface nodes ----
+    const NN = 64;
+    const nodeVecs = [];
+    const gr = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < NN; i++) {
+      const y = 1 - (i / (NN - 1)) * 2;
+      const rad = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = gr * i;
+      nodeVecs.push(new THREE.Vector3(Math.cos(th) * rad, y, Math.sin(th) * rad).multiplyScalar(Rg * 1.004));
+    }
+    const nPos = new Float32Array(NN * 3), nCol = new Float32Array(NN * 3);
+    nodeVecs.forEach((v, i) => {
+      nPos[i * 3] = v.x; nPos[i * 3 + 1] = v.y; nPos[i * 3 + 2] = v.z;
+      const c = (i % 4 === 0) ? new THREE.Color('#FFFFFF') : new THREE.Color('#CFDEFF');
+      nCol[i * 3] = c.r; nCol[i * 3 + 1] = c.g; nCol[i * 3 + 2] = c.b;
+    });
+    const nGeom = new THREE.BufferGeometry();
+    nGeom.setAttribute('position', new THREE.BufferAttribute(nPos, 3));
+    nGeom.setAttribute('color', new THREE.BufferAttribute(nCol, 3));
+    const nMat = new THREE.PointsMaterial({ size: 6, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0 });
+    sphere.add(new THREE.Points(nGeom, nMat));
+    this.nMat = nMat;
+
+    // ---- Focal hub + glowing gold network routes ----
+    const focal = new THREE.Vector3(0.42, 0.2, 1).normalize();
+    const arcPos = [];
+    const arcSeg = 32;
+    for (let k = 0; k < 10; k++) {
+      const b = nodeVecs[Math.floor(Math.random() * NN)].clone().normalize();
+      if (focal.distanceTo(b) < 0.4) continue;
+      const prev = new THREE.Vector3();
+      for (let s = 0; s <= arcSeg; s++) {
+        const tt = s / arcSeg;
+        const p = focal.clone().lerp(b, tt).normalize().multiplyScalar(Rg * (1 + 0.2 * Math.sin(Math.PI * tt)));
+        if (s > 0) arcPos.push(prev.x, prev.y, prev.z, p.x, p.y, p.z);
+        prev.copy(p);
+      }
+    }
+    const aGeom = new THREE.BufferGeometry();
+    aGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(arcPos), 3));
+    const arcMat = new THREE.LineBasicMaterial({ color: new THREE.Color('#F0C258'), transparent: true, opacity: 0, blending: THREE.AdditiveBlending });
+    sphere.add(new THREE.LineSegments(aGeom, arcMat));
+    this.arcMat = arcMat;
+
+    // glowing hub at focal point
+    const glowCan = document.createElement('canvas'); glowCan.width = glowCan.height = 64;
+    const gcx = glowCan.getContext('2d');
+    const gg = gcx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gg.addColorStop(0, 'rgba(255,226,160,1)'); gg.addColorStop(0.4, 'rgba(255,200,110,0.55)'); gg.addColorStop(1, 'rgba(255,200,110,0)');
+    gcx.fillStyle = gg; gcx.fillRect(0, 0, 64, 64);
+    const glowTex = new THREE.CanvasTexture(glowCan);
+    const hubSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+    hubSprite.position.copy(focal.clone().multiplyScalar(Rg * 1.02)); hubSprite.scale.set(0.85, 0.85, 1);
+    sphere.add(hubSprite); this.hubSprite = hubSprite;
+    const hubDot = new THREE.Mesh(new THREE.SphereGeometry(0.028, 14, 14), new THREE.MeshBasicMaterial({ color: 0xffe6b0, transparent: true, opacity: 0 }));
+    hubDot.position.copy(focal.clone().multiplyScalar(Rg * 1.01)); sphere.add(hubDot); this.hubDot = hubDot;
+    // telecom tower rising from the hub
+    const tower = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.17, 4), new THREE.MeshStandardMaterial({ color: 0x25304b, roughness: 0.6, transparent: true, opacity: 0 }));
+    tower.position.copy(focal.clone().multiplyScalar(Rg * 1.075));
+    tower.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), focal.clone());
+    sphere.add(tower); this.tower = tower;
+
+    // ---- Internal light nodes flowing toward the core ----
+    const IC = 9; this.IC = IC;
+    this.icVecs = [];
+    for (let i = 0; i < IC; i++) this.icVecs.push(nodeVecs[Math.floor(Math.random() * NN)].clone());
+    const icPos = new Float32Array(IC * 3);
+    const icGeom = new THREE.BufferGeometry();
+    icGeom.setAttribute('position', new THREE.BufferAttribute(icPos, 3));
+    const icMat = new THREE.PointsMaterial({ color: accent.clone(), size: 5, sizeAttenuation: false, transparent: true, opacity: 0 });
+    sphere.add(new THREE.Points(icGeom, icMat));
+    this.icPos = icPos; this.icGeom = icGeom; this.icMat = icMat;
+    this.icT = [];
+    for (let i = 0; i < IC; i++) this.icT.push(Math.random());
+
+    // ---- Beams (rails) + inbound pulses toward the five cards ----
+    const anchors = [
+      new THREE.Vector3(0, 1, 0.1),
+      new THREE.Vector3(-1, 0.62, 0.1),
+      new THREE.Vector3(1, 0.62, 0.1),
+      new THREE.Vector3(-1, -0.82, 0.1),
+      new THREE.Vector3(1, -0.82, 0.1)
+    ].map(v => v.normalize().multiplyScalar(2.95));
+    this.anchors = anchors;
+
+    const rGeom = new THREE.BufferGeometry();
+    const rArr = new Float32Array(anchors.length * 6);
+    anchors.forEach((a, i) => {
+      const edge = a.clone().normalize().multiplyScalar(Rg);
+      rArr[i * 6] = a.x; rArr[i * 6 + 1] = a.y; rArr[i * 6 + 2] = a.z;
+      rArr[i * 6 + 3] = edge.x; rArr[i * 6 + 4] = edge.y; rArr[i * 6 + 5] = edge.z;
+    });
+    rGeom.setAttribute('position', new THREE.BufferAttribute(rArr, 3));
+    const rMat = new THREE.LineBasicMaterial({ color: accent.clone(), transparent: true, opacity: 0 });
+    group.add(new THREE.LineSegments(rGeom, rMat));
+    this.rMat = rMat;
+
+    const per = 2; this.per = per;
+    const pPos = new Float32Array(anchors.length * per * 3);
+    const pGeom = new THREE.BufferGeometry();
+    pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ color: accent.clone(), size: 7, sizeAttenuation: false, transparent: true, opacity: 0 });
+    group.add(new THREE.Points(pGeom, pMat));
+    this.pPos = pPos; this.pGeom = pGeom; this.pMat = pMat; this.Rg = Rg;
+    this.pT = [];
+    for (let i = 0; i < anchors.length * per; i++) this.pT.push(Math.random());
+
+    this.start = performance.now();
+
+    this._ro = new ResizeObserver(() => {
+      const w = parent.clientWidth, h = parent.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+      group.position.x = w < 900 ? 0.35 : 1.7;
+    });
+    this._ro.observe(parent);
+
+    this._animate();
+  }
+
+  _animate() {
+    const clamp = (x) => Math.min(1, Math.max(0, x));
+    const loop = () => {
+      this._raf = requestAnimationFrame(loop);
+      const t = (performance.now() - this.start) / 1000;
+      const reduced = this.reduced;
+
+      if (this.ballMat) { const bo = reduced ? 1 : clamp(t / 0.9); this.ballMat.opacity = bo; this.ballMat.emissiveIntensity = bo * 1.15; }
+      if (this.cloudMat) this.cloudMat.opacity = (reduced ? 1 : clamp((t - 0.3) / 1.0)) * 0.85;
+      if (this.atmoU) this.atmoU.uOpacity.value = 0;
+      this.gMat.opacity = reduced ? 0.12 : clamp(t / 0.7) * 0.12;
+      this.nMat.opacity = 0;
+      this.arcMat.opacity = reduced ? 0.6 : clamp((t - 0.3) / 0.8) * 0.6;
+      const hf = reduced ? 1 : clamp((t - 0.5) / 1.0);
+      if (this.hubSprite) { const pulse = 0.78 + 0.32 * Math.sin(t * 2.2); this.hubSprite.material.opacity = hf; this.hubSprite.scale.set(0.8 * pulse, 0.8 * pulse, 1); }
+      if (this.hubDot) this.hubDot.material.opacity = hf;
+      if (this.tower) this.tower.material.opacity = hf;
+      this.rMat.opacity = this.railsVisible ? (reduced ? 0.24 : clamp((t - 0.9) / 1.0) * 0.24) : 0;
+
+      if (!reduced && t > 0.8) {
+        const spd = this.calm ? 0.16 : 0.22;
+        for (let i = 0; i < this.IC; i++) {
+          this.icT[i] += (1 / 60) * spd;
+          if (this.icT[i] > 1) this.icT[i] -= 1;
+          const f = this.icT[i], s = this.icVecs[i];
+          const k = 1 - f * 0.96;
+          this.icPos[i * 3] = s.x * k; this.icPos[i * 3 + 1] = s.y * k; this.icPos[i * 3 + 2] = s.z * k;
+        }
+        this.icGeom.attributes.position.needsUpdate = true;
+        this.icMat.opacity = clamp((t - 0.8) / 0.8) * 0.72;
+      } else if (reduced) {
+        this.icMat.opacity = 0.4;
+      }
+
+      const pulseOn = !reduced && t > 0.9;
+      if (pulseOn) {
+        const spd = this.calm ? 0.18 : 0.26;
+        for (let i = 0; i < this.anchors.length; i++) {
+          const a = this.anchors[i];
+          for (let j = 0; j < this.per; j++) {
+            const idx = i * this.per + j;
+            this.pT[idx] += (1 / 60) * spd;
+            if (this.pT[idx] > 1) this.pT[idx] -= 1;
+            const f = this.pT[idx];
+            const toR = this.Rg * 0.96;
+            const cur = a.clone().normalize().multiplyScalar(a.length() + (toR - a.length()) * f);
+            this.pPos[idx * 3] = cur.x; this.pPos[idx * 3 + 1] = cur.y; this.pPos[idx * 3 + 2] = cur.z;
+          }
+        }
+        this.pGeom.attributes.position.needsUpdate = true;
+        this.pMat.opacity = clamp((t - 0.9) / 0.6) * 0.9;
+      } else {
+        this.pMat.opacity = 0;
+      }
+
+      if (!reduced) {
+        const nowMs = performance.now();
+        const dt = this._last ? Math.min(0.05, (nowMs - this._last) / 1000) : 0.016;
+        this._last = nowMs;
+        const spin = (this.calm ? 0.055 : 0.085) * clamp((t - 0.3) / 1.6);
+        this.sphere.rotation.y += dt * spin;
+        if (this.cloudMesh) this.cloudMesh.rotation.y += dt * spin * 0.35;
+        const breathe = 1 + Math.sin(t * 0.7) * 0.006;
+        this.sphere.scale.setScalar(breathe);
+        const tgx = (this._pmy || 0) * 0.1, tgy = (this._pmx || 0) * 0.16;
+        this.group.rotation.x += (tgx - this.group.rotation.x) * 0.045;
+        this.group.rotation.y += (tgy - this.group.rotation.y) * 0.045;
+      } else {
+        this.sphere.rotation.y = 0.4;
+      }
+
+      this.renderer.render(this.scene, this.camera);
+    };
+    loop();
+  }
+
+  componentWillUnmount() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._pmove) window.removeEventListener('pointermove', this._pmove);
+    if (this._t) clearTimeout(this._t);
+    if (this._stimer) clearTimeout(this._stimer);
+    if (this._statRaf) cancelAnimationFrame(this._statRaf);
+    if (this._ttimer) clearTimeout(this._ttimer);
+    if (this._rT) clearTimeout(this._rT);
+    if (this._rRaf) cancelAnimationFrame(this._rRaf);
+    if (this._rPoll) cancelAnimationFrame(this._rPoll);
+    if (this._rro) this._rro.disconnect();
+    if (this._tScroll) window.removeEventListener('scroll', this._tScroll, true);
+    if (this._hrTimer) clearTimeout(this._hrTimer);
+    if (this._hrT) clearTimeout(this._hrT);
+    if (this._hrInt) clearInterval(this._hrInt);
+    if (this._rvTimer) clearTimeout(this._rvTimer);
+    if (this._rvRaf) cancelAnimationFrame(this._rvRaf);
+    if (this._rvCheck) window.removeEventListener('scroll', this._rvCheck, true);
+    if (this._htimer2) clearTimeout(this._htimer2);
+    if (this._hRaf) cancelAnimationFrame(this._hRaf);
+    if (this._hro) this._hro.disconnect();
+    if (this._hScroll) window.removeEventListener('scroll', this._hScroll, true);
+    if (this._itimer) clearTimeout(this._itimer);
+    if (this._iRaf) cancelAnimationFrame(this._iRaf);
+    if (this._iro) this._iro.disconnect();
+    if (this._iTrack && this._iOnScroll) this._iTrack.removeEventListener('scroll', this._iOnScroll);
+    if (this._ro) this._ro.disconnect();
+    if (this._twTimer) clearTimeout(this._twTimer);
+    if (this._twRaf) cancelAnimationFrame(this._twRaf);
+    if (this._twro) this._twro.disconnect();
+    if (this._ssWheel) window.removeEventListener('wheel', this._ssWheel, { passive: false });
+    if (this._ssScroll) window.removeEventListener('scroll', this._ssScroll, { passive: true });
+    if (this._ssStop) this._ssStop();
+    if (this.renderer) this.renderer.dispose();
+  }
+}
+</script>
+</body>
+</html>
