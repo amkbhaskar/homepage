@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style data-omelette-print-defaults>
+@media print {
+  @page { margin: 0.5in; }
+  h1, h2, h3, h4, h5, h6 { break-after: avoid; }
+  figure, table, pre, blockquote, img, svg, tr, [class~="card" i] { break-inside: avoid; }
+  img, svg { max-width: 100%; }
+  p { orphans: 3; widows: 3; }
+}
+</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#FAFAF8; }
+  a{ color:var(--accent); text-decoration:none; }
+  a:hover{ color:#0F172A; }
+  @keyframes navIn{ from{ opacity:0; transform:translateY(-6px);} to{ opacity:1; transform:none;} }
+  @keyframes textIn{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:none;} }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(10px) scale(.985); filter:blur(3px);} to{ opacity:1; transform:none; filter:none;} }
+  @keyframes coreGlow{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.35);} 100%{ opacity:1; transform:translate(-50%,-50%) scale(1);} }
+  @keyframes letterIn{ 0%{ opacity:0; filter:blur(9px); transform:translateY(5px);} 60%{ opacity:1;} 100%{ opacity:1; filter:blur(0); transform:none;} }
+  @keyframes tagIn{ from{ opacity:0;} to{ opacity:1;} }
+  @keyframes marquee{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+  @keyframes floatA{ 0%{transform:translate(0,0);}25%{transform:translate(4px,-6px);}50%{transform:translate(-4px,4px);}75%{transform:translate(4px,5px);}100%{transform:translate(0,0);} }
+  @keyframes floatB{ 0%{transform:translate(0,0);}25%{transform:translate(-5px,5px);}50%{transform:translate(4px,-5px);}75%{transform:translate(-3px,-5px);}100%{transform:translate(0,0);} }
+  @keyframes floatC{ 0%{transform:translate(0,0);}30%{transform:translate(4px,6px);}60%{transform:translate(-5px,-3px);}100%{transform:translate(0,0);} }
+  @keyframes floatD{ 0%{transform:translate(0,0);}33%{transform:translate(-4px,-6px);}66%{transform:translate(5px,3px);}100%{transform:translate(0,0);} }
+  @keyframes floatE{ 0%{transform:translate(0,0);}25%{transform:translate(6px,4px);}50%{transform:translate(-4px,-5px);}75%{transform:translate(-5px,3px);}100%{transform:translate(0,0);} }
+  /* ---- Transformation section (Thousands -> One) ---- */
+  #lepton-reduce{ position:relative; width:100%; max-width:1000px; margin:0 auto; height:460px; }
+  #lepton-reduce-canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  .rd-inputs{ position:absolute; left:50%; top:26px; transform:translateX(-50%); width:92%; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; line-height:1.9; color:#9098A6; opacity:0; transition:opacity .8s ease; }
+  #lepton-reduce.seen .rd-inputs{ opacity:1; }
+  #lepton-reduce.collapsing .rd-inputs{ opacity:0; }
+  .rd-core{ position:absolute; left:50%; top:52%; transform:translate(-50%,-50%) scale(.96); text-align:center; opacity:0; transition:opacity .85s ease, transform .85s cubic-bezier(.2,.7,.2,1); pointer-events:none; }
+  #lepton-reduce.collapsed .rd-core{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .rd-glow{ position:absolute; left:50%; top:42%; width:300px; height:300px; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(91,141,239,0.24) 0%, rgba(91,141,239,0.08) 38%, rgba(250,250,248,0) 70%); z-index:-1; }
+  .rd-one{ font-size:clamp(88px,13vw,176px); font-weight:700; line-height:.9; letter-spacing:-0.05em; color:#0A1F44; }
+  .rd-cap{ margin-top:12px; font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.24em; color:var(--accent); }
+  .rd-sub{ margin-top:14px; font-size:15px; color:#5A647B; }
+
+  /* ---- Industries (scroll story) ---- */
+  #lepton-ind{ position:relative; height:600vh; }
+  .ind-head{ max-width:840px; margin:0 auto; padding:120px clamp(22px,5vw,72px) 30px; text-align:center; }
+  .ind-ey{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:var(--accent); margin-bottom:20px; }
+  .ind-hl{ font-size:clamp(30px,3.4vw,52px); font-weight:600; line-height:1.08; letter-spacing:-0.026em; color:#0A1F44; margin:0 0 22px; text-wrap:balance; }
+  .ind-sub{ font-size:clamp(15px,1.15vw,18px); line-height:1.62; color:#5A647B; max-width:640px; margin:0 auto; text-wrap:pretty; }
+  .ind-sticky{ position:sticky; top:0; height:100vh; display:flex; align-items:center; gap:clamp(24px,4vw,64px); padding:0 clamp(22px,5vw,72px); }
+  .ind-left{ width:40%; flex:0 0 40%; position:relative; min-height:360px; }
+  .ind-right{ position:relative; flex:1 1 auto; height:min(78vh,640px); }
+  #ind-canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  .ind-ch{ position:absolute; left:0; top:50%; width:100%; opacity:0; transform:translateY(calc(-50% + 16px)); transition:opacity .55s ease, transform .55s ease; }
+  .ind-ch.active{ opacity:1; transform:translateY(-50%); }
+  .ind-name{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.26em; color:var(--accent); margin-bottom:16px; }
+  .ind-chhl{ font-size:clamp(28px,3vw,46px); font-weight:600; line-height:1.08; letter-spacing:-0.026em; color:#0A1F44; margin:0 0 16px; text-wrap:balance; }
+  .ind-copy{ font-size:clamp(15px,1.15vw,17px); line-height:1.6; color:#5A647B; max-width:440px; margin:0 0 20px; text-wrap:pretty; }
+  .ind-tags{ display:flex; flex-wrap:wrap; gap:8px 9px; margin-bottom:26px; max-width:440px; }
+  .ind-tag{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.06em; color:#5A647B; background:rgba(91,141,239,0.08); border:1px solid rgba(91,141,239,0.18); padding:5px 10px; border-radius:20px; opacity:0; transform:translateY(6px); transition:opacity .45s ease, transform .45s ease; }
+  .ind-ch.active .ind-tag{ opacity:1; transform:none; }
+  .ind-ch.active .ind-tag:nth-child(2){ transition-delay:.1s; }
+  .ind-ch.active .ind-tag:nth-child(3){ transition-delay:.2s; }
+  .ind-ch.active .ind-tag:nth-child(4){ transition-delay:.3s; }
+  .ind-cta{ display:inline-flex; align-items:center; gap:8px; font-size:14.5px; font-weight:600; color:var(--accent); }
+  .ind-close{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.96); text-align:center; width:88%; opacity:0; transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); pointer-events:none; }
+  #lepton-ind.ind-done .ind-close{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .ind-close-t{ font-size:clamp(26px,2.6vw,40px); font-weight:600; letter-spacing:-0.02em; line-height:1.15; color:#0A1F44; }
+  .ind-close-t b{ color:var(--accent); font-weight:600; }
+  @media (max-width:900px){
+    #lepton-ind{ height:auto !important; }
+    .ind-sticky{ position:relative; height:auto; flex-direction:column; align-items:flex-start; padding:20px clamp(22px,5vw,72px) 70px; gap:0; }
+    .ind-left{ width:100%; flex:none; min-height:0; }
+    .ind-right{ display:none; }
+    .ind-ch{ position:relative; top:auto; opacity:1; transform:none; padding-top:28px; margin-top:28px; border-top:1px solid rgba(18,28,70,0.08); }
+    .ind-ch .ind-tag{ opacity:1 !important; transform:none !important; }
+    .ind-close{ display:none; }
+  }
+
+  /* ---- How (scroll story) ---- */
+  #lepton-how{ position:relative; height:340vh; }
+  .how-sticky{ position:sticky; top:0; height:100vh; display:flex; align-items:center; gap:clamp(24px,4vw,64px); padding:0 clamp(22px,5vw,72px); }
+  .how-left{ width:38%; flex:0 0 38%; }
+  .how-ey{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:var(--accent); margin-bottom:20px; }
+  .how-hl{ font-size:clamp(36px,3.8vw,60px); font-weight:600; line-height:1.06; letter-spacing:-0.028em; color:#0A1F44; margin:0 0 24px; text-wrap:balance; }
+  .how-sub{ font-size:clamp(16px,1.25vw,20px); line-height:1.6; color:#5A647B; max-width:440px; }
+  .how-right{ position:relative; flex:1 1 auto; height:min(78vh,640px); }
+  #how-canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  .how-chapter{ position:absolute; left:0; top:50%; width:100%; opacity:0; transform:translateY(calc(-50% + 16px)); transition:opacity .55s ease, transform .55s ease; pointer-events:none; }
+  .how-chapter.active{ opacity:1; transform:translateY(-50%); }
+  .how-tag{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.24em; color:var(--accent); margin-bottom:12px; }
+  .how-title{ font-size:clamp(24px,2.3vw,36px); font-weight:600; letter-spacing:-0.022em; color:#0A1F44; margin:0 0 14px; text-wrap:balance; }
+  .how-desc{ font-size:clamp(15px,1.15vw,18px); line-height:1.58; color:#5A647B; max-width:480px; margin:0 0 18px; }
+  .how-powered{ display:flex; flex-wrap:wrap; gap:8px 9px; margin-bottom:18px; max-width:500px; }
+  .how-chip{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.06em; color:#5A647B; background:rgba(91,141,239,0.08); border:1px solid rgba(91,141,239,0.18); padding:5px 10px; border-radius:20px; opacity:0; transform:translateY(6px); transition:opacity .45s ease, transform .45s ease; }
+  .how-chapter.active .how-chip{ opacity:1; transform:none; }
+  .how-chapter.active .how-chip:nth-child(1){ transition-delay:.15s; }
+  .how-chapter.active .how-chip:nth-child(2){ transition-delay:.28s; }
+  .how-chapter.active .how-chip:nth-child(3){ transition-delay:.41s; }
+  .how-chapter.active .how-chip:nth-child(4){ transition-delay:.54s; }
+  .how-chapter.active .how-chip:nth-child(5){ transition-delay:.67s; }
+  .how-ans{ display:flex; flex-wrap:wrap; gap:8px 9px; margin-bottom:18px; max-width:500px; }
+  .how-ans .how-chip{ color:var(--accent); background:rgba(91,141,239,0.1); border-color:rgba(91,141,239,0.3); }
+  .how-close{ display:flex; align-items:center; gap:9px; font-size:15px; font-weight:500; color:#0A1F44; }
+  .how-close::before{ content:""; width:16px; height:1px; background:var(--accent); display:inline-block; }
+  @media (max-width:900px){
+    #lepton-how{ height:auto !important; }
+    .how-sticky{ position:relative; height:auto; flex-direction:column; align-items:flex-start; padding:70px clamp(22px,5vw,72px); gap:36px; }
+    .how-left{ width:100%; flex:none; }
+    .how-right{ width:100%; height:auto; }
+    #how-canvas{ display:none !important; }
+    .how-chapter{ position:relative; bottom:auto; opacity:1; transform:none; padding-top:28px; margin-top:28px; border-top:1px solid rgba(18,28,70,0.08); }
+    .how-chapter.active .how-chip, .how-chip{ opacity:1 !important; transform:none !important; }
+  }
+
+  /* ---- Outcomes ---- */
+  #lepton-outcomes .ogrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  #lepton-outcomes .ocard{ padding:30px 26px 34px; border-radius:16px; background:transparent; transition:background .4s ease, box-shadow .45s ease, transform .45s cubic-bezier(.2,.7,.2,1); }
+  #lepton-outcomes .ocard:hover{ background:#ffffff; box-shadow:0 24px 56px -28px rgba(24,34,90,0.26); transform:translateY(-5px); }
+  #lepton-outcomes .oicon{ font-size:22px; line-height:1; margin-bottom:20px; }
+  #lepton-outcomes .otitle{ font-size:clamp(19px,1.5vw,23px); font-weight:600; letter-spacing:-0.02em; color:#0A1F44; margin-bottom:12px; }
+  #lepton-outcomes .obody{ font-size:14.5px; line-height:1.62; color:#5A647B; margin-bottom:26px; }
+  #lepton-outcomes .vflow{ display:flex; flex-direction:column; align-items:flex-start; }
+  #lepton-outcomes .vstep{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:#9098A6; transition:color .45s ease; }
+  #lepton-outcomes .vconn{ width:1px; height:12px; margin:5px 0 5px 2px; background:rgba(18,28,70,0.14); transition:background .45s ease; }
+  #lepton-outcomes .ocard:hover .vstep{ color:#33405C; }
+  #lepton-outcomes .ocard:hover .vfinal{ color:var(--accent); }
+  #lepton-outcomes .ocard:hover .vconn{ background:var(--accent); }
+  @media (max-width:1000px){ #lepton-outcomes .ogrid{ grid-template-columns:repeat(2,1fr); gap:8px; } }
+  @media (max-width:600px){ #lepton-outcomes .ogrid{ grid-template-columns:1fr; } }
+
+  @media (max-width:1080px){
+    .qcard-hide-md{ display:none !important; }
+  }
+  @media (max-width:900px){
+    #lepton-content{ max-width:100% !important; }
+    .qcard{ display:none !important; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .rd-inputs,.rd-core{ transition:none !important; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    [data-anim]{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
+    .qfloat{ animation:none !important; }
+    .hletter{ animation:none !important; opacity:1 !important; filter:none !important; }
+    .marquee-track{ animation:none !important; }
+  }
+</style>
+</helmet>
+
+<div id="lepton-page" style="--accent:#5B8DEF; position:relative; width:100%; background:#FAFAF8; color:#1B2333; font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;">
+
+  <div id="lepton-hero-root" style="position:relative; min-height:100vh; width:100%; overflow:hidden; background:radial-gradient(120% 110% at 70% 47%, rgba(91,141,239,0.11), rgba(250,250,248,0) 55%), #FAFAF8;">
+
+    <div style="position:absolute; inset:0; z-index:0;">
+      <canvas ref="{{ setCanvas }}" style="width:100%; height:100%; display:block;"></canvas>
+    </div>
+
+    <div id="lepton-here" style="position:absolute; left:70%; top:50%; z-index:3; pointer-events:none; transform:translate(-50%,-50%); text-align:center;">
+      <div data-anim="" style="position:absolute; left:50%; top:50%; width:320px; height:320px; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 17%, rgba(91,141,239,0.26) 40%, rgba(250,250,248,0) 70%); animation:coreGlow 1.2s ease 1.75s both; z-index:0;"></div>
+      <div style="position:relative; z-index:1; display:inline-flex; align-items:baseline; font-weight:700; font-size:clamp(40px,4.4vw,66px); letter-spacing:-0.04em; color:#0F172A; line-height:0.9;">
+        <span class="hletter" style="display:inline-block; animation:letterIn .55s cubic-bezier(.2,.7,.2,1) 2s both;">H</span>
+        <span class="hletter" style="display:inline-block; animation:letterIn .55s cubic-bezier(.2,.7,.2,1) 2.22s both;">E</span>
+        <span class="hletter" style="display:inline-block; animation:letterIn .55s cubic-bezier(.2,.7,.2,1) 2.44s both;">R</span>
+        <span class="hletter" style="display:inline-block; animation:letterIn .55s cubic-bezier(.2,.7,.2,1) 2.66s both;">E</span>
+      </div>
+      <div class="hletter" style="position:relative; z-index:1; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.3em; color:var(--accent); margin-top:14px; white-space:nowrap; animation:tagIn .9s ease 3.1s both;">ONE INTELLIGENT VIEW</div>
+    </div>
+
+    <header data-anim="" style="position:relative; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:26px clamp(22px,5vw,72px); animation:navIn .8s ease .05s both;">
+      <div style="display:flex; align-items:center; gap:11px;">
+        <span style="width:12px; height:12px; background:var(--accent); display:inline-block; transform:rotate(45deg); border-radius:2px;"></span>
+        <span style="font-weight:600; letter-spacing:0.16em; font-size:15px; color:#0B1324;">LEPTON</span>
+      </div>
+      <nav style="display:flex; align-items:center; gap:clamp(18px,2.4vw,36px);">
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">Platform</a>
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">Solutions</a>
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">Customers</a>
+        <a href="#" style="color:#586179; font-size:14px; font-weight:500;" style-hover="color:#0B1324;">Company</a>
+        <a href="#" style="color:#1C2436; font-size:13.5px; font-weight:500; border:1px solid rgba(18,28,70,0.16); padding:9px 16px; border-radius:8px; background:rgba(255,255,255,0.6);" style-hover="background:#ffffff; border-color:rgba(18,28,70,0.28);">Request access</a>
+      </nav>
+    </header>
+
+    <div style="position:relative; z-index:4; display:flex; align-items:center; min-height:calc(100vh - 88px); padding:0 clamp(22px,5vw,72px); pointer-events:none;">
+      <div id="lepton-content" style="max-width:472px; pointer-events:auto;">
+        <div data-anim="" style="display:flex; align-items:center; gap:12px; margin-bottom:26px; animation:textIn .8s cubic-bezier(.2,.7,.2,1) .15s both;">
+          <span style="width:26px; height:1px; background:var(--accent); display:inline-block; opacity:.8;"></span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.18em; color:var(--accent); white-space:nowrap;">INFRASTRUCTURE INTELLIGENCE</span>
+        </div>
+        <h1 data-anim="" style="margin:0 0 24px; font-size:clamp(38px,4vw,58px); font-weight:600; line-height:1.04; letter-spacing:-0.028em; color:#0A1F44; text-wrap:balance; max-width:400px; animation:textIn .85s cubic-bezier(.2,.7,.2,1) .3s both;">Where are your assets?</h1>
+        <p data-anim="" style="margin:0 0 34px; font-size:clamp(16px,1.2vw,18px); line-height:1.62; color:#5A647B; max-width:430px; text-wrap:pretty; animation:textIn .85s cubic-bezier(.2,.7,.2,1) .45s both;">Every asset, customer, network and opportunity becomes visible through one intelligent view — helping organizations make faster, smarter and more confident decisions.</p>
+        <div data-anim="" style="display:flex; align-items:center; gap:20px; animation:textIn .85s cubic-bezier(.2,.7,.2,1) .6s both;">
+          <a href="#" style="background:var(--accent); color:#ffffff; font-weight:600; font-size:14.5px; padding:13px 24px; border-radius:9px; box-shadow:0 12px 26px -10px rgba(91,141,239,0.65);" style-hover="filter:brightness(1.07);">Request a Demo</a>
+          <a href="#" style="color:var(--accent); font-size:14.5px; font-weight:500;" style-hover="color:#0A1F44;">Explore Platform →</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:absolute; inset:0; z-index:4; pointer-events:none;">
+      <div class="qcard" style="position:absolute; left:72%; top:17%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatA 20s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .5s both;">
+            <span style="font-size:17px; line-height:1;">📍</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where are your assets?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard qcard-hide-md" style="position:absolute; left:56%; top:40%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatB 23s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .56s both;">
+            <span style="font-size:17px; line-height:1;">👥</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where are your customers?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard qcard-hide-md" style="position:absolute; left:62%; top:77%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatC 21s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .62s both;">
+            <span style="font-size:17px; line-height:1;">📡</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where is your network?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard" style="position:absolute; left:88%; top:40%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatE 19s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .68s both;">
+            <span style="font-size:17px; line-height:1;">📈</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where should you expand next?</span>
+          </div>
+        </div>
+      </div>
+      <div class="qcard" style="position:absolute; left:82%; top:77%; transform:translate(-50%,-50%); width:210px; pointer-events:auto;">
+        <div class="qfloat" style="animation:floatD 22s ease-in-out 1s infinite;">
+          <div data-anim="" style="display:flex; align-items:center; gap:11px; background:rgba(255,255,255,0.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(18,28,70,0.06); border-radius:13px; padding:13px 16px; box-shadow:0 14px 34px -16px rgba(24,34,90,0.22); animation:cardIn .8s cubic-bezier(.2,.7,.2,1) .74s both;">
+            <span style="font-size:17px; line-height:1;">🎯</span>
+            <span style="font-size:15px; font-weight:500; color:#1C2436; letter-spacing:-0.01em; line-height:1.3;">Where are your opportunities?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <section style="position:relative; z-index:1; padding:44px clamp(22px,5vw,72px) 40px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="text-align:center; font-size:13.5px; letter-spacing:0.02em; color:#8A93A3; margin-bottom:30px;">Trusted by enterprises across 60+ countries</div>
+    <div style="position:relative; overflow:hidden; -webkit-mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);">
+      <div class="marquee-track" style="display:flex; width:max-content; align-items:center; gap:76px; animation:marquee 34s linear infinite;">
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">airtel</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Allianz</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Domino’s</span>
+        <span style="font-size:26px; font-weight:800; letter-spacing:0.04em; color:#A6ADB8; white-space:nowrap;">OYO</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Vodafone</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">HDFC Bank</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Indian Oil</span>
+        <span style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Maruti Suzuki</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">airtel</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Allianz</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Domino’s</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:800; letter-spacing:0.04em; color:#A6ADB8; white-space:nowrap;">OYO</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:0.01em; color:#A6ADB8; white-space:nowrap;">Vodafone</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">HDFC Bank</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Indian Oil</span>
+        <span aria-hidden="true" style="font-size:26px; font-weight:700; letter-spacing:-0.01em; color:#A6ADB8; white-space:nowrap;">Maruti Suzuki</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-stats" style="position:relative; z-index:1; padding:64px clamp(22px,5vw,72px) 96px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:40px 32px; max-width:1120px;">
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="425" data-suffix="">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Enterprise customers</div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="60" data-suffix="">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Countries deployed</div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="50" data-suffix="M">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Indian POIs mapped</div>
+      </div>
+      <div>
+        <div style="display:flex; align-items:baseline; font-weight:700; font-size:clamp(44px,5vw,68px); letter-spacing:-0.03em; color:#0A1F44; line-height:1;"><span data-count="20" data-suffix="">0</span><span style="color:var(--accent); margin-left:2px;">+</span></div>
+        <div style="margin-top:10px; font-size:15px; color:#5A647B;">Years of geospatial work</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-transform" style="position:relative; z-index:1; padding:104px clamp(22px,5vw,72px) 116px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="max-width:720px; margin:0 auto 60px; text-align:center;">
+      
+      <h2 style="margin:0 0 20px; font-size:clamp(28px,3.1vw,44px); font-weight:600; line-height:1.12; letter-spacing:-0.02em; color:#0A1F44; text-wrap:balance;">Every critical infrastructure decision begins with better intelligence.</h2>
+      <p style="margin:0 auto; max-width:560px; font-size:clamp(16px,1.2vw,18px); line-height:1.62; color:#5A647B; text-wrap:pretty;">Replace months of analysis, fragmented information, and costly surveys with intelligence you can trust.</p>
+    </div>
+    <div id="lepton-reduce">
+      <canvas id="lepton-reduce-canvas"></canvas>
+      <div class="rd-inputs">1,000+ LOCATIONS &nbsp;&middot;&nbsp; 10M ASSETS &nbsp;&middot;&nbsp; THOUSANDS OF SIGNALS &nbsp;&middot;&nbsp; MONTHS OF ANALYSIS</div>
+      <div class="rd-core">
+        <div class="rd-glow"></div>
+        <div class="rd-one">1</div>
+        <div class="rd-cap">ONE TRUSTED DECISION</div>
+        <div class="rd-sub">Months of analysis, resolved in minutes to insight.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-outcomes" style="position:relative; z-index:1; padding:100px clamp(22px,5vw,72px) 120px; border-top:1px solid rgba(18,28,70,0.06);">
+    <div style="max-width:720px; margin:0 0 52px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.2em; color:var(--accent); margin-bottom:20px;">WHERE LEPTON CREATES VALUE</div>
+      <h2 style="margin:0 0 18px; font-size:clamp(28px,3.1vw,44px); font-weight:600; line-height:1.12; letter-spacing:-0.02em; color:#0A1F44; text-wrap:balance;">Powering every critical infrastructure decision.</h2>
+      <p style="margin:0; max-width:600px; font-size:clamp(16px,1.2vw,18px); line-height:1.62; color:#5A647B; text-wrap:pretty;">Whether you&rsquo;re planning expansion, managing critical infrastructure, optimizing operations, or building smarter cities, Lepton delivers the intelligence behind every confident decision.</p>
+    </div>
+    <div class="ogrid">
+      <div class="ocard">
+        <div class="oicon">📍</div>
+        <div class="otitle">Expand with Confidence</div>
+        <div class="obody">Choose the right location before making your biggest investments. Replace costly surveys and instinct with location intelligence backed by real-world data.</div>
+        <div class="vflow">
+          <div class="vstep" style="transition-delay:.02s;">Potential sites</div>
+          <div class="vconn" style="transition-delay:.08s;"></div>
+          <div class="vstep" style="transition-delay:.14s;">Location analysis</div>
+          <div class="vconn" style="transition-delay:.2s;"></div>
+          <div class="vstep vfinal" style="transition-delay:.26s;">Recommended location</div>
+        </div>
+      </div>
+      <div class="ocard">
+        <div class="oicon">🌐</div>
+        <div class="otitle">Operate with Complete Visibility</div>
+        <div class="obody">Bring assets, networks, field operations, and infrastructure into one connected operational view, so every team works from the same reality.</div>
+        <div class="vflow">
+          <div class="vstep" style="transition-delay:.02s;">Disconnected assets</div>
+          <div class="vconn" style="transition-delay:.08s;"></div>
+          <div class="vstep" style="transition-delay:.14s;">Digital twin</div>
+          <div class="vconn" style="transition-delay:.2s;"></div>
+          <div class="vstep vfinal" style="transition-delay:.26s;">One trusted view</div>
+        </div>
+      </div>
+      <div class="ocard">
+        <div class="oicon">⚡</div>
+        <div class="otitle">Optimize Every Operation</div>
+        <div class="obody">Detect bottlenecks, predict issues, and continuously improve infrastructure performance before small problems become expensive failures.</div>
+        <div class="vflow">
+          <div class="vstep" style="transition-delay:.02s;">Operations</div>
+          <div class="vconn" style="transition-delay:.08s;"></div>
+          <div class="vstep" style="transition-delay:.14s;">Patterns</div>
+          <div class="vconn" style="transition-delay:.2s;"></div>
+          <div class="vstep vfinal" style="transition-delay:.26s;">Optimization</div>
+        </div>
+      </div>
+      <div class="ocard">
+        <div class="oicon">🏗️</div>
+        <div class="otitle">Build Smarter Infrastructure</div>
+        <div class="obody">Transform millions of location and operational data points into recommendations leaders can trust for planning, investment, and growth.</div>
+        <div class="vflow">
+          <div class="vstep" style="transition-delay:.02s;">Data points</div>
+          <div class="vconn" style="transition-delay:.08s;"></div>
+          <div class="vstep" style="transition-delay:.14s;">Recommendations</div>
+          <div class="vconn" style="transition-delay:.2s;"></div>
+          <div class="vstep vfinal" style="transition-delay:.26s;">Smarter infrastructure</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-how">
+    <div class="how-sticky">
+      <div class="how-left">
+        <div class="how-ey">HOW LEPTON MAKES IT POSSIBLE</div>
+        <h2 class="how-hl">One platform, every location question</h2>
+        <p class="how-sub">Lepton combines Location Intelligence, Infrastructure Intelligence, Digital Twins, GIS, Artificial Intelligence, and the Google Maps Platform into one intelligence platform &mdash; transforming complex real-world information into decisions organizations can trust.</p>
+      </div>
+      <div class="how-right">
+        <canvas id="how-canvas"></canvas>
+        <div class="how-chapter" data-ch="0">
+          <div class="how-tag">CHAPTER ONE</div>
+          <h3 class="how-title">Create a Living Digital Twin of Your Infrastructure</h3>
+          <p class="how-desc">Bring every asset, network, and operation into one intelligent view that mirrors your physical infrastructure in real time.</p>
+          <div class="how-powered">
+            <span class="how-chip">Digital Twins</span>
+            <span class="how-chip">GIS</span>
+            <span class="how-chip">Infrastructure Intelligence</span>
+            <span class="how-chip">Artificial Intelligence</span>
+          </div>
+          <div class="how-close">Know every asset. Understand every connection. Operate with confidence.</div>
+        </div>
+        <div class="how-chapter" data-ch="1">
+          <div class="how-tag">CHAPTER TWO</div>
+          <h3 class="how-title">Turn Location Into Your Competitive Advantage</h3>
+          <p class="how-desc">Every location tells a story. Understand demand, accessibility, movement, competition, and opportunity before making your next investment.</p>
+          <div class="how-powered">
+            <span class="how-chip">Location Intelligence</span>
+            <span class="how-chip">GIS</span>
+            <span class="how-chip">Artificial Intelligence</span>
+            <span class="how-chip">Google Maps Platform</span>
+            <span class="how-chip">Geospatial Analytics</span>
+          </div>
+          <div class="how-close">Know where to invest before you invest.</div>
+        </div>
+        <div class="how-chapter" data-ch="2">
+          <div class="how-tag">CHAPTER THREE</div>
+          <h3 class="how-title">Turn Complex Data Into Confident Decisions</h3>
+          <p class="how-desc">Bring together operational, spatial, and business intelligence to uncover patterns, predict issues, and recommend the next best action.</p>
+          <div class="how-ans">
+            <span class="how-chip">Coverage Gap Detected</span>
+            <span class="how-chip">Expansion Opportunity Identified</span>
+            <span class="how-chip">Maintenance Priority Recommended</span>
+            <span class="how-chip">Traffic Hotspot Predicted</span>
+          </div>
+          <div class="how-close">From millions of data points to one confident decision.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lepton-ind">
+    <div class="ind-head">
+      <div class="ind-ey">INDUSTRIES WE POWER</div>
+      <h2 class="ind-hl">Powering the Industries That Build Tomorrow</h2>
+      <p class="ind-sub">Every industry has different challenges. They all begin with the same need &mdash; better visibility, better intelligence, and better decisions. From networks and infrastructure to mobility, retail, utilities and public services, Lepton adapts its intelligence platform to every environment.</p>
+    </div>
+    <div class="ind-sticky">
+      <div class="ind-left">
+        <div class="ind-ch" data-ch="0">
+          <div class="ind-name">TELECOM</div>
+          <h3 class="ind-chhl">Build networks that connect millions.</h3>
+          <p class="ind-copy">Plan, build, operate and optimize telecom infrastructure with complete visibility across assets, fibre, towers and operations.</p>
+          <div class="ind-tags"><span class="ind-tag">Digital Twin</span><span class="ind-tag">Infrastructure Intelligence</span><span class="ind-tag">Network Operations</span><span class="ind-tag">GIS</span></div>
+          <a href="#" class="ind-cta">Learn More &rarr;</a>
+        </div>
+        <div class="ind-ch" data-ch="1">
+          <div class="ind-name">RETAIL</div>
+          <h3 class="ind-chhl">Know where your next opportunity begins.</h3>
+          <p class="ind-copy">Understand customer movement, demand, accessibility and competition before choosing your next location.</p>
+          <div class="ind-tags"><span class="ind-tag">Location Intelligence</span><span class="ind-tag">AI</span><span class="ind-tag">Site Selection</span><span class="ind-tag">Demand Analysis</span></div>
+          <a href="#" class="ind-cta">Learn More &rarr;</a>
+        </div>
+        <div class="ind-ch" data-ch="2">
+          <div class="ind-name">MOBILITY</div>
+          <h3 class="ind-chhl">Keep people and goods moving intelligently.</h3>
+          <p class="ind-copy">Optimize movement through real-time traffic intelligence, routing insights and operational visibility.</p>
+          <div class="ind-tags"><span class="ind-tag">Traffic Intelligence</span><span class="ind-tag">Google Maps Platform</span><span class="ind-tag">AI</span><span class="ind-tag">Routing</span></div>
+          <a href="#" class="ind-cta">Learn More &rarr;</a>
+        </div>
+        <div class="ind-ch" data-ch="3">
+          <div class="ind-name">UTILITIES</div>
+          <h3 class="ind-chhl">Operate critical infrastructure with confidence.</h3>
+          <p class="ind-copy">Monitor assets, predict failures and improve operational resilience across large infrastructure networks.</p>
+          <div class="ind-tags"><span class="ind-tag">Asset Intelligence</span><span class="ind-tag">Infrastructure Intelligence</span><span class="ind-tag">Predictive Analytics</span><span class="ind-tag">GIS</span></div>
+          <a href="#" class="ind-cta">Learn More &rarr;</a>
+        </div>
+        <div class="ind-ch" data-ch="4">
+          <div class="ind-name">GOVERNMENT &amp; SMART CITIES</div>
+          <h3 class="ind-chhl">Build smarter cities through connected intelligence.</h3>
+          <p class="ind-copy">Plan resilient infrastructure, improve public services and make better urban decisions using one intelligent platform.</p>
+          <div class="ind-tags"><span class="ind-tag">Urban Planning</span><span class="ind-tag">GIS</span><span class="ind-tag">Location Intelligence</span><span class="ind-tag">Digital Twin</span></div>
+          <a href="#" class="ind-cta">Learn More &rarr;</a>
+        </div>
+      </div>
+      <div class="ind-right">
+        <canvas id="ind-canvas"></canvas>
+        <div class="ind-close">
+          <div class="ind-close-t">One platform. Every industry. <b>Better decisions.</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accent&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#5B8DEF&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#5B8DEF&quot;, &quot;#3E63DD&quot;, &quot;#22B8CF&quot;, &quot;#0A2540&quot;] },
+  &quot;railsVisible&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot; },
+  &quot;motion&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Standard&quot;, &quot;options&quot;: [&quot;Standard&quot;, &quot;Calm&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Motion&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return { setCanvas: (el) => { this.canvas = el; } };
+  }
+
+  _readParams() {
+    this.accent = this.props.accent || '#5B8DEF';
+    this.railsVisible = this.props.railsVisible !== false;
+    this.calm = (this.props.motion || 'Standard') === 'Calm';
+  }
+
+  componentDidMount() {
+    this._readParams();
+    const root = document.getElementById('lepton-page');
+    if (root && this.props.accent) root.style.setProperty('--accent', this.props.accent);
+    this.reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this._initStats();
+    this._initTransform();
+    this._initHow();
+    this._initInd();
+    this._wait();
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.accent !== this.props.accent && this.props.accent) {
+      this.accent = this.props.accent;
+      const root = document.getElementById('lepton-page');
+      if (root) root.style.setProperty('--accent', this.props.accent);
+      if (this.accentCol) this.accentCol.set(this.props.accent);
+      if (this.pMat) this.pMat.color.set(this.props.accent);
+      if (this.arcMat) this.arcMat.color.set(this.props.accent);
+      if (this.icMat) this.icMat.color.set(this.props.accent);
+      if (this.rMat) this.rMat.color.set(this.props.accent);
+    }
+    if (prev.railsVisible !== this.props.railsVisible) this.railsVisible = this.props.railsVisible !== false;
+    if (prev.motion !== this.props.motion) this.calm = (this.props.motion || 'Standard') === 'Calm';
+  }
+
+  _initStats(retry) {
+    const els = [...document.querySelectorAll('#lepton-stats [data-count]')];
+    if (!els.length) {
+      if ((retry || 0) < 50) this._stimer = setTimeout(() => this._initStats((retry || 0) + 1), 80);
+      return;
+    }
+    const ease = (x) => 1 - Math.pow(1 - x, 3);
+    const run = () => {
+      els.forEach((el) => {
+        const target = +el.getAttribute('data-count');
+        const suf = el.getAttribute('data-suffix') || '';
+        const dur = 1600, t0 = performance.now();
+        const step = (now) => {
+          const p = Math.min(1, (now - t0) / dur);
+          el.textContent = Math.round(target * ease(p)) + suf;
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    };
+    if (this.reduced) {
+      els.forEach((el) => { el.textContent = el.getAttribute('data-count') + (el.getAttribute('data-suffix') || ''); });
+      return;
+    }
+    const sec = document.getElementById('lepton-stats');
+    if (!sec) { run(); return; }
+    let done = false;
+    const check = () => {
+      if (done) return;
+      const r = sec.getBoundingClientRect();
+      const vh = window.innerHeight || 800;
+      if (r.top < vh * 0.9 && r.bottom > 0) { done = true; run(); return; }
+      this._statRaf = requestAnimationFrame(check);
+    };
+    check();
+  }
+
+  _initTransform(retry) {
+    const stage = document.getElementById('lepton-reduce');
+    const canvas = document.getElementById('lepton-reduce-canvas');
+    if (!stage || !canvas) {
+      if ((retry || 0) < 50) this._ttimer = setTimeout(() => this._initTransform((retry || 0) + 1), 80);
+      return;
+    }
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const setSize = () => {
+      const r = canvas.getBoundingClientRect();
+      this.rcW = r.width; this.rcH = r.height;
+      canvas.width = Math.max(1, r.width * dpr); canvas.height = Math.max(1, r.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    setSize();
+    const N = this.rcW < 620 ? 420 : 820;
+    const pts = [];
+    for (let k = 0; k < N; k++) pts.push({ nx: Math.random(), ny: 0.12 + Math.random() * 0.78, ph: Math.random() * Math.PI * 2 });
+    this._rro = new ResizeObserver(setSize); this._rro.observe(canvas);
+
+    const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+    this._rp = 0;
+    const draw = (now) => {
+      const w = this.rcW, h = this.rcH; ctx.clearRect(0, 0, w, h);
+      const e = ease(this._rp), cx = w * 0.5, cy = h * 0.52;
+      ctx.fillStyle = '#A7AFBE';
+      for (let k = 0; k < pts.length; k++) {
+        const p = pts[k], sx = p.nx * w, sy = p.ny * h;
+        const dx = Math.sin(now * 0.0006 + p.ph) * 3 * (1 - e);
+        const dy = Math.cos(now * 0.0007 + p.ph) * 3 * (1 - e);
+        const x = sx + (cx - sx) * e + dx, y = sy + (cy - sy) * e + dy;
+        const a = 0.6 * (1 - smooth(0.5, 1, e));
+        if (a <= 0.01) continue;
+        ctx.globalAlpha = a; ctx.fillRect(x, y, 1.8, 1.8);
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    if (this.reduced) {
+      this._rp = 1; stage.classList.add('seen', 'collapsing', 'collapsed'); draw(0); return;
+    }
+
+    let started = false, collapseStart = null;
+    const loop = () => {
+      const now = performance.now();
+      if (collapseStart !== null) {
+        this._rp = Math.min(1, (now - collapseStart) / 2300);
+        if (this._rp > 0.04) stage.classList.add('collapsing');
+        if (this._rp > 0.7) stage.classList.add('collapsed');
+      }
+      draw(now);
+      if (collapseStart !== null && this._rp >= 1) { this._rRaf = null; return; }
+      this._rRaf = requestAnimationFrame(loop);
+    };
+    const trigger = () => {
+      if (started) return false;
+      const r = stage.getBoundingClientRect();
+      const vh = window.innerHeight || 800;
+      if (r.top < vh * 0.68 && r.bottom > 0) {
+        started = true;
+        window.removeEventListener('scroll', trigger, true);
+        stage.classList.add('seen');
+        this._rRaf = requestAnimationFrame(loop);
+        this._rT = setTimeout(() => { collapseStart = performance.now(); }, 950);
+        return true;
+      }
+      return false;
+    };
+    const poll = () => { if (started) return; if (!trigger()) this._rPoll = requestAnimationFrame(poll); };
+    this._tScroll = trigger;
+    window.addEventListener('scroll', trigger, true);
+    poll();
+  }
+
+  _hexRgb(hex) {
+    hex = (hex || '#5B8DEF').replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+    const n = parseInt(hex, 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+
+  _initHow(retry) {
+    const sec = document.getElementById('lepton-how');
+    const canvas = document.getElementById('how-canvas');
+    if (!sec || !canvas) {
+      if ((retry || 0) < 50) this._htimer2 = setTimeout(() => this._initHow((retry || 0) + 1), 80);
+      return;
+    }
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const acc = this._hexRgb(this.accent);
+    const chapters = [].slice.call(sec.querySelectorAll('.how-chapter'));
+    let W = 0, Hh = 0;
+    const setSize = () => {
+      const r = canvas.getBoundingClientRect();
+      W = r.width; Hh = r.height;
+      canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, Hh * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    setSize();
+    this._hro = new ResizeObserver(setSize); this._hro.observe(canvas);
+
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+    const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    const A = (al) => 'rgba(' + acc.r + ',' + acc.g + ',' + acc.b + ',' + al + ')';
+
+    // Scene 1 — scattered assets assembling into a connected twin
+    const N1 = 26, cols = 6, rows = Math.ceil(N1 / cols);
+    const s1 = [];
+    for (let i = 0; i < N1; i++) {
+      const c = i % cols, r = Math.floor(i / cols);
+      s1.push({ sx: rnd(0.04, 0.96), sy: rnd(0.05, 0.95), tx: 0.13 + (c / (cols - 1)) * 0.74 + rnd(-0.03, 0.03), ty: 0.16 + (r / (rows - 1)) * 0.66 + rnd(-0.03, 0.03) });
+    }
+    const e1 = [];
+    for (let i = 0; i < N1; i++) { const c = i % cols; if (c < cols - 1 && i + 1 < N1) e1.push([i, i + 1]); if (i + cols < N1) e1.push([i, i + cols]); }
+
+    // Scene 2 — map layers + candidate scoring
+    const layers = [{ x: 0.34, y: 0.42, r: 0.34 }, { x: 0.63, y: 0.56, r: 0.38 }, { x: 0.52, y: 0.3, r: 0.28 }, { x: 0.72, y: 0.4, r: 0.24 }];
+    const cand = [];
+    for (let i = 0; i < 6; i++) cand.push({ x: rnd(0.22, 0.8), y: rnd(0.24, 0.78) });
+    cand[2].best = true;
+
+    // Scene 3 — streams into an engine
+    const streams = [];
+    for (let i = 0; i < 8; i++) streams.push({ ang: (i / 8) * Math.PI * 2 + 0.3 });
+
+    const grid = (alpha) => {
+      ctx.globalAlpha = alpha; ctx.strokeStyle = 'rgba(18,28,70,0.05)'; ctx.lineWidth = 1;
+      const gs = Math.max(40, Math.round(W / 13)); ctx.beginPath();
+      for (let x = gs; x < W; x += gs) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, Hh); }
+      for (let y = gs; y < Hh; y += gs) { ctx.moveTo(0, y + 0.5); ctx.lineTo(W, y + 0.5); }
+      ctx.stroke(); ctx.globalAlpha = 1;
+    };
+
+    const scene1 = (lp, alpha) => {
+      const e = ease(Math.min(1, lp / 0.72));
+      const eo = smooth(0.32, 0.85, lp);
+      if (eo > 0) {
+        ctx.strokeStyle = A(0.32 * eo * alpha); ctx.lineWidth = 1;
+        for (const ed of e1) {
+          const p = s1[ed[0]], q = s1[ed[1]];
+          ctx.beginPath();
+          ctx.moveTo((p.sx + (p.tx - p.sx) * e) * W, (p.sy + (p.ty - p.sy) * e) * Hh);
+          ctx.lineTo((q.sx + (q.tx - q.sx) * e) * W, (q.sy + (q.ty - q.sy) * e) * Hh);
+          ctx.stroke();
+        }
+      }
+      if (lp > 0.58) {
+        const tt = (performance.now() * 0.0004) % 1;
+        for (let k = 0; k < e1.length; k += 2) {
+          const ed = e1[k], p = s1[ed[0]], q = s1[ed[1]];
+          const px = (p.sx + (p.tx - p.sx) * e) * W, py = (p.sy + (p.ty - p.sy) * e) * Hh;
+          const qx = (q.sx + (q.tx - q.sx) * e) * W, qy = (q.sy + (q.ty - q.sy) * e) * Hh;
+          const t2 = (tt + k * 0.09) % 1;
+          ctx.fillStyle = A(0.7 * smooth(0.58, 0.8, lp) * alpha);
+          ctx.beginPath(); ctx.arc(px + (qx - px) * t2, py + (qy - py) * t2, 2, 0, 6.283); ctx.fill();
+        }
+      }
+      for (let i = 0; i < N1; i++) {
+        const p = s1[i], x = (p.sx + (p.tx - p.sx) * e) * W, y = (p.sy + (p.ty - p.sy) * e) * Hh;
+        ctx.fillStyle = i % 5 === 0 ? A(0.9 * alpha) : 'rgba(42,53,102,' + ((0.45 + 0.4 * e) * alpha) + ')';
+        ctx.fillRect(x - 2.4, y - 2.4, 4.8, 4.8);
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    const scene2 = (lp, alpha) => {
+      grid(alpha * 0.9);
+      for (let i = 0; i < layers.length; i++) {
+        const L = layers[i], la = smooth(i * 0.13, i * 0.13 + 0.3, lp);
+        if (la <= 0.01) continue;
+        const g = ctx.createRadialGradient(L.x * W, L.y * Hh, 0, L.x * W, L.y * Hh, L.r * Math.min(W, Hh));
+        g.addColorStop(0, A(0.15 * la * alpha)); g.addColorStop(1, A(0));
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, Hh);
+      }
+      const reveal = smooth(0.32, 0.66, lp);
+      if (reveal > 0) {
+        for (let i = 0; i < cand.length; i++) {
+          const c = cand[i], x = c.x * W, y = c.y * Hh, hi = c.best ? smooth(0.66, 1, lp) : 0;
+          ctx.globalAlpha = alpha * reveal;
+          ctx.strokeStyle = c.best ? A(0.4 + 0.5 * hi) : 'rgba(42,53,102,0.3)';
+          ctx.lineWidth = c.best ? 1.5 : 1;
+          ctx.beginPath(); ctx.arc(x, y, 9 + (c.best ? hi * 17 : 0), 0, 6.283); ctx.stroke();
+          if (c.best && hi > 0) { ctx.strokeStyle = A(0.15 * hi); ctx.beginPath(); ctx.arc(x, y, 9 + hi * 34, 0, 6.283); ctx.stroke(); }
+          ctx.fillStyle = c.best ? A(0.95) : 'rgba(42,53,102,0.45)';
+          ctx.beginPath(); ctx.arc(x, y, c.best ? 4 : 3, 0, 6.283); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+    };
+
+    const scene3 = (lp, alpha) => {
+      const cx = W * 0.5, cy = Hh * 0.5, flow = performance.now() * 0.0005;
+      for (let i = 0; i < streams.length; i++) {
+        const s = streams[i], sx = cx + Math.cos(s.ang) * W * 0.52, sy = cy + Math.sin(s.ang) * Hh * 0.52;
+        ctx.strokeStyle = A(0.1 * alpha); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(cx, cy); ctx.stroke();
+        const t2 = (flow + i * 0.13) % 1, rev = 1 - t2;
+        ctx.fillStyle = A(0.7 * smooth(0, 0.4, lp) * alpha);
+        ctx.beginPath(); ctx.arc(cx + (sx - cx) * rev, cy + (sy - cy) * rev, 2, 0, 6.283); ctx.fill();
+      }
+      const cs = smooth(0.2, 0.7, lp);
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, 66);
+      g.addColorStop(0, A(0.22 * cs * alpha)); g.addColorStop(1, A(0));
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, Hh);
+      ctx.strokeStyle = A((0.4 + 0.4 * cs) * alpha); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx, cy, 24 + cs * 6, 0, 6.283); ctx.stroke();
+      ctx.fillStyle = A(0.95 * alpha); ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 6.283); ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    const scenes = [scene1, scene2, scene3];
+    const drawAt = (gp) => {
+      ctx.clearRect(0, 0, W, Hh);
+      const seg = Math.min(2.999, gp * 3), idx = Math.floor(seg), lp = seg - idx;
+      if (lp > 0.86 && idx < 2) { const b = smooth(0.86, 1, lp); scenes[idx](lp, 1 - b); scenes[idx + 1](0, b); }
+      else scenes[idx](lp, 1);
+      for (let i = 0; i < chapters.length; i++) chapters[i].classList.toggle('active', i === idx);
+    };
+
+    const compute = () => {
+      const r = sec.getBoundingClientRect();
+      const total = sec.offsetHeight - window.innerHeight;
+      let gp = 0; if (total > 0) gp = Math.min(1, Math.max(0, -r.top / total));
+      this._hgp = gp;
+      this._hVisible = r.bottom > 0 && r.top < window.innerHeight;
+      drawAt(gp);
+    };
+    this._hScroll = compute; window.addEventListener('scroll', compute, true); compute();
+
+    if (this.reduced) { chapters.forEach((c) => c.classList.add('active')); drawAt(0); return; }
+    const loop = () => { this._hRaf = requestAnimationFrame(loop); if (this._hVisible) drawAt(this._hgp || 0); };
+    loop();
+  }
+
+  _initInd(retry) {
+    const sec = document.getElementById('lepton-ind');
+    const canvas = document.getElementById('ind-canvas');
+    const intro = sec && sec.querySelector('.ind-head');
+    if (!sec || !canvas) {
+      if ((retry || 0) < 50) this._itimer = setTimeout(() => this._initInd((retry || 0) + 1), 80);
+      return;
+    }
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const acc = this._hexRgb(this.accent);
+    const chapters = [].slice.call(sec.querySelectorAll('.ind-ch'));
+    let W = 0, Hh = 0;
+    const setSize = () => {
+      const r = canvas.getBoundingClientRect(); W = r.width; Hh = r.height;
+      canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, Hh * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    setSize();
+    this._iro = new ResizeObserver(setSize); this._iro.observe(canvas);
+
+    const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+    const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    const A = (al) => 'rgba(' + acc.r + ',' + acc.g + ',' + acc.b + ',' + al + ')';
+    const SL = 'rgba(42,53,102,';
+    const vx = [0.2, 0.4, 0.6, 0.8], hy = [0.26, 0.5, 0.74];
+    const nodes = [[0.2, 0.26], [0.4, 0.5], [0.6, 0.26], [0.8, 0.5], [0.4, 0.74], [0.6, 0.74], [0.2, 0.74], [0.8, 0.26], [0.5, 0.4], [0.6, 0.5], [0.3, 0.5], [0.7, 0.74]];
+
+    const roads = (al) => {
+      ctx.strokeStyle = SL + (0.1 * al) + ')'; ctx.lineWidth = 1; ctx.beginPath();
+      for (const x of vx) { ctx.moveTo(x * W, 0.08 * Hh); ctx.lineTo(x * W, 0.92 * Hh); }
+      for (const y of hy) { ctx.moveTo(0.08 * W, y * Hh); ctx.lineTo(0.92 * W, y * Hh); }
+      ctx.stroke();
+    };
+    const dot = (nx, ny, r, col) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(nx * W, ny * Hh, r, 0, 6.283); ctx.fill(); };
+
+    const telecom = (lp, al) => {
+      const e = ease(Math.min(1, lp / 0.7));
+      const eo = smooth(0.1, 0.6, lp);
+      ctx.strokeStyle = A(0.3 * eo * al); ctx.lineWidth = 1; ctx.beginPath();
+      for (let i = 0; i < 6; i++) { const a = nodes[i], b = nodes[(i + 2) % 8]; ctx.moveTo(a[0] * W, a[1] * Hh); ctx.lineTo(b[0] * W, b[1] * Hh); }
+      ctx.stroke();
+      for (let i = 0; i < 5; i++) {
+        const n = nodes[i], x = n[0] * W, y = n[1] * Hh, h = e * 15;
+        ctx.strokeStyle = A(0.7 * al); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - h); ctx.stroke();
+        const rr = 8 + smooth(0.3, 1, lp) * 26; ctx.strokeStyle = A(0.16 * al); ctx.beginPath(); ctx.arc(x, y, rr, 0, 6.283); ctx.stroke();
+        dot(n[0], n[1], 3, A(0.9 * al));
+      }
+    };
+    const retail = (lp, al) => {
+      const blobs = [[0.35, 0.42], [0.62, 0.56], [0.5, 0.32]];
+      for (let i = 0; i < blobs.length; i++) { const la = smooth(i * 0.12, i * 0.12 + 0.3, lp); if (la < 0.01) continue; const g = ctx.createRadialGradient(blobs[i][0] * W, blobs[i][1] * Hh, 0, blobs[i][0] * W, blobs[i][1] * Hh, 0.3 * Math.min(W, Hh)); g.addColorStop(0, A(0.15 * la * al)); g.addColorStop(1, A(0)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, Hh); }
+      const rev = smooth(0.3, 0.66, lp);
+      if (rev > 0) { const ci = [1, 3, 8, 5, 2]; for (let k = 0; k < ci.length; k++) { const n = nodes[ci[k]], best = k === 2, hi = best ? smooth(0.66, 1, lp) : 0; ctx.strokeStyle = best ? A((0.4 + 0.5 * hi) * al) : SL + (0.3 * rev * al) + ')'; ctx.lineWidth = best ? 1.5 : 1; ctx.beginPath(); ctx.arc(n[0] * W, n[1] * Hh, 9 + (best ? hi * 16 : 0), 0, 6.283); ctx.stroke(); dot(n[0], n[1], best ? 4 : 3, best ? A(0.95 * al) : SL + (0.5 * rev * al) + ')'); } }
+    };
+    const mobility = (lp, al) => {
+      const t = performance.now() * 0.00006, cong = smooth(0.3, 0.8, lp);
+      ctx.strokeStyle = A(0.35 * cong * al); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0.08 * W, 0.5 * Hh); ctx.lineTo(0.92 * W, 0.5 * Hh); ctx.stroke();
+      const rev = smooth(0, 0.5, lp);
+      for (let i = 0; i < 22; i++) {
+        const onH = i % 2 === 0, lane = (i % 3), off = ((t * (onH ? 1 : -1) + i * 0.13) % 1 + 1) % 1;
+        let x, y; if (onH) { y = hy[lane]; x = 0.08 + off * 0.84; } else { x = vx[i % 4]; y = 0.08 + off * 0.84; }
+        dot(x, y, 1.8, A(0.75 * rev * al));
+      }
+    };
+    const utilities = (lp, al) => {
+      const si = [0, 2, 4, 3], e = smooth(0.1, 0.6, lp);
+      ctx.strokeStyle = A(0.3 * e * al); ctx.lineWidth = 1; ctx.beginPath();
+      for (let i = 0; i < si.length - 1; i++) { const a = nodes[si[i]], b = nodes[si[i + 1]]; ctx.moveTo(a[0] * W, a[1] * Hh); ctx.lineTo(b[0] * W, b[1] * Hh); } ctx.stroke();
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = A(0.25 * e * al); ctx.beginPath(); ctx.moveTo(0.15 * W, 0.7 * Hh); ctx.lineTo(0.85 * W, 0.62 * Hh); ctx.stroke(); ctx.setLineDash([]);
+      for (let k = 0; k < si.length; k++) { const n = nodes[si[k]], x = n[0] * W, y = n[1] * Hh; ctx.fillStyle = A(0.85 * al); ctx.fillRect(x - 3.5, y - 3.5, 7, 7); }
+      const alert = smooth(0.6, 1, lp); if (alert > 0) { const n = nodes[3], pr = 6 + ((performance.now() * 0.002) % 1) * 18; ctx.strokeStyle = A((0.5 - ((performance.now() * 0.002) % 1) * 0.5) * alert * al); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(n[0] * W, n[1] * Hh, pr, 0, 6.283); ctx.stroke(); }
+    };
+    const city = (lp, al) => {
+      telecom(1, al * 0.5); retail(1, al * 0.4); utilities(1, al * 0.5); mobility(1, al * 0.6);
+      const cs = smooth(0.2, 0.9, lp); const g = ctx.createRadialGradient(W / 2, Hh / 2, 0, W / 2, Hh / 2, Math.min(W, Hh) * 0.6); g.addColorStop(0, A(0.1 * cs * al)); g.addColorStop(1, A(0)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, Hh);
+    };
+    const scenes = [telecom, retail, mobility, utilities, city];
+
+    const drawAt = (gp) => {
+      ctx.clearRect(0, 0, W, Hh);
+      const seg = Math.min(4.999, gp * 5), idx = Math.floor(seg), lp = seg - idx;
+      let s = 1.03; if (idx >= 4) s = 1.03 - smooth(0.35, 1, lp) * 0.28;
+      ctx.save(); ctx.translate(W / 2, Hh / 2); ctx.scale(s, s); ctx.translate(-W / 2, -Hh / 2);
+      roads(1);
+      if (lp > 0.86 && idx < 4) { const b = smooth(0.86, 1, lp); scenes[idx](lp, 1 - b); scenes[idx + 1](0, b); }
+      else scenes[idx](lp, 1);
+      ctx.restore();
+      for (let i = 0; i < chapters.length; i++) chapters[i].classList.toggle('active', i === idx);
+      sec.classList.toggle('ind-done', gp > 0.9);
+    };
+
+    const compute = () => {
+      const r = sec.getBoundingClientRect();
+      const iH = intro ? intro.offsetHeight : 0;
+      const total = sec.offsetHeight - iH - window.innerHeight;
+      let gp = 0; if (total > 0) gp = Math.min(1, Math.max(0, (-r.top - iH) / total));
+      this._igp = gp;
+      this._iVisible = r.bottom > 0 && r.top < window.innerHeight;
+      drawAt(gp);
+    };
+    this._iScroll = compute; window.addEventListener('scroll', compute, true); compute();
+    if (this.reduced) { chapters.forEach((c) => c.classList.add('active')); return; }
+    const loop = () => { this._iRaf = requestAnimationFrame(loop); if (this._iVisible) drawAt(this._igp || 0); };
+    loop();
+  }
+
+  _wait() {
+    if (window.THREE) { try { this._init(); } catch (err) { console.error('Lepton sphere init failed', err); } return; }
+    this._t = setTimeout(() => this._wait(), 60);
+  }
+
+  _init() {
+    const THREE = window.THREE;
+    const canvas = this.canvas;
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    let W = parent.clientWidth || window.innerWidth;
+    let H = parent.clientHeight || window.innerHeight;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(W, H, false);
+    this.renderer = renderer;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+    camera.position.set(0, 0, 6);
+    this.camera = camera;
+    this.scene = scene;
+
+    const group = new THREE.Group();
+    group.position.set(W < 900 ? 0.35 : 1.7, 0, 0);
+    scene.add(group);
+    this.group = group;
+
+    const sphere = new THREE.Group();
+    sphere.rotation.x = 0.3;
+    group.add(sphere);
+    this.sphere = sphere;
+
+    const Rg = 1.5;
+    const steel = new THREE.Color('#6E86D8');
+    const nodeSteel = new THREE.Color('#2A3566');
+    const accent = new THREE.Color(this.accent);
+    this.accentCol = accent;
+
+    // ---- Wireframe network lines ----
+    const gridPos = [];
+    const seg = 90;
+    const lats = [-64, -46, -28, -10, 10, 28, 46, 64];
+    lats.forEach((deg) => {
+      const lat = deg * Math.PI / 180;
+      const y = Rg * Math.sin(lat), r = Rg * Math.cos(lat);
+      for (let i = 0; i < seg; i++) {
+        const a0 = (i / seg) * Math.PI * 2, a1 = ((i + 1) / seg) * Math.PI * 2;
+        gridPos.push(r * Math.cos(a0), y, r * Math.sin(a0), r * Math.cos(a1), y, r * Math.sin(a1));
+      }
+    });
+    const meridians = 14;
+    for (let m = 0; m < meridians; m++) {
+      const lon = (m / meridians) * Math.PI * 2;
+      const half = seg / 2;
+      for (let i = 0; i < half; i++) {
+        const t0 = -Math.PI / 2 + (i / half) * Math.PI, t1 = -Math.PI / 2 + ((i + 1) / half) * Math.PI;
+        gridPos.push(
+          Rg * Math.cos(t0) * Math.cos(lon), Rg * Math.sin(t0), Rg * Math.cos(t0) * Math.sin(lon),
+          Rg * Math.cos(t1) * Math.cos(lon), Rg * Math.sin(t1), Rg * Math.cos(t1) * Math.sin(lon)
+        );
+      }
+    }
+    const gGeom = new THREE.BufferGeometry();
+    gGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(gridPos), 3));
+    const gMat = new THREE.LineBasicMaterial({ color: steel.clone(), transparent: true, opacity: 0 });
+    sphere.add(new THREE.LineSegments(gGeom, gMat));
+    this.gMat = gMat;
+
+    // ---- Surface nodes ----
+    const NN = 64;
+    const nodeVecs = [];
+    const gr = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < NN; i++) {
+      const y = 1 - (i / (NN - 1)) * 2;
+      const rad = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = gr * i;
+      nodeVecs.push(new THREE.Vector3(Math.cos(th) * rad, y, Math.sin(th) * rad).multiplyScalar(Rg * 1.004));
+    }
+    const nPos = new Float32Array(NN * 3), nCol = new Float32Array(NN * 3);
+    nodeVecs.forEach((v, i) => {
+      nPos[i * 3] = v.x; nPos[i * 3 + 1] = v.y; nPos[i * 3 + 2] = v.z;
+      const c = (i % 4 === 0) ? accent : nodeSteel;
+      nCol[i * 3] = c.r; nCol[i * 3 + 1] = c.g; nCol[i * 3 + 2] = c.b;
+    });
+    const nGeom = new THREE.BufferGeometry();
+    nGeom.setAttribute('position', new THREE.BufferAttribute(nPos, 3));
+    nGeom.setAttribute('color', new THREE.BufferAttribute(nCol, 3));
+    const nMat = new THREE.PointsMaterial({ size: 6, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0 });
+    sphere.add(new THREE.Points(nGeom, nMat));
+    this.nMat = nMat;
+
+    // ---- Connection arcs ----
+    const arcPos = [];
+    const arcCount = 14, arcSeg = 28;
+    for (let k = 0; k < arcCount; k++) {
+      const a = nodeVecs[Math.floor(Math.random() * NN)].clone().normalize();
+      const b = nodeVecs[Math.floor(Math.random() * NN)].clone().normalize();
+      if (a.distanceTo(b) < 0.5) continue;
+      const prev = new THREE.Vector3();
+      for (let s = 0; s <= arcSeg; s++) {
+        const tt = s / arcSeg;
+        const p = a.clone().lerp(b, tt).normalize().multiplyScalar(Rg * (1 + 0.14 * Math.sin(Math.PI * tt)));
+        if (s > 0) arcPos.push(prev.x, prev.y, prev.z, p.x, p.y, p.z);
+        prev.copy(p);
+      }
+    }
+    const aGeom = new THREE.BufferGeometry();
+    aGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(arcPos), 3));
+    const arcMat = new THREE.LineBasicMaterial({ color: accent.clone(), transparent: true, opacity: 0 });
+    sphere.add(new THREE.LineSegments(aGeom, arcMat));
+    this.arcMat = arcMat;
+
+    // ---- Internal light nodes flowing toward the core ----
+    const IC = 9; this.IC = IC;
+    this.icVecs = [];
+    for (let i = 0; i < IC; i++) this.icVecs.push(nodeVecs[Math.floor(Math.random() * NN)].clone());
+    const icPos = new Float32Array(IC * 3);
+    const icGeom = new THREE.BufferGeometry();
+    icGeom.setAttribute('position', new THREE.BufferAttribute(icPos, 3));
+    const icMat = new THREE.PointsMaterial({ color: accent.clone(), size: 5, sizeAttenuation: false, transparent: true, opacity: 0 });
+    sphere.add(new THREE.Points(icGeom, icMat));
+    this.icPos = icPos; this.icGeom = icGeom; this.icMat = icMat;
+    this.icT = [];
+    for (let i = 0; i < IC; i++) this.icT.push(Math.random());
+
+    // ---- Beams (rails) + inbound pulses toward the five cards ----
+    const anchors = [
+      new THREE.Vector3(0, 1, 0.1),
+      new THREE.Vector3(-1, 0.62, 0.1),
+      new THREE.Vector3(1, 0.62, 0.1),
+      new THREE.Vector3(-1, -0.82, 0.1),
+      new THREE.Vector3(1, -0.82, 0.1)
+    ].map(v => v.normalize().multiplyScalar(2.95));
+    this.anchors = anchors;
+
+    const rGeom = new THREE.BufferGeometry();
+    const rArr = new Float32Array(anchors.length * 6);
+    anchors.forEach((a, i) => {
+      const edge = a.clone().normalize().multiplyScalar(Rg);
+      rArr[i * 6] = a.x; rArr[i * 6 + 1] = a.y; rArr[i * 6 + 2] = a.z;
+      rArr[i * 6 + 3] = edge.x; rArr[i * 6 + 4] = edge.y; rArr[i * 6 + 5] = edge.z;
+    });
+    rGeom.setAttribute('position', new THREE.BufferAttribute(rArr, 3));
+    const rMat = new THREE.LineBasicMaterial({ color: accent.clone(), transparent: true, opacity: 0 });
+    group.add(new THREE.LineSegments(rGeom, rMat));
+    this.rMat = rMat;
+
+    const per = 2; this.per = per;
+    const pPos = new Float32Array(anchors.length * per * 3);
+    const pGeom = new THREE.BufferGeometry();
+    pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ color: accent.clone(), size: 7, sizeAttenuation: false, transparent: true, opacity: 0 });
+    group.add(new THREE.Points(pGeom, pMat));
+    this.pPos = pPos; this.pGeom = pGeom; this.pMat = pMat; this.Rg = Rg;
+    this.pT = [];
+    for (let i = 0; i < anchors.length * per; i++) this.pT.push(Math.random());
+
+    this.start = performance.now();
+
+    this._ro = new ResizeObserver(() => {
+      const w = parent.clientWidth, h = parent.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+      group.position.x = w < 900 ? 0.35 : 1.7;
+    });
+    this._ro.observe(parent);
+
+    this._animate();
+  }
+
+  _animate() {
+    const clamp = (x) => Math.min(1, Math.max(0, x));
+    const loop = () => {
+      this._raf = requestAnimationFrame(loop);
+      const t = (performance.now() - this.start) / 1000;
+      const reduced = this.reduced;
+
+      this.gMat.opacity = reduced ? 0.32 : clamp(t / 0.7) * 0.32;
+      this.nMat.opacity = reduced ? 1.0 : clamp(t / 0.7) * 1.0;
+      this.arcMat.opacity = reduced ? 0.24 : clamp((t - 0.2) / 0.6) * 0.24;
+      this.rMat.opacity = this.railsVisible ? (reduced ? 0.24 : clamp((t - 0.9) / 1.0) * 0.24) : 0;
+
+      if (!reduced && t > 0.8) {
+        const spd = this.calm ? 0.16 : 0.22;
+        for (let i = 0; i < this.IC; i++) {
+          this.icT[i] += (1 / 60) * spd;
+          if (this.icT[i] > 1) this.icT[i] -= 1;
+          const f = this.icT[i], s = this.icVecs[i];
+          const k = 1 - f * 0.96;
+          this.icPos[i * 3] = s.x * k; this.icPos[i * 3 + 1] = s.y * k; this.icPos[i * 3 + 2] = s.z * k;
+        }
+        this.icGeom.attributes.position.needsUpdate = true;
+        this.icMat.opacity = clamp((t - 0.8) / 0.8) * 0.72;
+      } else if (reduced) {
+        this.icMat.opacity = 0.4;
+      }
+
+      const pulseOn = !reduced && t > 0.9;
+      if (pulseOn) {
+        const spd = this.calm ? 0.18 : 0.26;
+        for (let i = 0; i < this.anchors.length; i++) {
+          const a = this.anchors[i];
+          for (let j = 0; j < this.per; j++) {
+            const idx = i * this.per + j;
+            this.pT[idx] += (1 / 60) * spd;
+            if (this.pT[idx] > 1) this.pT[idx] -= 1;
+            const f = this.pT[idx];
+            const toR = this.Rg * 0.96;
+            const cur = a.clone().normalize().multiplyScalar(a.length() + (toR - a.length()) * f);
+            this.pPos[idx * 3] = cur.x; this.pPos[idx * 3 + 1] = cur.y; this.pPos[idx * 3 + 2] = cur.z;
+          }
+        }
+        this.pGeom.attributes.position.needsUpdate = true;
+        this.pMat.opacity = clamp((t - 0.9) / 0.6) * 0.9;
+      } else {
+        this.pMat.opacity = 0;
+      }
+
+      if (!reduced) {
+        this.sphere.rotation.y += (this.calm ? 0.0007 : 0.0011);
+        const breathe = 1 + Math.sin(t * 0.9) * 0.008;
+        this.sphere.scale.setScalar(breathe);
+      } else {
+        this.sphere.rotation.y = 0.4;
+      }
+
+      this.renderer.render(this.scene, this.camera);
+    };
+    loop();
+  }
+
+  componentWillUnmount() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._t) clearTimeout(this._t);
+    if (this._stimer) clearTimeout(this._stimer);
+    if (this._statRaf) cancelAnimationFrame(this._statRaf);
+    if (this._ttimer) clearTimeout(this._ttimer);
+    if (this._rT) clearTimeout(this._rT);
+    if (this._rRaf) cancelAnimationFrame(this._rRaf);
+    if (this._rPoll) cancelAnimationFrame(this._rPoll);
+    if (this._rro) this._rro.disconnect();
+    if (this._tScroll) window.removeEventListener('scroll', this._tScroll, true);
+    if (this._htimer2) clearTimeout(this._htimer2);
+    if (this._hRaf) cancelAnimationFrame(this._hRaf);
+    if (this._hro) this._hro.disconnect();
+    if (this._hScroll) window.removeEventListener('scroll', this._hScroll, true);
+    if (this._itimer) clearTimeout(this._itimer);
+    if (this._iRaf) cancelAnimationFrame(this._iRaf);
+    if (this._iro) this._iro.disconnect();
+    if (this._iScroll) window.removeEventListener('scroll', this._iScroll, true);
+    if (this._ro) this._ro.disconnect();
+    if (this.renderer) this.renderer.dispose();
+  }
+}
+</script>
+<script>
+(async () => {
+  if (!document.title || !document.title.trim()) document.title = "Lepton Hero";
+  // Prepend so page-supplied @page / break rules (deck-stage's margin:0,
+  // author CSS) keep source-order precedence over the baseline.
+  const baseCss = document.createElement('style');
+  baseCss.textContent = "@media print {\n  figure, table { break-inside: avoid; }\n  *, *::before, *::after {\n    print-color-adjust: exact; -webkit-print-color-adjust: exact;\n    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;\n    animation-delay: -99s !important; animation-duration: .001s !important;\n    animation-iteration-count: 1 !important; animation-fill-mode: both !important;\n    animation-play-state: running !important; transition-duration: 0s !important;\n  }\n}";
+  document.head.prepend(baseCss);
+  if (document.readyState === 'loading') {
+    await new Promise((r) => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  }
+  let ds = document.querySelector('deck-stage');
+  // whenDefined never resolves when nothing registers the element, so only
+  // await it when a <deck-stage> tag exists (and race a timeout regardless).
+  if (ds && !customElements.get('deck-stage')) {
+    try {
+      await Promise.race([
+        customElements.whenDefined('deck-stage'),
+        new Promise((r) => setTimeout(r, 3000)),
+      ]);
+    } catch (e) {}
+    ds = document.querySelector('deck-stage');
+  }
+  // dc-runtime assigns window.DCLogic at init and mounts into #dc-root on
+  // DOMContentLoaded; settle on that subtree so React has rendered before
+  // print(). Non-DC pages fall through to weighing body.
+  const isDc = !ds && 'DCLogic' in window;
+  const settleRoot = ds || (isDc ? document.getElementById('dc-root') : null) || document.body;
+  if (settleRoot) {
+    // Weigh only content children — skip script/style/template so inline
+    // Babel/CSS doesn't register as stable "content" before the framework
+    // has mounted anything.
+    const MEDIA = 'img,svg,canvas,video,picture,iframe,embed,object';
+    const weigh = () => {
+      let text = 0, media = 0;
+      for (const c of settleRoot.children) {
+        const t = c.tagName;
+        if (t === 'SCRIPT' || t === 'STYLE' || t === 'TEMPLATE') continue;
+        text += (c.textContent || '').trim().length;
+        media += c.querySelectorAll(MEDIA).length + (c.matches(MEDIA) ? 1 : 0);
+      }
+      return text + media * 100;
+    };
+    // "Non-zero and stable" alone is not sufficient to mean rendered: generic
+    // body can carry a static shell while async main content is pending, and
+    // #dc-root can carry the root DC's static text while child refs are still
+    // .sc-placeholder boxes. Gate generic on readyState 'complete', and never
+    // accept stability while a dc-runtime placeholder is present.
+    const isGeneric = settleRoot === document.body;
+    const deadline = Date.now() + 15000;
+    let last = -1, stable = 0;
+    while (Date.now() < deadline) {
+      const n = weigh();
+      const ready =
+        (!isGeneric || document.readyState === 'complete') &&
+        !settleRoot.querySelector('.sc-placeholder');
+      if (n > 0 && n === last && ready) { if (++stable >= 2) break; } else { stable = 0; }
+      last = n;
+      await new Promise((r) => setTimeout(r, 250));
+    }
+  }
+  // Project support.js may predate runtime default-seeding; push via bridge.
+  if (isDc && window.__dcSetProps && window.__dcRootName) {
+    try {
+      const dpEl = document.querySelector('script[data-dc-script]');
+      const meta = JSON.parse((dpEl && dpEl.getAttribute('data-props')) || '{}');
+      const bag = {};
+      for (const k in meta)
+        if (k[0] !== '$' && meta[k] && meta[k].default !== undefined)
+          bag[k] = meta[k].default;
+      if (Object.keys(bag).length) {
+        window.__dcSetProps(window.__dcRootName(), bag);
+        await new Promise((r) => setTimeout(r, 50));
+      }
+    } catch (e) {}
+  }
+  // Reveal content gated on scroll or visibility before printing. Lazy <img>,
+  // IntersectionObserver fade-ins, and collapsed <details> don't render while
+  // off-screen, so a long page would print with them blank or closed. Open
+  // every <details>, force native-lazy images eager, and scroll the document
+  // through its full height to trip lazy-load + IO; then wait (bounded) for the
+  // newly-triggered images. Inert for deck-stage (slides aren't scroll-gated).
+  try {
+    for (const d of document.querySelectorAll('details')) d.open = true;
+    for (const img of document.querySelectorAll('img[loading="lazy"]'))
+      img.loading = 'eager';
+    const scroller = document.scrollingElement || document.documentElement;
+    const full = Math.max(scroller.scrollHeight, document.body.scrollHeight);
+    const step = window.innerHeight || 800;
+    for (let y = 0; y <= full; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => requestAnimationFrame(r));
+    }
+    window.scrollTo(0, 0);
+    await Promise.race([
+      Promise.all(
+        [...document.images].map((img) =>
+          img.complete
+            ? null
+            : new Promise((res) => {
+                img.addEventListener('load', res, { once: true });
+                img.addEventListener('error', res, { once: true });
+              })
+        )
+      ),
+      new Promise((r) => setTimeout(r, 4000)),
+    ]);
+  } catch (e) {}
+  try { await document.fonts.ready; } catch (e) {}
+  // Jump every animation to its end state so print() never captures a slide
+  // mid-entrance. Ordering matters: the 0s-transition style must be live
+  // BEFORE data-deck-active is set so attribute-keyed transitions don't
+  // start a (now-0s) run from the pre-active base.
+  const st = document.createElement('style');
+  st.textContent = '*,*::before,*::after{animation-delay:-99s !important;animation-duration:.001s !important;animation-iteration-count:1 !important;animation-fill-mode:both !important;animation-play-state:running !important;transition-duration:0s !important}';
+  document.head.appendChild(st);
+  for (const d of document.querySelectorAll('deck-stage')) {
+    for (const c of d.children) {
+      const t = c.tagName;
+      if (t === 'SCRIPT' || t === 'STYLE' || t === 'TEMPLATE') continue;
+      c.setAttribute('data-deck-active', '');
+    }
+  }
+  // Re-append deck-stage's @page last so no author @page can add a margin and
+  // spill each full-bleed slide onto two sheets. Backstop for old copies.
+  if (ds) {
+    let pg = document.getElementById('deck-stage-print-page');
+    if (!pg) {
+      pg = document.createElement('style');
+      pg.textContent = '@page{size:' + (+ds.getAttribute('width') || 1920) +
+        'px ' + (+ds.getAttribute('height') || 1080) + 'px;margin:0}';
+    }
+    document.body.appendChild(pg);
+  }
+  try {
+    const sweep = () => {
+      for (const a of document.getAnimations()) {
+        try { a.finish(); } catch (e) {
+          try { a.currentTime = (a.effect && a.effect.getComputedTiming().duration) || 0; a.pause(); } catch (e2) {}
+        }
+      }
+    };
+    sweep();
+    await new Promise((r) => requestAnimationFrame(r));
+    sweep();
+    await new Promise((r) => requestAnimationFrame(r));
+  } catch (e) {}
+  // A document that owns its print CSS (the doc-page starter injects the
+  // meta at runtime; hand-rolled print designs author it) gets no automatic
+  // page geometry and keeps its forced breaks: strip the injected default
+  // @page — write time cannot see a runtime-injected meta — skip the frame
+  // override below, and skip the fakepage-flattening further down. What
+  // still applies: the print baseline and break-hygiene defaults (no @page
+  // in either; low specificity, so the document's own print CSS wins) and
+  // the break-inside relaxation on >page elements (avoid on those cannot
+  // be honored whoever authored it).
+  var ownsPrint = !!document.querySelector('meta[name="omelette-owns-print" i]');
+  if (ownsPrint) {
+    var dst = document.querySelector('style[data-omelette-print-defaults]');
+    if (dst && dst.textContent) {
+      dst.textContent = dst.textContent.replace(/@page\b[^{}]*\{[^}]*\}/, '');
+    }
+  }
+  // Size the PDF page to the rendered design unless the file opted into
+  // standard paper via @page{size:letter|A4|…} or declared print ownership
+  // via the meta above. Decks own their own @page.
+  // Wrappers (body, …) lose padding+margin so the frame sits at (0,0); the
+  // frame itself loses only margin — its padding is INSIDE the measured
+  // rect and must stay, or content shifts and leaves a gap at bottom/right.
+  var __m = null;
+  try { __m = (() => {
+  var STAMP = true;
+  var docEl = document.documentElement;
+  var doc = { width: docEl.scrollWidth, height: docEl.scrollHeight };
+  // Name-presence check, case-insensitive — the same contract as the
+  // instant-PDF path's runtime check in deck-stage-export.ts. The name is
+  // a string literal here because that file interpolates this script into
+  // its print script, so importing a shared constant from it would be a
+  // cycle; measure.test.ts pins the literal so the two cannot drift apart
+  // silently.
+  var ownsPrint = !!document.querySelector('meta[name="omelette-owns-print" i]');
+
+  var ds = document.querySelector('deck-stage');
+  if (ds) {
+    var dw = Number(ds.getAttribute('width')) || 1920;
+    var dh = Number(ds.getAttribute('height')) || 1080;
+    var n = typeof ds.length === 'number' ? ds.length : ds.children.length;
+    var idx = typeof ds.index === 'number' ? ds.index : 0;
+    var frames = [];
+    for (var i = 0; i < n; i++) frames.push({ left: 0, top: 0, width: dw, height: dh });
+    return { kind: 'deck', source: 'declared', doc: doc, frames: frames,
+      authored: frames.map(function(){return{width:true,height:true}}),
+      deck: { width: dw, height: dh, slideCount: n, index: idx },
+      signals: { paperPage: false, pxPage: false, ownsPrint: ownsPrint } };
+  }
+
+  // Declared kind: a doc-page tag names the kind outright, so no signal
+  // heuristics run (like the deck branch above, signals report false —
+  // they describe inferred classifications only). The tag alone is not
+  // trusted: the element must have upgraded (shadowRoot present), so a
+  // leftover tag whose script was deleted falls through to the heuristics
+  // that handle plain markup.
+  var stageSx = window.scrollX || 0, stageSy = window.scrollY || 0;
+  var dp = document.querySelector('doc-page');
+  if (dp && dp.shadowRoot) {
+    // Crop to the sheet, not the host — the desk around it is screen-only
+    // chrome that must not land in PNG exports.
+    var sheet = dp.shadowRoot.querySelector('.sheet');
+    var sr = (sheet || dp).getBoundingClientRect();
+    return { kind: 'paper-doc', source: 'declared', doc: doc,
+      frames: [{ left: sr.left + stageSx, top: sr.top + stageSy,
+        width: sr.width, height: sr.height }],
+      authored: [{ width: false, height: false }],
+      signals: { paperPage: false, pxPage: false, ownsPrint: ownsPrint } };
+  }
+  var paperPage = false, pxPage = false;
+  var eachRule = function (fn) {
+    for (var s = 0; s < document.styleSheets.length; s++) {
+      var rs; try { rs = document.styleSheets[s].cssRules; } catch (e) { continue; }
+      for (var r = 0; r < rs.length; r++) {
+        fn(rs[r]);
+        if (rs[r].cssRules) for (var n = 0; n < rs[r].cssRules.length; n++) fn(rs[r].cssRules[n]);
+      }
+    }
+  };
+  eachRule(function (r) {
+    if (r.type !== 6) return;
+    var m = /\bsize\s*:\s*([^;}]+)/i.exec(r.cssText || '');
+    if (!m) return;
+    if (/\b(letter|a[3-5]|legal|ledger)\b/i.test(m[1])) paperPage = true;
+    if (/\d+(?:\.\d+)?px\b/i.test(m[1])) pxPage = true;
+  });
+  var signals = { paperPage: paperPage, pxPage: pxPage, ownsPrint: ownsPrint };
+
+  var pxVal = function (v) {
+    var m = /^(\d+(?:\.\d+)?)px$/.exec(v || ''); return m ? +m[1] : 0;
+  };
+  var authoredPx = function (el, prop) {
+    if (pxVal(el.style[prop])) return true;
+    var attr = el.getAttribute(prop);
+    if (attr && /^\d+$/.test(attr)) return true;
+    var hit = false;
+    eachRule(function (r) {
+      if (hit || r.type !== 1 || !r.style) return;
+      try { if (el.matches(r.selectorText) && pxVal(r.style[prop])) hit = true; } catch (e) {}
+    });
+    return hit;
+  };
+
+  var el = document.body, rootPxW = false;
+  for (;;) {
+    var kids = [];
+    for (var c = 0; c < el.children.length; c++) {
+      var t = el.children[c].tagName;
+      if (t !== 'SCRIPT' && t !== 'STYLE' && t !== 'TEMPLATE') kids.push(el.children[c]);
+    }
+    if (kids.length !== 1 || !(kids[0] instanceof HTMLElement)) break;
+    if (STAMP) el.setAttribute('data-om-frame-wrap', '');
+    el = kids[0];
+    rootPxW = authoredPx(el, 'width');
+    if (rootPxW) break;
+  }
+  if (!rootPxW) rootPxW = authoredPx(el, 'width');
+
+  // @page{size:letter} alone is a flowing doc; with a px-width root it's a
+  // fixed sheet pretending to be paper — fall through and size to render.
+  if (paperPage && !rootPxW) {
+    return { kind: 'paper-doc', source: 'inferred', doc: doc, signals: signals,
+      frames: [{ left: 0, top: 0, width: doc.width, height: doc.height }],
+      authored: [{ width: false, height: false }] };
+  }
+
+  var sx = window.scrollX || 0, sy = window.scrollY || 0;
+  var rectOf = function (e) {
+    var r = e.getBoundingClientRect();
+    var oy; try { oy = getComputedStyle(e).overflowY; } catch (err) {}
+    var h = oy === 'visible' ? Math.max(r.height, e.scrollHeight || 0) : r.height;
+    return { left: r.left + sx, top: r.top + sy, width: r.width, height: h };
+  };
+
+  // Multi-frame: off unless the page opts in via data-om-multi-frame on the
+  // stop element — the explicit opt-in is what guards against card grids
+  // and pricing tables that match the geometry but aren't separate
+  // canvases. Two ways to name the frames, explicit first:
+  // 1. Descendants marked data-om-frame-export (the social-frames starter
+  //    marks each asset frame; shells/panels around them are presentation,
+  //    so nesting is expected). Document order.
+  // 2. Fallback, no marked descendants: direct children with an authored px
+  //    width AND height (the original geometry heuristic).
+  // Frames may be different sizes (a gallery mixes 1080×1920 stories with
+  // 728×90 banners); data-om-frame-label rides along for export filenames.
+  if (el.hasAttribute('data-om-multi-frame')) {
+    var visOk = function (e) {
+      var cs; try { cs = getComputedStyle(e); } catch (err) { return false; }
+      return cs.display !== 'none' && cs.visibility !== 'hidden' && cs.position !== 'fixed';
+    };
+    // A frame's crop is its VISUAL box — never the scrollHeight-inflated
+    // rect that rectOf computes for page roots. Shadow-DOM hover controls
+    // (image-slot's Replace bar parks 29px below its host) and similar
+    // escaping UI contribute scrollable overflow to the frame, and the
+    // inflated height both squashes the nominal-size resize and drags
+    // content below the frame into the crop. Zoom-independent; bit every
+    // slot-bearing frame.
+    var frameRectOf = function (e) {
+      var r = e.getBoundingClientRect();
+      return { left: r.left + sx, top: r.top + sy, width: r.width, height: r.height };
+    };
+    var pushCand = function (list, e) {
+      if (!visOk(e)) return;
+      var rc = frameRectOf(e);
+      if (rc.width < 2 || rc.height < 2) return;
+      var lbl = e.getAttribute('data-om-frame-label');
+      if (lbl) rc.label = lbl;
+      list.push(rc);
+    };
+    var cands = [];
+    var marked = el.querySelectorAll('[data-om-frame-export]');
+    if (marked.length) {
+      for (var mk = 0; mk < marked.length; mk++) pushCand(cands, marked[mk]);
+    } else {
+      for (var k = 0; k < el.children.length; k++) {
+        var ch = el.children[k];
+        if (!authoredPx(ch, 'width') || !authoredPx(ch, 'height')) continue;
+        pushCand(cands, ch);
+      }
+    }
+    if (cands.length >= 2) {
+      return { kind: 'multi-frame', source: 'inferred', doc: doc, signals: signals,
+        frames: cands, authored: cands.map(function(){return{width:true,height:true}}) };
+    }
+  }
+
+  if (STAMP) el.setAttribute('data-om-frame', '');
+  return { kind: 'single-canvas', source: 'inferred', doc: doc, signals: signals,
+    frames: [rectOf(el)],
+    authored: [{ width: rootPxW, height: authoredPx(el, 'height') }] };
+})(); } catch (e) {}
+  var frame = null;
+  if (!ownsPrint && __m && __m.kind === 'single-canvas') {
+    var f = __m.frames && __m.frames[0];
+    if (f && f.width >= 200 && f.height >= 200) {
+      frame = f;
+      var fst = document.createElement('style');
+      fst.textContent = '@media print{@page{size:' + Math.ceil(f.width) + 'px ' +
+        Math.ceil(f.height) + 'px;margin:0}' +
+        'html,body,[data-om-frame-wrap]{padding:0!important;margin:0!important;background:none!important}' +
+        '[data-om-frame]{margin:0!important}}';
+      document.body.appendChild(fst);
+    }
+  }
+  // Relax break-inside on oversized elements. An element taller than a
+  // printable page can't honor break-inside: avoid — browsers either overflow
+  // it or push it whole to the next page, leaving a blank gap, then break it
+  // anyway at an arbitrary point. After the final layout (content revealed,
+  // animations jumped), find elements taller than a page that still compute
+  // break-inside: avoid and reset them to auto, so the browser breaks them at
+  // their children's boundaries instead (children keep their own avoid). PAGE_PX
+  // is a conservative portrait estimate at 96 CSS px/in — Letter/A4 usable
+  // height minus our 0.5in margins — so only clearly-oversized elements are
+  // touched and under-page elements still stay whole. Skipped for decks (slides
+  // are sized to the page) and for fixed-size canvases (frame set, or an author
+  // px-based @page) — runs as before for flowing docs on letter/A4.
+  try {
+    if (!ds && !frame && !(__m && __m.signals && __m.signals.pxPage)) {
+      const PAGE_PX = 1024;
+      // Our print defaults add a real @page margin only when the source has
+      // no @page of its own; computed style can't tell us (it reports screen
+      // media), so read the injected rule directly.
+      const defaults = document.querySelector('style[data-omelette-print-defaults]');
+      const pageInset = /@page\s*\{[^}]*margin/.test(defaults ? defaults.textContent || '' : '');
+      const SEL = 'section,article,figure,table,pre,blockquote,[class~="card" i],[class~="page" i],[class~="sheet" i]';
+      for (const el of document.body.querySelectorAll(SEL)) {
+        if (el instanceof HTMLElement && el.offsetHeight > PAGE_PX) {
+          el.setAttribute('data-om-oversized', '');
+          // Fake-paged docs simulate sheets with over-tall break-after:page
+          // boxes; honoring the break spills half-blank pages and ends a
+          // colored box mid-sheet. Flow them, and (only when we own the page
+          // inset) drop the redundant padding/background via the rule below.
+          const cs = getComputedStyle(el);
+          // An owns-print doc's forced breaks are intentional sheet
+          // boundaries, never fake-paged simulation — don't strip them.
+          // The break-inside relaxation above still applies: avoid on a
+          // >page element is impossible to honor whoever authored it.
+          if (
+            !ownsPrint &&
+            (cs.breakAfter === 'page' || cs.pageBreakAfter === 'always')
+          ) {
+            el.setAttribute('data-om-fakepage', '');
+          }
+        }
+      }
+      const ost = document.createElement('style');
+      ost.textContent = '@media print{' +
+        '[data-om-oversized]{break-inside:auto !important;page-break-inside:auto !important}' +
+        '[data-om-fakepage]{break-after:auto !important;page-break-after:auto !important}' +
+        (pageInset ? '[data-om-fakepage]{padding:0 !important;background:none !important}' : '') +
+        '}';
+      document.head.appendChild(ost);
+    }
+  } catch (e) {}
+  // macOS Preview renders Skia-PDF Luminosity soft-masks as opaque grey boxes;
+  // swap the CSS that triggers them for Preview-safe forms.
+  try {
+    for (const el of document.body.querySelectorAll('*')) {
+      const cs = getComputedStyle(el);
+
+      if (cs.boxShadow !== 'none' && cs.filter === 'none') {
+        const outs = [], kept = [];
+        for (const s of cs.boxShadow.split(/,(?![^(]*[)])/)) {
+          const t = s.trim();
+          const m = t.match(/^(rgba?[(][^)]+[)]) (-?[0-9.]+px) (-?[0-9.]+px) ([0-9.]+px) -?[0-9.]+px$/);
+          if (m && parseFloat(m[4]) > 0) outs.push('drop-shadow(' + m[2] + ' ' + m[3] + ' ' + m[4] + ' ' + m[1] + ')');
+          else kept.push(t);
+        }
+        if (outs.length) {
+          el.style.setProperty('filter', outs.join(' '), 'important');
+          el.style.setProperty('box-shadow', kept.join(', ') || 'none', 'important');
+        }
+      }
+
+      const mask = cs.maskImage && cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage;
+      if (mask && mask !== 'none' && cs.filter === 'none') el.style.setProperty('filter', 'opacity(1)', 'important');
+    }
+  } catch (e) {}
+  setTimeout(() => { try { window.print(); } catch (e) {} }, 200);
+})();
+</script>
+</body>
+</html>
